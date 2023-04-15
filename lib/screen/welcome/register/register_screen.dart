@@ -98,9 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       TextField(
                         controller: emailController,
-                        onChanged: (value) => debugPrint('이메일: $value'),
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -132,10 +131,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       TextField(
                         controller: passwordController,
-                        onChanged: (value) => debugPrint('비밀번호: $value'),
                         obscureText: true,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -155,11 +153,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       TextField(
                         controller: confirmController,
-                        onChanged: (value) => debugPrint('비밀번호 확인: $value'),
                         cursorHeight: 24.h,
                         obscureText: true,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(

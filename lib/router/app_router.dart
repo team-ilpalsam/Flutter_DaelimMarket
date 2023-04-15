@@ -1,5 +1,6 @@
 // import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
+import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/welcome/account_done_screen.dart';
 import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
 import 'package:daelim_market/screen/welcome/login/forgot/forgot_authcode_screen.dart';
@@ -8,7 +9,6 @@ import 'package:daelim_market/screen/welcome/login/forgot/forgot_screen.dart';
 import 'package:daelim_market/screen/welcome/login/login_screen.dart';
 import 'package:daelim_market/screen/welcome/register/register_vefiry_screen.dart';
 import 'package:daelim_market/screen/welcome/register/register_screen.dart';
-import 'package:daelim_market/screen/welcome/welcome_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -16,7 +16,7 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const WelcomeScreen(),
+        builder: (context, state) => const UploadScreen(),
       ),
 
       // 회원가입

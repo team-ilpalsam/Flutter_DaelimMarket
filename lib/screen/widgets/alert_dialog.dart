@@ -39,6 +39,7 @@ class AlertDialogWidget {
                 ),
                 Text(
                   content,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 21.sp,

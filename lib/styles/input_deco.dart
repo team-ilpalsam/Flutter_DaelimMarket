@@ -3,7 +3,7 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-var inputDeco = InputDecoration(
+var welcomeInputDeco = InputDecoration(
   isDense: true,
   contentPadding: const EdgeInsets.symmetric(
     vertical: 0,
@@ -22,9 +22,46 @@ var inputDeco = InputDecoration(
   ),
 );
 
-var inputTextDeco = TextStyle(
+var welcomeInputTextDeco = TextStyle(
   fontFamily: 'Pretendard',
   fontSize: 24.sp,
   fontWeight: bold,
+  color: dmBlack,
+);
+
+mainInputDeco(String hintText) {
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 18.sp,
+      fontWeight: medium,
+      color: dmBlack,
+    ),
+    contentPadding: EdgeInsets.symmetric(
+      vertical: 10.h,
+      horizontal: 10.w,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(
+        width: 1.w,
+        color: dmLightGrey,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(
+        width: 1.w,
+        color: dmLightGrey,
+      ),
+    ),
+  );
+}
+
+var mainInputTextDeco = TextStyle(
+  fontFamily: 'Pretendard',
+  fontSize: 18.sp,
+  fontWeight: medium,
   color: dmBlack,
 );
