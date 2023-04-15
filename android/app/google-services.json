@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "691133324885",
+    "firebase_url": "https://daelimmarket-f423e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "daelimmarket-f423e",
+    "storage_bucket": "daelimmarket-f423e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691133324885:android:dbc9eaa8ffdba420647edc",
+        "android_client_info": {
+          "package_name": "com.example.daelim_market"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691133324885-hloaec44cqbobu71pa35qs3r9bmp6uau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO9s-aE3jv_54RTzxPhw9K8tumbpEVVn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691133324885-hloaec44cqbobu71pa35qs3r9bmp6uau.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "691133324885-6vq84ca8k02vll4831k94emd35vmougq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.daelimMarket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
