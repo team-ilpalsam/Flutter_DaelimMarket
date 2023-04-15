@@ -17,6 +17,7 @@ dependencies:
   firebase_auth: ^4.4.0
   cloud_firestore: ^4.5.0
   dropdown_button2: ^2.0.0
+  carousel_images: ^1.1.2
 
 dev_dependencies:
   flutter_test:
