@@ -83,8 +83,8 @@ class _ForgotScreen extends State<ForgotScreen> {
                         controller: emailController,
                         onChanged: (value) => debugPrint('이메일: $value'),
                         cursorHeight: 24.h,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(

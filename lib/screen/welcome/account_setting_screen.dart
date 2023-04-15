@@ -115,7 +115,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                 ),
                                 Positioned(
                                   top: 73.h,
-                                  left: 73.h,
+                                  left: 73.w,
                                   child: Container(
                                     width: 32.w,
                                     height: 32.h,
@@ -158,13 +158,12 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       ),
                       TextField(
                         controller: nickNameController,
-                        onChanged: (value) => debugPrint('닉네임: $value'),
                         cursorHeight: 24.h,
                         inputFormatters: <TextInputFormatter>[
                           LengthLimitingTextInputFormatter(12),
                         ],
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
 

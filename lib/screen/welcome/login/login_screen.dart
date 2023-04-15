@@ -92,10 +92,9 @@ class _LoginScreen extends State<LoginScreen> {
                       ),
                       TextField(
                         controller: emailController,
-                        onChanged: (value) => debugPrint('이메일: $value'),
                         cursorHeight: 24.h,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -127,11 +126,10 @@ class _LoginScreen extends State<LoginScreen> {
                       ),
                       TextField(
                         controller: passwordController,
-                        onChanged: (value) => debugPrint('비밀번호: $value'),
                         cursorHeight: 24.h,
                         obscureText: true,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(

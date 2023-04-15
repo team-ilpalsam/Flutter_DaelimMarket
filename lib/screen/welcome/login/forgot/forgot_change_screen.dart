@@ -90,8 +90,8 @@ class _ForgotChangeScreen extends State<ForgotChangeScreen> {
                         onChanged: (value) => debugPrint('비밀번호: $value'),
                         cursorHeight: 24.h,
                         obscureText: true,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -114,8 +114,8 @@ class _ForgotChangeScreen extends State<ForgotChangeScreen> {
                         onChanged: (value) => debugPrint('비밀번호 확인: $value'),
                         cursorHeight: 24.h,
                         obscureText: true,
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       SizedBox(

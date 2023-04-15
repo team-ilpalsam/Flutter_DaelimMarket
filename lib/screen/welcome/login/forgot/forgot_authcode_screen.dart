@@ -104,8 +104,8 @@ class _ForgotAuthCodeScreen extends State<ForgotAuthCodeScreen> {
                           LengthLimitingTextInputFormatter(6),
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        style: inputTextDeco,
-                        decoration: inputDeco,
+                        style: welcomeInputTextDeco,
+                        decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
                       ),
                       // Bottom
