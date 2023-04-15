@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -94,7 +95,26 @@ class _UploadScreenState extends State<UploadScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          context.pop();
+                          AlertDialogWidget.twoButtons(
+                              context: context,
+                              content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
+                              button: [
+                                '취소',
+                                '나갈래요'
+                              ],
+                              color: [
+                                dmGrey,
+                                dmBlue
+                              ],
+                              action: [
+                                () {
+                                  Navigator.pop(context);
+                                },
+                                () {
+                                  Navigator.pop(context);
+                                  context.pop();
+                                }
+                              ]);
                         },
                         child: Image.asset(
                           'assets/images/icons/icon_back.png',
