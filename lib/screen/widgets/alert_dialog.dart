@@ -40,6 +40,7 @@ class AlertDialogWidget {
                 Text(
                   content,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 21.sp,
@@ -100,7 +101,6 @@ class AlertDialogWidget {
   static void twoButtons({
     required BuildContext context,
     required String content,
-    // List<String>도 고밈했는데 그냥 String 2개 쓰겠습니다.
     required List<String> button,
     required List<Color> color,
     required List<VoidCallback> action,
@@ -114,7 +114,6 @@ class AlertDialogWidget {
           elevation: 0,
           content: Container(
             width: 319.w,
-            // content는 3줄 이상 쓰지 않기!
             height: content.contains('\n') ? 170.h : 145.h,
             decoration: BoxDecoration(
               border: Border.all(
@@ -129,6 +128,8 @@ class AlertDialogWidget {
                 ),
                 Text(
                   content,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 21.sp,
