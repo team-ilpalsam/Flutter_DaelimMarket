@@ -5,6 +5,7 @@ import 'package:daelim_market/screen/main/search/search_screen.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -36,24 +37,20 @@ class _MainScreenState extends State<MainScreen> {
       body: SafeArea(
         child: _widgetOptions.elementAt(_selectedIndex)!,
       ),
-      floatingActionButton: Theme(
-        data: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: SizedBox(
-          width: 62.w,
-          height: 62.h,
-          child: FittedBox(
-            child: FloatingActionButton(
-              onPressed: () {},
-              elevation: 0,
-              backgroundColor: dmBlue,
-              child: Icon(
-                Icons.add,
-                size: 30.h,
-                color: dmWhite,
-              ),
+      floatingActionButton: SizedBox(
+        width: 62.w,
+        height: 62.h,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: () {
+              context.push('/main/upload');
+            },
+            elevation: 0,
+            backgroundColor: dmBlue,
+            child: Icon(
+              Icons.add,
+              size: 30.h,
+              color: dmWhite,
             ),
           ),
         ),

@@ -22,7 +22,11 @@ class DaelimMarket extends StatelessWidget {
       designSize: const Size(393, 852),
       builder: (context, child) {
         return MaterialApp.router(
-          theme: ThemeData(scaffoldBackgroundColor: dmWhite),
+          theme: ThemeData(
+            scaffoldBackgroundColor: dmWhite,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
           debugShowCheckedModeBanner: false,
           routerConfig: AppRouter.config,
         );
