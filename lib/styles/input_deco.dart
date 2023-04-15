@@ -29,7 +29,7 @@ var welcomeInputTextDeco = TextStyle(
   color: dmBlack,
 );
 
-mainInputDeco(String hintText) {
+mainInputDeco(String? hintText) {
   return InputDecoration(
     hintText: hintText,
     hintStyle: TextStyle(
