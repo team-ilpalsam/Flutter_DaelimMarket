@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../widgets/alert_dialog.dart';
 
 class MypageSettingScreen extends StatefulWidget {
   final VoidCallback? onTap;
@@ -17,8 +22,11 @@ class MypageSettingScreen extends StatefulWidget {
 }
 
 class _MypageSettingScreenState extends State<MypageSettingScreen> {
+  XFile? _pickedImage;
+
   @override
   Widget build(BuildContext context) {
+    debugPrint(_pickedImage?.path);
     return Scaffold(
       backgroundColor: dmWhite,
       body: SafeArea(
@@ -73,16 +81,70 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          Container(
-                            width: 105.w,
-                            height: 105.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: dmLightGrey,
-                              border: Border.all(
-                                color: dmDarkGrey,
-                                width: 1.w,
+                          GestureDetector(
+                            onTap: () {
+                              AlertDialogWidget.twoButtons(
+                                context: context,
+                                content: "프로필 사진을 선택해주세요!",
+                                button: ["앨범에서 선택", "카메라로 촬영"],
+                                color: [dmBlue, dmBlue],
+                                action: [
+                                  () {
+                                    Navigator.pop(context);
+                                    try {
+                                      ImagePicker()
+                                          .pickImage(
+                                              source: ImageSource.gallery)
+                                          .then((xfile) {
+                                        if (xfile == null) return;
+                                        setState(() {
+                                          _pickedImage = XFile(xfile.path);
+                                        });
+                                      });
+                                    } catch (e) {
+                                      AlertDialogWidget.oneButton(
+                                          context: context,
+                                          content: "오류가 발생했습니다",
+                                          button: "확인",
+                                          action: () {
+                                            Navigator.pop(context);
+                                            debugPrint(e.toString());
+                                          });
+                                    }
+                                  },
+                                  () {
+                                    ImagePicker()
+                                        .pickImage(source: ImageSource.camera)
+                                        .then((xfile) {
+                                      if (xfile == null) return;
+                                      setState(() {
+                                        _pickedImage = XFile(xfile.path);
+                                      });
+                                    });
+                                  },
+                                ],
+                              );
+                            },
+                            child: Container(
+                              width: 105.w,
+                              height: 105.h,
+                              decoration: BoxDecoration(
+                                image: _pickedImage != null
+                                    ? DecorationImage(
+                                        image:
+                                            Image.file(File(_pickedImage!.path))
+                                                .image,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                                shape: BoxShape.circle,
+                                color: dmLightGrey,
+                                border: Border.all(
+                                  color: dmDarkGrey,
+                                  width: 1.w,
+                                ),
                               ),
+                              //child: Image.file(File(_pickedImage!.path)),
                             ),
                           ),
                           Positioned(
