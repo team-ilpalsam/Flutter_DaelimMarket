@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
+import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
@@ -82,78 +82,36 @@ class _UploadScreenState extends State<UploadScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                window.viewPadding.top > 0
-                    ? SizedBox(height: 7.h)
-                    : SizedBox(height: 71.h),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
+                MainAppbar.leadingAndAction(
+                  title: '물건 등록',
+                  leading: 'assets/images/icons/icon_back.png',
+                  action: Text(
+                    "완료",
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18.sp,
+                      fontWeight: medium,
+                      color: dmBlue,
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          AlertDialogWidget.twoButtons(
-                              context: context,
-                              content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
-                              button: [
-                                '취소',
-                                '나갈래요'
-                              ],
-                              color: [
-                                dmGrey,
-                                dmBlue
-                              ],
-                              action: [
-                                () {
-                                  Navigator.pop(context);
-                                },
-                                () {
-                                  Navigator.pop(context);
-                                  context.pop();
-                                }
-                              ]);
+                  leadingTap: () {
+                    AlertDialogWidget.twoButtons(
+                      context: context,
+                      content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
+                      button: ['취소', '나갈래요'],
+                      color: [dmGrey, dmBlue],
+                      action: [
+                        () {
+                          Navigator.pop(context);
                         },
-                        child: Image.asset(
-                          'assets/images/icons/icon_back.png',
-                          alignment: Alignment.topLeft,
-                          height: 18.h,
-                        ),
-                      ),
-                      const Spacer(flex: 200),
-                      Text(
-                        "물건 등록",
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 22.sp,
-                          fontWeight: medium,
-                          color: dmBlack,
-                        ),
-                      ),
-                      const Spacer(flex: 165),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Text(
-                          "완료",
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18.sp,
-                            fontWeight: medium,
-                            color: dmBlue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 25.h,
-                ),
-                Divider(
-                  thickness: 1.w,
-                  color: dmGrey,
+                        () {
+                          Navigator.pop(context);
+                          context.pop();
+                        }
+                      ],
+                    );
+                  },
+                  actionTap: () {},
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
