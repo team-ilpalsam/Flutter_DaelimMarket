@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:daelim_market/screen/widgets/button.dart';
-import 'package:daelim_market/screen/widgets/welcome_title.dart';
+import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
@@ -63,7 +63,7 @@ class _ForgotAuthCodeScreen extends State<ForgotAuthCodeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeTitle(
+                      const WelcomeAppbar(
                         image: 'assets/images/icons/icon_back.png',
                         title: '이메일 인증',
                       ),

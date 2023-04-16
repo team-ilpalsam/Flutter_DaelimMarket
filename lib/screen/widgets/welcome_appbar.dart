@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class WelcomeTitle extends StatelessWidget {
+class WelcomeAppbar extends StatelessWidget {
   final String? image;
   final String title;
   final VoidCallback? onTap;
 
-  const WelcomeTitle({
+  const WelcomeAppbar({
     super.key,
     this.image,
     required this.title,

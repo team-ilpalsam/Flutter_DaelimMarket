@@ -1,0 +1,18 @@
+# This is a generated file; do not edit or check into version control.
+cloud_firestore=/Users/hugesilver/.pub-cache/hosted/pub.dev/cloud_firestore-4.5.0/
+cloud_firestore_web=/Users/hugesilver/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.4.0/
+firebase_auth=/Users/hugesilver/.pub-cache/hosted/pub.dev/firebase_auth-4.4.0/
+firebase_auth_web=/Users/hugesilver/.pub-cache/hosted/pub.dev/firebase_auth_web-5.3.0/
+firebase_core=/Users/hugesilver/.pub-cache/hosted/pub.dev/firebase_core-2.9.0/
+firebase_core_web=/Users/hugesilver/.pub-cache/hosted/pub.dev/firebase_core_web-2.3.0/
+flutter_plugin_android_lifecycle=/Users/hugesilver/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.9/
+image_picker=/Users/hugesilver/.pub-cache/hosted/pub.dev/image_picker-0.8.7+1/
+image_picker_android=/Users/hugesilver/.pub-cache/hosted/pub.dev/image_picker_android-0.8.6+6/
+image_picker_for_web=/Users/hugesilver/.pub-cache/hosted/pub.dev/image_picker_for_web-2.1.12/
+image_picker_ios=/Users/hugesilver/.pub-cache/hosted/pub.dev/image_picker_ios-0.8.7+2/
+path_provider=/Users/hugesilver/.pub-cache/hosted/pub.dev/path_provider-2.0.14/
+path_provider_android=/Users/hugesilver/.pub-cache/hosted/pub.dev/path_provider_android-2.0.25/
+path_provider_foundation=/Users/hugesilver/.pub-cache/hosted/pub.dev/path_provider_foundation-2.2.2/
+path_provider_linux=/Users/hugesilver/.pub-cache/hosted/pub.dev/path_provider_linux-2.1.10/
+path_provider_windows=/Users/hugesilver/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.5/
+sqflite=/Users/hugesilver/.pub-cache/hosted/pub.dev/sqflite-2.2.6/

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
-import 'package:daelim_market/screen/widgets/welcome_title.dart';
+import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
@@ -65,7 +65,7 @@ class _ForgotChangeScreen extends State<ForgotChangeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeTitle(
+                      const WelcomeAppbar(
                         image: 'assets/images/icons/icon_close.png',
                         title: '비밀번호 변경',
                       ),

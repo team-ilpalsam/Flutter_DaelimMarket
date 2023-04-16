@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -57,36 +58,12 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 71.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: Image.asset(
-                          'assets/images/icons/icon_back.png',
-                          alignment: Alignment.topLeft,
-                          height: 18.h,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      "프로필 수정",
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 22.sp,
-                        fontWeight: medium,
-                        color: dmBlack,
-                      ),
-                    ),
-                    const Spacer(flex: 2),
-                  ],
+                MainAppbar.leadingOnly(
+                  title: '프로필 수정',
+                  leading: 'assets/images/icons/icon_back.png',
+                  leadingTap: () {
+                    context.pop();
+                  },
                 ),
                 SizedBox(
                   height: 56.h,

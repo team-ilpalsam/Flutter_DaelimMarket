@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:daelim_market/screen/widgets/button.dart';
-import 'package:daelim_market/screen/widgets/welcome_title.dart';
+import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class _RegisterVefiryScreenState extends State<RegisterVefiryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeTitle(
+                      const WelcomeAppbar(
                         title: '이메일 인증',
                       ),
                       SizedBox(
