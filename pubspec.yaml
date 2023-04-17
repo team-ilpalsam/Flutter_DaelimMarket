@@ -9,15 +9,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  flutter_screenutil: ^5.7.0
+  cupertino_icons: 
+  flutter_screenutil: 
   go_router: ^6.5.0
   image_picker: ^0.8.7+1
-  firebase_core: ^2.9.0
-  firebase_auth: ^4.4.0
-  cloud_firestore: ^4.5.0
+  firebase_core: 
+  firebase_auth:
+  cloud_firestore: 
+  firebase_storage: 
   dropdown_button2: ^2.0.0
-  carousel_images: ^1.1.2
+  carousel_images: 
+  flutter_secure_storage: 
+  flutter_native_splash: 
+  timer_builder: 
+  intl:
+  connectivity: ^3.0.6
 
 dev_dependencies:
   flutter_test:

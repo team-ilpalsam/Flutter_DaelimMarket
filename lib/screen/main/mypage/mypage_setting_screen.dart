@@ -60,10 +60,16 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
               children: [
                 MainAppbar.leadingOnly(
                   title: '프로필 수정',
-                  leading: 'assets/images/icons/icon_back.png',
-                  leadingTap: () {
-                    context.pop();
-                  },
+                  leading: GestureDetector(
+                    onTap: () {
+                      context.pop();
+                    },
+                    child: Image.asset(
+                      'assets/images/icons/icon_back.png',
+                      alignment: Alignment.topLeft,
+                      height: 18.h,
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 56.h,

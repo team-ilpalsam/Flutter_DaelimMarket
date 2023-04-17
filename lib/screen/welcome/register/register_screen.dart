@@ -201,6 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         'email':
                                             '${emailController.text}@email.daelim.ac.kr',
                                         'profile_image': "",
+                                        'posts': []
                                       });
                                       context.goNamed(
                                         'registerAuthLink',

@@ -56,6 +56,13 @@ mainInputDeco(String? hintText) {
         color: dmLightGrey,
       ),
     ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.zero,
+      borderSide: BorderSide(
+        width: 1.w,
+        color: dmDarkGrey,
+      ),
+    ),
   );
 }
 
