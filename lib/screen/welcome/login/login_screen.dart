@@ -9,6 +9,7 @@ import 'package:daelim_market/styles/input_deco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -71,7 +72,7 @@ class _LoginScreen extends State<LoginScreen> {
                         image: 'assets/images/icons/icon_close.png',
                         title: '로그인',
                         onTap: () {
-                          context.go('/');
+                          context.go('/welcome');
                         },
                       ),
                       // Contents
@@ -171,15 +172,36 @@ class _LoginScreen extends State<LoginScreen> {
                                                 '${emailController.text}@email.daelim.ac.kr',
                                             password: passwordController.text)
                                         .then(
-                                      (value) {
+                                      (value) async {
                                         setState(() {
                                           _isLoading = false;
                                         });
-                                        value.user!.emailVerified == true
-                                            ? context.go('/main')
-                                            : WarningSnackBar.show(
-                                                context: context,
-                                                text: '이메일 인증이 안 된 계정이에요.');
+                                        if (value.user!.emailVerified == true) {
+                                          await const FlutterSecureStorage()
+                                              .deleteAll();
+                                          await const FlutterSecureStorage().write(
+                                              key: 'email',
+                                              value:
+                                                  '${emailController.text}@email.daelim.ac.kr');
+                                          await const FlutterSecureStorage()
+                                              .write(
+                                                  key: 'password',
+                                                  value:
+                                                      passwordController.text);
+                                          await const FlutterSecureStorage()
+                                              .write(
+                                                  key: 'id',
+                                                  value: emailController.text);
+                                          await const FlutterSecureStorage()
+                                              .write(
+                                                  key: 'uid',
+                                                  value: value.user!.uid);
+                                          context.go('/main');
+                                        } else {
+                                          WarningSnackBar.show(
+                                              context: context,
+                                              text: '이메일 인증이 안 된 계정이에요.');
+                                        }
                                         return value;
                                       },
                                     );

@@ -8,8 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MainAppbar {
   static Widget leadingOnly({
     required String title,
-    required String leading,
-    required VoidCallback leadingTap,
+    required Widget leading,
   }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -26,13 +25,7 @@ class MainAppbar {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: GestureDetector(
-                    onTap: leadingTap,
-                    child: Image.asset(
-                      leading,
-                      alignment: Alignment.topLeft,
-                      height: 18.h,
-                    )),
+                child: leading,
               ),
               const Spacer(),
               Text(
@@ -61,10 +54,8 @@ class MainAppbar {
 
   static Widget leadingAndAction({
     required String title,
-    required String leading,
+    required Widget leading,
     required Widget action,
-    required VoidCallback leadingTap,
-    required VoidCallback actionTap,
   }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -81,29 +72,25 @@ class MainAppbar {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: leadingTap,
-                child: Image.asset(
-                  leading,
-                  alignment: Alignment.topLeft,
-                  height: 18.h,
+              Expanded(flex: 2, child: SizedBox(child: leading)),
+              Expanded(
+                flex: 6,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 22.sp,
+                    fontWeight: medium,
+                    color: dmBlack,
+                  ),
                 ),
               ),
-              const Spacer(flex: 200),
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 22.sp,
-                  fontWeight: medium,
-                  color: dmBlack,
-                ),
-              ),
-              const Spacer(flex: 165),
-              GestureDetector(
-                onTap: actionTap,
-                child: action,
-              ),
+              Expanded(
+                  flex: 2,
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(child: action))),
             ],
           ),
         ),
