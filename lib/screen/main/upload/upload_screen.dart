@@ -159,7 +159,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                                       .read(key: "uid") ??
                                                   'null';
                                           String productId =
-                                              '${id}_${DateFormat('yyyyMMddHHmmss').format(now)}';
+                                              '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
 
                                           await Future.wait(_pickedImages!
                                               .asMap()
