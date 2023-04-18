@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/styles/colors.dart';
+import 'package:daelim_market/styles/image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -50,7 +51,7 @@ class _AccountDoneScreenState extends State<AccountDoneScreen> {
                       ),
                       child: Center(
                         child: Image.asset(
-                          'assets/images/logo/daelimmarket_textless.png',
+                          textLessLogo,
                           width: 168.w,
                           height: 168.h,
                         ),
