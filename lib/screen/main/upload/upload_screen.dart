@@ -212,6 +212,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                               'desc': descController.text,
                                               'images': downloadUrls,
                                               'likes': [],
+                                              'uploadTime': now,
                                             });
                                           }));
 

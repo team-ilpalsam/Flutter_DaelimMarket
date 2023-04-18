@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
+import 'package:daelim_market/styles/image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 
@@ -71,9 +72,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
         body: Center(
-      child: CupertinoActivityIndicator(),
+      child: Image.asset(
+        textLessLogo,
+        height: 214.w,
+      ),
     ));
   }
 }

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -123,6 +126,196 @@ class _HomeScreenState extends State<HomeScreen> {
             Divider(
               thickness: 1.w,
               color: dmGrey,
+            ),
+            SizedBox(
+              height: 13.h,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                ),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _selectedLocation == _locationList[0]
+                      ? FirebaseFirestore.instance
+                          .collection('product')
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection('product')
+                          .where('location', isEqualTo: _selectedLocation)
+                          .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CupertinoActivityIndicator(),
+                      );
+                    }
+
+                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                      return ListView.separated(
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data!.docs.length,
+                        separatorBuilder: (context, builder) => Divider(
+                          thickness: 1.w,
+                          color: dmGrey,
+                        ),
+                        itemBuilder: (context, index) {
+                          // 가격 포맷
+                          String price = '';
+                          if (int.parse(snapshot.data!.docs[index]['price']) >=
+                              10000) {
+                            if (int.parse(snapshot.data!.docs[index]['price']) %
+                                    10000 ==
+                                0) {
+                              price =
+                                  '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만원';
+                            } else {
+                              price =
+                                  '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만 ${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) % 10000)}원';
+                            }
+                          } else {
+                            price =
+                                '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']))}원';
+                          }
+
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 17.5.h),
+                            child: SizedBox(
+                              height: 116.h,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 113.w,
+                                    height: 113.h,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(snapshot
+                                            .data!.docs[index]['images'][0]),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.r),
+                                      color: dmBlue,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 17.w,
+                                  ),
+                                  SizedBox(
+                                    width: 222.w,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 222.w,
+                                          child: Flexible(
+                                            child: RichText(
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              strutStyle:
+                                                  StrutStyle(fontSize: 18.sp),
+                                              text: TextSpan(
+                                                  text: snapshot.data!
+                                                      .docs[index]['title'],
+                                                  style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontSize: 18.sp,
+                                                    fontWeight: medium,
+                                                    color: dmBlack,
+                                                  )),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 11.h,
+                                        ),
+                                        Text(
+                                          '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 14.sp,
+                                            fontWeight: medium,
+                                            color: dmGrey,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 9.h,
+                                        ),
+                                        Text(
+                                          price,
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 18.sp,
+                                            fontWeight: bold,
+                                            color: dmBlue,
+                                          ),
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(),
+                                        ),
+                                        Visibility(
+                                          maintainSize: true,
+                                          maintainAnimation: true,
+                                          maintainState: true,
+                                          visible: snapshot
+                                                      .data!
+                                                      .docs[index]['likes']
+                                                      .length >
+                                                  0
+                                              ? true
+                                              : false,
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/images/icons/icon_heart.png',
+                                                  width: 13.w,
+                                                ),
+                                                SizedBox(
+                                                  width: 5.5.w,
+                                                ),
+                                                Text(
+                                                  '${snapshot.data!.docs[index]['likes'].length}',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontSize: 14.sp,
+                                                    fontWeight: bold,
+                                                    color: dmGrey,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: Text(
+                          '등록된 게시글이 없어요.',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14.sp,
+                            fontWeight: bold,
+                            color: dmLightGrey,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
             ),
           ],
         ),
