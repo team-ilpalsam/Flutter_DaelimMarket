@@ -54,7 +54,7 @@ app.*.map.json
 /ios/Runner/GoogleService-Info.plist
 
 # Not Used OSs
-/linux
-/macos
-/web
-/windows
+/linux/
+/macos/
+/web/
+/windows/

@@ -2,9 +2,9 @@
     package="com.example.daelim_market">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
    <application
-        android:label="daelim_market"
+        android:label="대림마켓"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

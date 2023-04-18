@@ -1,5 +1,0 @@
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/images/logo/daelimmarket_colored.jpg
-  fullscreen: true
-  fill: true
