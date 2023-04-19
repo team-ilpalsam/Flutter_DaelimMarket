@@ -135,17 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _selectedLocation == _locationList[0]
-                      ? FirebaseFirestore.instance
-                          .collection('product')
-                          .orderBy("desc")
-                          .snapshots()
-                      : FirebaseFirestore.instance
-                          .collection('product')
-                          .where('location', isEqualTo: _selectedLocation)
-                          .orderBy("desc")
-                          .snapshots(),
+                child: FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('product')
+                      .where("location",
+                          isEqualTo: _selectedLocation == '전체'
+                              ? null
+                              : _selectedLocation)
+                      .orderBy("uploadTime", descending: true)
+                      .get(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -305,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else {
                       return Center(
                         child: Text(
-                          '등록된 게시글이 없어요.',
+                          '$_selectedLocation에 등록된 게시글이 없어요.',
                           style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 14.sp,
