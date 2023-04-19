@@ -139,12 +139,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   stream: _selectedLocation == _locationList[0]
                       ? FirebaseFirestore.instance
                           .collection('product')
-                          .orderBy("desc")
+                          .orderBy("uploadTime", descending: true)
                           .snapshots()
                       : FirebaseFirestore.instance
                           .collection('product')
                           .where('location', isEqualTo: _selectedLocation)
-                          .orderBy("desc")
+                          .orderBy("uploadTime", descending: true)
                           .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

@@ -25,7 +25,7 @@ class AlertDialogWidget {
           elevation: 0,
           content: Container(
             width: 319.w,
-            height: (145 + (25 * nextLineCount)).h,
+            height: (146 + (25 * nextLineCount)).h,
             decoration: BoxDecoration(
               border: Border.all(
                 color: dmBlack,
@@ -105,6 +105,12 @@ class AlertDialogWidget {
     required List<Color> color,
     required List<VoidCallback> action,
   }) {
+    int nextLineCount = 0;
+    for (int i = 0; i < content.length; i++) {
+      if (content[i] == '\n') {
+        nextLineCount++;
+      }
+    }
     showDialog(
       barrierColor: Colors.transparent,
       context: context,
@@ -114,7 +120,7 @@ class AlertDialogWidget {
           elevation: 0,
           content: Container(
             width: 319.w,
-            height: content.contains('\n') ? 170.h : 145.h,
+            height: (146 + (25 * nextLineCount)).h,
             decoration: BoxDecoration(
               border: Border.all(
                 color: dmBlack,

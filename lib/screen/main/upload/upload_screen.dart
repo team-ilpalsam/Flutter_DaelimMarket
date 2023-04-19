@@ -207,7 +207,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                               'title': titleController.text,
                                               'location':
                                                   _selectedLocation == '장소 선택'
-                                                      ? '전체'
+                                                      ? _locationList[0]
                                                       : _selectedLocation,
                                               'desc': descController.text,
                                               'images': downloadUrls,
