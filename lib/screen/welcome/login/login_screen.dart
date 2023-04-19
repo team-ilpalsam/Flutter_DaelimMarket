@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:daelim_market/screen/widgets/button.dart';
+import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -251,13 +250,7 @@ class _LoginScreen extends State<LoginScreen> {
                                   : const BlueButton(text: '로그인'),
                             )
                           : const BlueButton(text: '로그인', color: dmLightGrey),
-                      window.viewPadding.bottom > 0
-                          ? SizedBox(
-                              height: 13.h,
-                            )
-                          : SizedBox(
-                              height: 45.h,
-                            ),
+                      bottomPadding,
                     ],
                   ),
                 ),

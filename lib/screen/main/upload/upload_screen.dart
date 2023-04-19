@@ -288,6 +288,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                         context: context,
                                         text: '사진은 5장까지만 올릴 수 있어요!',
                                         paddingHorizontal: 0,
+                                        paddingBottom: 0,
                                       );
                                       return;
                                     }
@@ -300,6 +301,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                     context: context,
                                     text: '사진을 불러오는 중 실패했어요.',
                                     paddingHorizontal: 0,
+                                    paddingBottom: 0,
                                   );
                                 }
                               },
@@ -454,8 +456,8 @@ class _UploadScreenState extends State<UploadScreen> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                              vertical: 10.h,
-                              horizontal: 10.w,
+                              vertical: 8.h,
+                              horizontal: 8.w,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
