@@ -454,8 +454,8 @@ class _UploadScreenState extends State<UploadScreen> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                              vertical: 10.h,
-                              horizontal: 10.w,
+                              vertical: 8.h,
+                              horizontal: 8.w,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
