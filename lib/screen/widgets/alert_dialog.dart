@@ -152,52 +152,58 @@ class AlertDialogWidget {
                   ),
                   child: Row(
                     children: [
-                      GestureDetector(
-                        onTap: action[0],
-                        child: Container(
-                          width: 132.w,
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              5.r,
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: GestureDetector(
+                          onTap: action[0],
+                          child: Container(
+                            width: 132.w,
+                            height: 38.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                5.r,
+                              ),
+                              color: color[0],
                             ),
-                            color: color[0],
-                          ),
-                          child: Center(
-                            child: Text(
-                              button[0],
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 18.sp,
-                                fontWeight: medium,
-                                color: dmWhite,
-                                height: 1.2.h,
+                            child: Center(
+                              child: Text(
+                                button[0],
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18.sp,
+                                  fontWeight: medium,
+                                  color: dmWhite,
+                                  height: 1.2.h,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                       SizedBox(width: 15.w),
-                      GestureDetector(
-                        onTap: action[1],
-                        child: Container(
-                          width: 132.w,
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              5.r,
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: GestureDetector(
+                          onTap: action[1],
+                          child: Container(
+                            width: 132.w,
+                            height: 38.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                5.r,
+                              ),
+                              color: color[1],
                             ),
-                            color: color[1],
-                          ),
-                          child: Center(
-                            child: Text(
-                              button[1],
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 18.sp,
-                                fontWeight: medium,
-                                color: dmWhite,
-                                height: 1.2.h,
+                            child: Center(
+                              child: Text(
+                                button[1],
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 18.sp,
+                                  fontWeight: medium,
+                                  color: dmWhite,
+                                  height: 1.2.h,
+                                ),
                               ),
                             ),
                           ),
