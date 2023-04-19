@@ -1,4 +1,5 @@
 // import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
+import 'package:daelim_market/screen/main/home/detail_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
@@ -86,6 +87,15 @@ class AppRouter {
         path: '/main',
         pageBuilder: (context, state) => const NoTransitionPage(
           child: MainScreen(),
+        ),
+      ),
+
+      // 상세 페이지
+      GoRoute(
+        name: 'detail',
+        path: '/main/detail',
+        builder: (context, state) => DetailScreen(
+          productId: state.queryParams['productId']!,
         ),
       ),
 

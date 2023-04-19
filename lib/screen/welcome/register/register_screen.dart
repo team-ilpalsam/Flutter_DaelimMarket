@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
+import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -268,13 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )
                           : const BlueButton(
                               text: '계정 등록하기', color: dmLightGrey),
-                      window.viewPadding.bottom > 0
-                          ? SizedBox(
-                              height: 13.h,
-                            )
-                          : SizedBox(
-                              height: 45.h,
-                            ),
+                      bottomPadding,
                     ],
                   ),
                 ),

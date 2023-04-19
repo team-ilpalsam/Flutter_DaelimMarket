@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
+import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -176,13 +175,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                               },
                               child: const BlueButton(text: '입력 완료'))
                           : const BlueButton(text: '입력 완료', color: dmLightGrey),
-                      window.viewPadding.bottom > 0
-                          ? SizedBox(
-                              height: 13.h,
-                            )
-                          : SizedBox(
-                              height: 45.h,
-                            ),
+                      bottomPadding,
                     ],
                   ),
                 ),
