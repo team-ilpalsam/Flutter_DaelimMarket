@@ -128,9 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 17.5.h),
             divider,
-            SizedBox(
-              height: 13.h,
-            ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(
