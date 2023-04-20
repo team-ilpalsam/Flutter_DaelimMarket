@@ -5,6 +5,8 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'named_widget.dart';
+
 class MainAppbar {
   static Widget leadingOnly({
     required String title,
@@ -44,10 +46,7 @@ class MainAppbar {
         SizedBox(
           height: 25.h,
         ),
-        Divider(
-          thickness: 1.w,
-          color: dmGrey,
-        ),
+        divider,
       ],
     );
   }
@@ -97,10 +96,7 @@ class MainAppbar {
         SizedBox(
           height: 25.h,
         ),
-        Divider(
-          thickness: 1.w,
-          color: dmGrey,
-        ),
+        divider,
       ],
     );
   }
