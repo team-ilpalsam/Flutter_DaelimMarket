@@ -72,6 +72,7 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                   options: CarouselOptions(
+                                    viewportFraction: 1,
                                     autoPlay: false,
                                     enableInfiniteScroll: false,
                                     height: 351.h,
