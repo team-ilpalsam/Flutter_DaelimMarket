@@ -18,13 +18,13 @@ dependencies:
   cloud_firestore: 
   firebase_storage: 
   dropdown_button2: ^2.0.0
-  carousel_images: 
   flutter_secure_storage: 
   timer_builder: 
   intl: ^0.18.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.19
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

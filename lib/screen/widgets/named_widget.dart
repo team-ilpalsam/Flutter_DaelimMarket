@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:daelim_market/styles/colors.dart';
@@ -10,13 +11,13 @@ Widget divider = Container(
   color: dmGrey,
 );
 
-Widget topPadding = window.viewPadding.top > 0
-    ? const SizedBox()
-    : SizedBox(
-        height: 25.h,
-      );
+Widget topPadding = Platform.isAndroid == true
+    ? SizedBox(
+        height: 15.h,
+      )
+    : const SizedBox();
 
-var bottomPadding = window.viewPadding.bottom > 0
+Widget bottomPadding = window.viewPadding.bottom > 0
     ? SizedBox(
         height: 18.h,
       )

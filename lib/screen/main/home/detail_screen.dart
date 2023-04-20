@@ -1,4 +1,4 @@
-import 'package:carousel_images/carousel_images.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
@@ -59,16 +59,24 @@ class DetailScreen extends StatelessWidget {
                                 height: 18.5.h,
                               ),
                               Center(
-                                child: CarouselImages(
-                                  listImages:
-                                      snapshot.data!['images']?.cast<String>(),
-                                  height: 351.h,
-                                  borderRadius: 0,
-                                  cachedNetworkImage: true,
-                                  verticalAlignment: Alignment.center,
-                                  onTap: (index) {},
+                                child: CarouselSlider(
+                                  items: List<Widget>.from(
+                                    snapshot.data!['images'].map(
+                                      (value) => SizedBox(
+                                        child: Image.network(
+                                          value,
+                                          width: 351.w,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  options: CarouselOptions(
+                                    autoPlay: false,
+                                    enableInfiniteScroll: false,
+                                    height: 351.h,
+                                  ),
                                 ),
-                                // ),이미지 없으면 주석 풀어
                               ),
                               SizedBox(
                                 height: 19.h,
@@ -128,7 +136,10 @@ class DetailScreen extends StatelessWidget {
                                     SizedBox(
                                       //하단 날짜
                                       child: Text(
-                                        '${DateFormat.yMMMMd('ko_KR').format((snapshot.data!['uploadTime'].toDate()))} ${DateFormat('a h시 mm분', 'ko_KR').format(snapshot.data!['uploadTime'].toDate())}',
+                                        DateFormat(
+                                                'y년 MMM d일 a h시 mm분', 'ko_KR')
+                                            .format(snapshot.data!['uploadTime']
+                                                .toDate()),
                                         style: TextStyle(
                                           fontFamily: 'Pretendard',
                                           color: dmDarkGrey,
