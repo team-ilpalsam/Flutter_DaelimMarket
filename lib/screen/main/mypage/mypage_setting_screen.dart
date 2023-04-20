@@ -58,7 +58,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MainAppbar.leadingOnly(
+                MainAppbar.show(
                   title: '프로필 수정',
                   leading: GestureDetector(
                     onTap: () {
@@ -70,6 +70,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       height: 18.h,
                     ),
                   ),
+                  action: const SizedBox(),
                 ),
                 SizedBox(
                   height: 56.h,

@@ -34,7 +34,7 @@ class DetailScreen extends StatelessWidget {
               return Column(
                 children: [
                   topPadding,
-                  MainAppbar.leadingOnly(
+                  MainAppbar.show(
                     title: snapshot.data!['title'],
                     leading: GestureDetector(
                       onTap: () {
@@ -46,115 +46,110 @@ class DetailScreen extends StatelessWidget {
                         height: 18.h,
                       ),
                     ),
+                    action: const SizedBox(),
                   ),
                   Expanded(
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverFillRemaining(
-                          hasScrollBody: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 18.5.h,
-                              ),
-                              Center(
-                                child: CarouselSlider(
-                                  items: List<Widget>.from(
-                                    snapshot.data!['images'].map(
-                                      (value) => SizedBox(
-                                        child: Image.network(
-                                          value,
-                                          width: 351.w,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  options: CarouselOptions(
-                                    viewportFraction: 1,
-                                    autoPlay: false,
-                                    enableInfiniteScroll: false,
-                                    height: 351.h,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 19.h,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      //상세페이지 제목
-                                      child: Text(
-                                        snapshot.data!['title'],
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmBlack,
-                                          fontSize: 21.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 15.h,
-                                    ),
-                                    SizedBox(
-                                      //닉네임 + 건물
-                                      child: Text(
-                                        '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}', //전산관이랑 따로 해야하겠지? 잠시 보류
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmDarkGrey,
-                                          fontSize: 18.sp,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 22.h,
-                                    ),
-                                    snapshot.data!['desc'] != ''
-                                        ? SizedBox(
-                                            //상세페이지 내용
-                                            child: Text(
-                                              snapshot.data!['desc'],
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                color: dmBlack,
-                                                fontSize: 16.sp,
-                                              ),
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                    snapshot.data!['desc'] != ''
-                                        ? SizedBox(
-                                            height: 22.h,
-                                          )
-                                        : const SizedBox(),
-                                    SizedBox(
-                                      //하단 날짜
-                                      child: Text(
-                                        DateFormat(
-                                                'y년 MMM d일 a h시 mm분', 'ko_KR')
-                                            .format(snapshot.data!['uploadTime']
-                                                .toDate()),
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmDarkGrey,
-                                          fontSize: 13.sp,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 18.5.h,
                           ),
-                        ),
-                      ],
+                          Center(
+                            child: CarouselSlider(
+                              items: List<Widget>.from(
+                                snapshot.data!['images'].map(
+                                  (value) => SizedBox(
+                                    child: Image.network(
+                                      value,
+                                      width: 351.w,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              options: CarouselOptions(
+                                viewportFraction: 1,
+                                autoPlay: false,
+                                enableInfiniteScroll: false,
+                                height: 351.h,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 19.h,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  //상세페이지 제목
+                                  child: Text(
+                                    snapshot.data!['title'],
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      color: dmBlack,
+                                      fontSize: 21.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                SizedBox(
+                                  //닉네임 + 건물
+                                  child: Text(
+                                    '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}', //전산관이랑 따로 해야하겠지? 잠시 보류
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      color: dmDarkGrey,
+                                      fontSize: 18.sp,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 22.h,
+                                ),
+                                snapshot.data!['desc'] != ''
+                                    ? SizedBox(
+                                        //상세페이지 내용
+                                        child: Text(
+                                          snapshot.data!['desc'],
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            color: dmBlack,
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox(),
+                                snapshot.data!['desc'] != ''
+                                    ? SizedBox(
+                                        height: 22.h,
+                                      )
+                                    : const SizedBox(),
+                                SizedBox(
+                                  //하단 날짜
+                                  child: Text(
+                                    DateFormat('y년 MMM d일 a h시 mm분', 'ko_KR')
+                                        .format(snapshot.data!['uploadTime']
+                                            .toDate()),
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      color: dmDarkGrey,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

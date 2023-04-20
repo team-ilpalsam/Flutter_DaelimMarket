@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                 },
                                 child: SizedBox(
-                                  height: 116.h,
+                                  height: 118.h,
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -221,20 +221,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: [
                                             SizedBox(
                                               width: 222.w,
-                                              child: RichText(
+                                              child: Text(
+                                                snapshot.data!.docs[index]
+                                                    ['title'],
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 2,
-                                                strutStyle:
-                                                    StrutStyle(fontSize: 18.sp),
-                                                text: TextSpan(
-                                                    text: snapshot.data!
-                                                        .docs[index]['title'],
-                                                    style: TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontSize: 18.sp,
-                                                      fontWeight: medium,
-                                                      color: dmBlack,
-                                                    )),
+                                                style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontSize: 18.sp,
+                                                  fontWeight: medium,
+                                                  color: dmBlack,
+                                                ),
                                               ),
                                             ),
                                             SizedBox(

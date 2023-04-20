@@ -99,7 +99,7 @@ class _UploadScreenState extends State<UploadScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MainAppbar.leadingAndAction(
+                MainAppbar.show(
                   title: '물건 등록',
                   leading: GestureDetector(
                     onTap: () {
