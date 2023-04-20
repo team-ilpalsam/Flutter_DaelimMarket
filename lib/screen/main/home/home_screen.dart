@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListView.separated(
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.docs.length,
-                          separatorBuilder: (context, builder) => divider,
+                          separatorBuilder: (context, index) => divider,
                           itemBuilder: (context, index) {
                             // 가격 포맷
                             String price = '';
@@ -180,7 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
 
                             return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 17.5.h),
+                              padding: index == 0
+                                  ? EdgeInsets.only(top: 30.5.h, bottom: 17.5.h)
+                                  : EdgeInsets.symmetric(vertical: 17.5.h),
                               child: InkWell(
                                 onTap: () {
                                   context.pushNamed('detail', queryParams: {
