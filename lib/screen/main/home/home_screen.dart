@@ -42,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             topPadding,
+            SizedBox(
+              height: 10.h,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.h),
               child: Row(
