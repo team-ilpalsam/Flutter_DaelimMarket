@@ -8,50 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'named_widget.dart';
 
 class MainAppbar {
-  static Widget leadingOnly({
-    required String title,
-    required Widget leading,
-  }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        window.viewPadding.top > 0
-            ? SizedBox(height: 7.h)
-            : SizedBox(height: 71.h),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: leading,
-              ),
-              const Spacer(),
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 22.sp,
-                  fontWeight: medium,
-                  color: dmBlack,
-                ),
-              ),
-              const Spacer(flex: 2),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 25.h,
-        ),
-        divider,
-      ],
-    );
-  }
-
-  static Widget leadingAndAction({
+  static Widget show({
     required String title,
     required Widget leading,
     required Widget action,
@@ -74,22 +31,27 @@ class MainAppbar {
               Expanded(flex: 2, child: SizedBox(child: leading)),
               Expanded(
                 flex: 6,
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 22.sp,
-                    fontWeight: medium,
-                    color: dmBlack,
+                child: SizedBox(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 22.sp,
+                      fontWeight: medium,
+                      color: dmBlack,
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                  flex: 2,
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(child: action))),
+                flex: 2,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(child: action),
+                ),
+              ),
             ],
           ),
         ),
