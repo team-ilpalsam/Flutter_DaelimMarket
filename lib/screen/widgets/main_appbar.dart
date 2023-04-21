@@ -17,6 +17,7 @@ class MainAppbar {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        topPadding,
         window.viewPadding.top > 0
             ? SizedBox(height: 7.h)
             : SizedBox(height: 71.h),
@@ -28,9 +29,17 @@ class MainAppbar {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(flex: 2, child: SizedBox(child: leading)),
               Expanded(
-                flex: 6,
+                flex: 15,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    child: leading,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 70,
                 child: SizedBox(
                   child: Text(
                     title,
@@ -46,7 +55,7 @@ class MainAppbar {
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 15,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: SizedBox(child: action),

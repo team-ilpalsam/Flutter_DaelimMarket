@@ -163,9 +163,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      emailController.text.length >= 4 &&
-                              passwordController.text.length >= 6 &&
-                              confirmController.text.length >= 6
+                      emailController.text.length >= 3 &&
+                              passwordController.text.length >= 4 &&
+                              confirmController.text.length >= 4
                           ? GestureDetector(
                               onTap: () async {
                                 if (!emailController.text

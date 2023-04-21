@@ -397,6 +397,9 @@ class _UploadScreenState extends State<UploadScreen> {
                           controller: titleController,
                           style: mainInputTextDeco,
                           decoration: mainInputDeco('글 제목'),
+                          inputFormatters: <TextInputFormatter>[
+                            LengthLimitingTextInputFormatter(25),
+                          ],
                           cursorColor: dmBlack,
                         ),
                       ),
@@ -490,6 +493,9 @@ class _UploadScreenState extends State<UploadScreen> {
                           textAlignVertical: TextAlignVertical.top,
                           style: mainInputTextDeco,
                           decoration: mainInputDeco('설명글'),
+                          inputFormatters: <TextInputFormatter>[
+                            LengthLimitingTextInputFormatter(128),
+                          ],
                           cursorColor: dmBlack,
                         ),
                       ),

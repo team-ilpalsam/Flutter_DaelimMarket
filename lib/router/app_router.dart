@@ -1,6 +1,7 @@
 // import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
-import 'package:daelim_market/screen/main/home/detail_screen.dart';
+import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
+import 'package:daelim_market/screen/main/detail/detail_screen.dart';
 import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
 import 'package:daelim_market/screen/welcome/account_done_screen.dart';
@@ -93,7 +94,7 @@ class AppRouter {
       // 상세 페이지
       GoRoute(
         name: 'detail',
-        path: '/main/detail',
+        path: '/detail',
         builder: (context, state) => DetailScreen(
           productId: state.queryParams['productId']!,
         ),
@@ -101,10 +102,23 @@ class AppRouter {
 
       // 판매 물건 등록 페이지
       GoRoute(
+        name: 'upload',
         path: '/main/upload',
         pageBuilder: (context, state) => const CupertinoPage(
           fullscreenDialog: true,
           child: UploadScreen(),
+        ),
+      ),
+
+      // 이미지 자세히 보기
+      GoRoute(
+        name: 'imageviewer',
+        path: '/detail/image',
+        pageBuilder: (context, state) => CupertinoPage(
+          fullscreenDialog: true,
+          child: ImageViewerScreen(
+            src: state.queryParams['src']!,
+          ),
         ),
       ),
     ],
