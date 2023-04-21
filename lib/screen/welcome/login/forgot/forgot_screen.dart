@@ -100,7 +100,7 @@ class _ForgotScreen extends State<ForgotScreen> {
                       ),
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      emailController.text.length >= 6
+                      emailController.text.length >= 3
                           ? GestureDetector(
                               onTap: () {
                                 if (!emailController.text

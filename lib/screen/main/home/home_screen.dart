@@ -152,8 +152,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                       return RefreshIndicator(
                         onRefresh: () async {
-                          setState(() {});
+                          return Future.delayed(
+                              const Duration(milliseconds: 1000), () {
+                            setState(() {});
+                          });
                         },
+                        backgroundColor: dmWhite,
+                        color: dmDarkGrey,
+                        strokeWidth: 2.w,
                         child: ListView.separated(
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.docs.length,

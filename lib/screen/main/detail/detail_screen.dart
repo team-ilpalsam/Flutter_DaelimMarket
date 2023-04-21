@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
-import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,6 @@ class DetailScreen extends StatelessWidget {
             if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
               return Column(
                 children: [
-                  topPadding,
                   MainAppbar.show(
                     title: snapshot.data!['title'],
                     leading: GestureDetector(
@@ -57,24 +55,36 @@ class DetailScreen extends StatelessWidget {
                             height: 18.5.h,
                           ),
                           Center(
-                            child: CarouselSlider(
-                              items: List<Widget>.from(
-                                snapshot.data!['images'].map(
-                                  (value) => SizedBox(
-                                    child: Image.network(
-                                      value,
-                                      width: 351.w,
-                                      fit: BoxFit.cover,
+                            child: Column(
+                              children: [
+                                CarouselSlider(
+                                  items: List<Widget>.from(
+                                    snapshot.data!['images'].map(
+                                      (value) => GestureDetector(
+                                        onTap: () {
+                                          context.pushNamed(
+                                            'imageviewer',
+                                            queryParams: {'src': value},
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          child: Image.network(
+                                            value,
+                                            width: 351.w,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
+                                  options: CarouselOptions(
+                                    viewportFraction: 1,
+                                    autoPlay: false,
+                                    enableInfiniteScroll: false,
+                                    height: 351.h,
+                                  ),
                                 ),
-                              ),
-                              options: CarouselOptions(
-                                viewportFraction: 1,
-                                autoPlay: false,
-                                enableInfiniteScroll: false,
-                                height: 351.h,
-                              ),
+                              ],
                             ),
                           ),
                           SizedBox(
