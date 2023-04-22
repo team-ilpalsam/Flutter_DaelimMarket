@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
@@ -136,23 +138,64 @@ class _DetailScreenState extends State<DetailScreen> {
                               children: [
                                 CarouselSlider(
                                   items: List<Widget>.from(
-                                    snapshot.data!['images'].map(
-                                      (value) => GestureDetector(
+                                    snapshot.data!['images']
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      String value = entry.value;
+                                      int index = entry.key;
+                                      return GestureDetector(
                                         onTap: () {
                                           context.pushNamed(
                                             'imageviewer',
                                             queryParams: {'src': value},
                                           );
                                         },
-                                        child: SizedBox(
-                                          child: Image.network(
-                                            value,
-                                            width: 351.w,
-                                            fit: BoxFit.cover,
-                                          ),
+                                        child: Stack(
+                                          children: [
+                                            SizedBox(
+                                              height: 351.h,
+                                              child: Image.network(
+                                                value,
+                                                width: 351.w,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            snapshot.data!['images'].length > 1
+                                                ? Positioned(
+                                                    left: 10.w,
+                                                    bottom: 10.h,
+                                                    child: Container(
+                                                      width: 75.w,
+                                                      height: 30.h,
+                                                      decoration: BoxDecoration(
+                                                        color: dmBlack
+                                                            .withOpacity(0.7),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    3.40e+38),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          '${index + 1} / ${snapshot.data!['images'].length}',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Pretendard',
+                                                              fontSize: 16.sp,
+                                                              fontWeight:
+                                                                  medium,
+                                                              color:
+                                                                  dmLightGrey),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox(),
+                                          ],
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    }),
                                   ),
                                   options: CarouselOptions(
                                     viewportFraction: 1,
@@ -255,6 +298,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         top: 10.h,
                         left: 32.w,
                         right: 20.w,
+                        bottom: window.viewPadding.bottom > 0 ? 0 : 32.h,
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
