@@ -13,11 +13,16 @@ import 'package:intl/intl.dart';
 import '../../../styles/fonts.dart';
 import '../../widgets/snackbar.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   final String productId;
 
-  DetailScreen({super.key, required this.productId});
+  const DetailScreen({super.key, required this.productId});
 
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
   String? uid;
 
   _asyncMethod() async {
@@ -33,7 +38,7 @@ class DetailScreen extends StatelessWidget {
         child: FutureBuilder(
           future: FirebaseFirestore.instance
               .collection('product')
-              .doc(productId)
+              .doc(widget.productId)
               .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -234,6 +239,157 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  Container(
+                    width: double.infinity,
+                    height: 60.5.h,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: dmGrey,
+                          width: 1.w,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 10.h,
+                        left: 32.w,
+                        right: 20.w,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              snapshot.data!['likes'].contains(uid)
+                                  ? GestureDetector(
+                                      onTap: () async {
+                                        try {
+                                          await Future.wait(
+                                            [
+                                              FirebaseFirestore.instance
+                                                  .collection('product')
+                                                  .doc(snapshot
+                                                      .data!['product_id'])
+                                                  .update({
+                                                'likes': FieldValue.arrayRemove(
+                                                    [uid!])
+                                              }),
+                                              FirebaseFirestore.instance
+                                                  .collection('user')
+                                                  .doc(uid)
+                                                  .update(
+                                                {
+                                                  'watchlist':
+                                                      FieldValue.arrayRemove([
+                                                    snapshot.data!['product_id']
+                                                  ])
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                          setState(() {});
+                                        } catch (e) {
+                                          WarningSnackBar.show(
+                                            context: context,
+                                            text: '관심을 누르던 중 문제가 생겼어요.',
+                                            paddingHorizontal: 0,
+                                          );
+                                          debugPrint(e.toString());
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/icons/icon_heart_fill.png',
+                                        height: 27.h,
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () async {
+                                        try {
+                                          await Future.wait(
+                                            [
+                                              FirebaseFirestore.instance
+                                                  .collection('product')
+                                                  .doc(snapshot
+                                                      .data!['product_id'])
+                                                  .update({
+                                                'likes': FieldValue.arrayUnion(
+                                                    [uid!])
+                                              }),
+                                              FirebaseFirestore.instance
+                                                  .collection('user')
+                                                  .doc(uid)
+                                                  .update(
+                                                {
+                                                  'watchlist':
+                                                      FieldValue.arrayUnion([
+                                                    snapshot.data!['product_id']
+                                                  ])
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                          setState(() {});
+                                        } catch (e) {
+                                          WarningSnackBar.show(
+                                            context: context,
+                                            text: '관심을 누르던 중 문제가 생겼어요.',
+                                            paddingHorizontal: 0,
+                                          );
+                                          debugPrint(e.toString());
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/icons/icon_heart.png',
+                                        height: 27.h,
+                                      ),
+                                    ),
+                              SizedBox(
+                                width: 21.83.w,
+                              ),
+                              Container(
+                                width: 1.w,
+                                height: 36.h,
+                                color: dmDarkGrey,
+                              ),
+                              SizedBox(
+                                width: 20.5.w,
+                              ),
+                              Text(
+                                '${NumberFormat('#,###').format(int.parse(snapshot.data!['price']))}원',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 21.sp,
+                                  fontWeight: bold,
+                                  color: dmBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: 115.w,
+                            height: 34.h,
+                            decoration: BoxDecoration(
+                              color: dmLightGrey,
+                              borderRadius: BorderRadius.circular(5.r),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '채팅하기',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16.sp,
+                                  fontWeight: bold,
+                                  color: dmWhite,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               );
             } else {
