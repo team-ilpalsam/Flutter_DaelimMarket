@@ -1,20 +1,32 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import '../../../styles/fonts.dart';
+import '../../widgets/snackbar.dart';
 
 class DetailScreen extends StatelessWidget {
   final String productId;
 
-  const DetailScreen({super.key, required this.productId});
+  DetailScreen({super.key, required this.productId});
+
+  String? uid;
+
+  _asyncMethod() async {
+    uid = await const FlutterSecureStorage().read(key: "uid");
+  }
 
   @override
   Widget build(BuildContext context) {
+    _asyncMethod();
     return Scaffold(
       backgroundColor: dmWhite,
       body: SafeArea(
@@ -36,7 +48,7 @@ class DetailScreen extends StatelessWidget {
                     title: snapshot.data!['title'],
                     leading: GestureDetector(
                       onTap: () {
-                        context.pop();
+                        context.go('/main');
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
@@ -44,7 +56,67 @@ class DetailScreen extends StatelessWidget {
                         height: 18.h,
                       ),
                     ),
-                    action: const SizedBox(),
+                    action: snapshot.data!['uid'] == uid
+                        ? GestureDetector(
+                            onTap: () {
+                              AlertDialogWidget.twoButtons(
+                                context: context,
+                                content: "정말로 삭제하시겠습니까?",
+                                button: ["취소", "삭제할래요."],
+                                color: [dmGrey, dmRed],
+                                action: [
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                  () async {
+                                    Navigator.pop(context);
+                                    try {
+                                      await Future.wait([
+                                        FirebaseFirestore.instance
+                                            .collection('product')
+                                            .doc(snapshot.data!['product_id'])
+                                            .delete(),
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(uid)
+                                            .update({
+                                          'posts': FieldValue.arrayRemove(
+                                              [snapshot.data!['product_id']])
+                                        })
+                                      ]);
+
+                                      context.go('/main');
+                                      DoneSnackBar.show(
+                                        context: context,
+                                        text: '판매글을 삭제했어요.',
+                                        paddingHorizontal: 0,
+                                        paddingBottom: 0,
+                                      );
+                                    } catch (e) {
+                                      context.go('/main');
+                                      WarningSnackBar.show(
+                                        context: context,
+                                        text: '판매글 삭제 중 문제가 생겼어요.',
+                                        paddingHorizontal: 0,
+                                        paddingBottom: 0,
+                                      );
+                                      debugPrint(e.toString());
+                                    }
+                                  }
+                                ],
+                              );
+                            },
+                            child: Text(
+                              "삭제",
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 18.sp,
+                                fontWeight: medium,
+                                color: dmRed,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
                   ),
                   Expanded(
                     child: SingleChildScrollView(
