@@ -116,7 +116,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                 },
                                 () {
                                   Navigator.pop(context);
-                                  context.pop();
+                                  context.go('/main');
                                 }
                               ],
                             );
@@ -201,6 +201,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                                 .doc(productId)
                                                 .set({
                                               'id': id,
+                                              'uid': uid,
                                               'product_id': productId,
                                               'nickName': '',
                                               'price': priceController.text,

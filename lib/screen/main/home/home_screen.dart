@@ -133,34 +133,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
-                child: FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance
-                      .collection('product')
-                      .where('location',
-                          isEqualTo: _selectedLocation == '전체'
-                              ? null
-                              : _selectedLocation)
-                      .orderBy("uploadTime", descending: true)
-                      .get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CupertinoActivityIndicator(),
-                      );
-                    }
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    return Future.delayed(const Duration(milliseconds: 1000),
+                        () {
+                      setState(() {});
+                    });
+                  },
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
+                  child: FutureBuilder<QuerySnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('product')
+                        .where('location',
+                            isEqualTo: _selectedLocation == '전체'
+                                ? null
+                                : _selectedLocation)
+                        .orderBy("uploadTime", descending: true)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CupertinoActivityIndicator(),
+                        );
+                      }
 
-                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          return Future.delayed(
-                              const Duration(milliseconds: 1000), () {
-                            setState(() {});
-                          });
-                        },
-                        backgroundColor: dmWhite,
-                        color: dmDarkGrey,
-                        strokeWidth: 2.w,
-                        child: ListView.separated(
+                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                        return ListView.separated(
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.docs.length,
                           separatorBuilder: (context, index) => divider,
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : EdgeInsets.symmetric(vertical: 17.5.h),
                               child: InkWell(
                                 onTap: () {
-                                  context.pushNamed('detail', queryParams: {
+                                  context.goNamed('detail', queryParams: {
                                     'productId': snapshot.data!.docs[index]
                                         ['product_id']
                                   });
@@ -315,22 +315,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
-                        ),
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          '등록된 게시글이 없어요.',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14.sp,
-                            fontWeight: bold,
-                            color: dmLightGrey,
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            '등록된 게시글이 없어요.',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14.sp,
+                              fontWeight: bold,
+                              color: dmLightGrey,
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ),

@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,62 +41,57 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: dmBlack,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-                child: _height != null
-                    ? InteractiveViewer(
-                        maxScale: 5.0,
-                        constrained: true,
-                        child: _height! > MediaQuery.of(context).size.height &&
-                                _width! == MediaQuery.of(context).size.width
-                            ? Image.network(
+      body: Stack(
+        children: [
+          Center(
+              child: _height != null
+                  ? InteractiveViewer(
+                      maxScale: 5.0,
+                      constrained: true,
+                      child: _height! > MediaQuery.of(context).size.height &&
+                              _width! == MediaQuery.of(context).size.width
+                          ? Image.network(
+                              widget.src,
+                              width: MediaQuery.of(context).size.width,
+                            )
+                          : SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: Image.network(
+                                fit: BoxFit.fitWidth,
                                 widget.src,
-                                width: MediaQuery.of(context).size.width,
-                              )
-                            : SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height,
-                                child: Image.network(
-                                  fit: BoxFit.fitWidth,
-                                  widget.src,
-                                ),
                               ),
-                      )
-                    : const Center(
-                        child: CupertinoActivityIndicator(
-                        color: dmWhite,
-                      ))),
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Column(
-                children: [
-                  topPadding,
-                  window.viewPadding.top > 0
-                      ? SizedBox(height: 20.h)
-                      : SizedBox(height: 84.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
+                            ),
+                    )
+                  : const Center(
+                      child: CupertinoActivityIndicator(
+                      color: dmWhite,
+                    ))),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Column(
+              children: [
+                SizedBox(height: 72.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.pop();
+                    },
+                    child: Image.asset(
+                      'assets/images/icons/icon_close_circle.png',
+                      alignment: Alignment.topLeft,
+                      height: 18.h,
                     ),
-                    child: GestureDetector(
-                      onTap: () {
-                        context.pop();
-                      },
-                      child: Image.asset(
-                        'assets/images/icons/icon_close_circle.png',
-                        alignment: Alignment.topLeft,
-                        height: 18.h,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
