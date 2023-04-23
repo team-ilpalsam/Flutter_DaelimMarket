@@ -50,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () {
-              context.push('/main/upload');
+              context.go('/main/upload');
             },
             elevation: 0,
             backgroundColor: dmBlue,
