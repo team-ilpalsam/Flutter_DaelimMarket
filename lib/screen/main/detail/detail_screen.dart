@@ -324,7 +324,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   Container(
                     width: double.infinity,
-                    height: 60.5.h,
+                    height: window.viewPadding.bottom > 0 ? 60.5.h : 92.5.h,
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
@@ -338,7 +338,6 @@ class _DetailScreenState extends State<DetailScreen> {
                         top: 10.h,
                         left: 32.w,
                         right: 20.w,
-                        bottom: window.viewPadding.bottom > 0 ? 0 : 32.h,
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
