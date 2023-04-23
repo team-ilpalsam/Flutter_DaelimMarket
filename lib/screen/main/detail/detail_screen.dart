@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
@@ -324,7 +322,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   Container(
                     width: double.infinity,
-                    height: window.viewPadding.bottom > 0 ? 60.5.h : 92.5.h,
+                    height: 60.5.h,
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
