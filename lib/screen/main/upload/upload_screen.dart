@@ -83,7 +83,7 @@ class _UploadScreenState extends State<UploadScreen> {
     super.deactivate();
   }
 
-  List<XFile>? _pickedImages;
+  List<XFile>? _pickedImages = [];
   List<String> downloadUrls = [];
 
   @override
@@ -304,6 +304,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                     paddingHorizontal: 0,
                                     paddingBottom: 0,
                                   );
+                                  debugPrint(e.toString());
                                 }
                               },
                               child: Stack(
@@ -315,8 +316,9 @@ class _UploadScreenState extends State<UploadScreen> {
                                     color: dmGrey,
                                   ),
                                   Image.asset(
-                                      'assets/images/icons/icon_add.png',
-                                      height: 43.85.h)
+                                    'assets/images/icons/icon_add.png',
+                                    height: 43.85.h,
+                                  ),
                                 ],
                               ),
                             )
@@ -324,61 +326,187 @@ class _UploadScreenState extends State<UploadScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: _pickedImages!.map(
-                                  (value) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                        right: 10.w,
-                                      ),
-                                      child: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Container(
-                                            width: 96.w,
-                                            height: 96.w,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image:
-                                                    Image.file(File(value.path))
-                                                        .image,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          _isLoading
-                                              ? Container()
-                                              : Positioned(
-                                                  top: 5.h,
-                                                  right: 5.w,
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _pickedImages!
-                                                            .remove((value));
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      width: 20.w,
-                                                      height: 20.h,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: dmWhite,
-                                                      ),
-                                                      child: Center(
-                                                        child: Icon(
-                                                          Icons.remove,
-                                                          size: 15.w,
-                                                          color: dmBlack,
-                                                        ),
+                                      (value) {
+                                        return value == _pickedImages!.last &&
+                                                _pickedImages!.length >= 5
+                                            ? Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  Container(
+                                                    width: 96.w,
+                                                    height: 96.w,
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: Image.file(File(
+                                                                value.path))
+                                                            .image,
+                                                        fit: BoxFit.cover,
                                                       ),
                                                     ),
                                                   ),
+                                                  _isLoading
+                                                      ? Container()
+                                                      : Positioned(
+                                                          top: 5.h,
+                                                          right: 5.w,
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                _pickedImages!
+                                                                    .remove(
+                                                                        value);
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              width: 20.w,
+                                                              height: 20.h,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: dmWhite,
+                                                              ),
+                                                              child: Center(
+                                                                child: Icon(
+                                                                  Icons.remove,
+                                                                  size: 15.w,
+                                                                  color:
+                                                                      dmBlack,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                ],
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 10.w),
+                                                child: Stack(
+                                                  clipBehavior: Clip.none,
+                                                  children: [
+                                                    Container(
+                                                      width: 96.w,
+                                                      height: 96.w,
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          image: Image.file(
+                                                                  File(value
+                                                                      .path))
+                                                              .image,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    _isLoading
+                                                        ? Container()
+                                                        : Positioned(
+                                                            top: 5.h,
+                                                            right: 5.w,
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _pickedImages!
+                                                                      .remove(
+                                                                          value);
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                width: 20.w,
+                                                                height: 20.h,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color:
+                                                                      dmWhite,
+                                                                ),
+                                                                child: Center(
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .remove,
+                                                                    size: 15.w,
+                                                                    color:
+                                                                        dmBlack,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                  ],
                                                 ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ).toList(),
+                                              );
+                                      },
+                                    ).toList() +
+                                    [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          right: 10.w,
+                                        ),
+                                        child: _pickedImages!.length < 5
+                                            ? GestureDetector(
+                                                onTap: () async {
+                                                  try {
+                                                    await ImagePicker()
+                                                        .pickMultiImage()
+                                                        .then(
+                                                      (xfile) {
+                                                        if (xfile == null) {
+                                                          return;
+                                                        }
+                                                        if (_pickedImages!
+                                                                    .length +
+                                                                xfile.length >
+                                                            5) {
+                                                          WarningSnackBar.show(
+                                                            context: context,
+                                                            text:
+                                                                '사진은 5장까지만 올릴 수 있어요!',
+                                                            paddingHorizontal:
+                                                                0,
+                                                            paddingBottom: 0,
+                                                          );
+                                                          return;
+                                                        }
+                                                        setState(
+                                                          () {
+                                                            _pickedImages =
+                                                                _pickedImages! +
+                                                                    (xfile);
+                                                          },
+                                                        );
+                                                      },
+                                                    );
+                                                  } catch (e) {
+                                                    WarningSnackBar.show(
+                                                      context: context,
+                                                      text: '사진을 불러오는 중 실패했어요.',
+                                                      paddingHorizontal: 0,
+                                                      paddingBottom: 0,
+                                                    );
+                                                    debugPrint(e.toString());
+                                                  }
+                                                },
+                                                child: Stack(
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 96.w,
+                                                      height: 96.w,
+                                                      color: dmGrey,
+                                                    ),
+                                                    Image.asset(
+                                                      'assets/images/icons/icon_add.png',
+                                                      height: 43.85.h,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : const SizedBox(),
+                                      )
+                                    ],
                               ),
                             ),
                       SizedBox(
