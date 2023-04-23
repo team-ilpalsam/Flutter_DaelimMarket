@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : EdgeInsets.symmetric(vertical: 17.5.h),
                               child: InkWell(
                                 onTap: () {
-                                  context.goNamed('detail', queryParams: {
+                                  context.pushNamed('detail', queryParams: {
                                     'productId': snapshot.data!.docs[index]
                                         ['product_id']
                                   });
