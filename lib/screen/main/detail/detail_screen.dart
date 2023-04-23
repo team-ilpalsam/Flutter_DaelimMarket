@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,7 +49,40 @@ class _DetailScreenState extends State<DetailScreen> {
                 child: CupertinoActivityIndicator(),
               );
             }
-            if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
+
+            if (snapshot.data?.exists == false) {
+              return Column(
+                children: [
+                  MainAppbar.show(
+                    title: '알 수 없음',
+                    leading: GestureDetector(
+                      onTap: () {
+                        context.go('/main');
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/icon_back.png',
+                        alignment: Alignment.topLeft,
+                        height: 18.h,
+                      ),
+                    ),
+                    action: const SizedBox(),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        '존재하지 않는 게시글이에요.',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14.sp,
+                          fontWeight: bold,
+                          color: dmLightGrey,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            } else if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
               return Column(
                 children: [
                   MainAppbar.show(
@@ -63,7 +97,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         height: 18.h,
                       ),
                     ),
-                    action: snapshot.data!['uid'] == uid
+                    action: uid == snapshot.data!['uid']
                         ? GestureDetector(
                             onTap: () {
                               AlertDialogWidget.twoButtons(
@@ -85,11 +119,18 @@ class _DetailScreenState extends State<DetailScreen> {
                                             .delete(),
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(uid)
+                                            .doc(snapshot.data!['uid'])
                                             .update({
                                           'posts': FieldValue.arrayRemove(
-                                              [snapshot.data!['product_id']])
-                                        })
+                                              [snapshot.data!['product_id']]),
+                                        }),
+                                        FirebaseStorage.instance
+                                            .ref(
+                                                'product/${snapshot.data!['product_id']}')
+                                            .listAll()
+                                            .then((value) => Future.wait(value
+                                                .items
+                                                .map((e) => e.delete())))
                                       ]);
 
                                       context.go('/main');
@@ -167,7 +208,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                     bottom: 10.h,
                                                     child: Container(
                                                       width: 75.w,
-                                                      height: 30.h,
+                                                      height: 35.h,
                                                       decoration: BoxDecoration(
                                                         color: dmBlack
                                                             .withOpacity(0.7),
@@ -183,8 +224,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                               fontFamily:
                                                                   'Pretendard',
                                                               fontSize: 16.sp,
-                                                              fontWeight:
-                                                                  medium,
+                                                              fontWeight: bold,
                                                               color:
                                                                   dmLightGrey),
                                                         ),
