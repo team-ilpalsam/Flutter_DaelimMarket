@@ -352,6 +352,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                               color: [dmBlue, dmBlue],
                                               action: [
                                                 () async {
+                                                  Navigator.pop(context);
                                                   try {
                                                     await ImagePicker()
                                                         .pickMultiImage()
@@ -394,6 +395,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                                   }
                                                 },
                                                 () async {
+                                                  Navigator.pop(context);
                                                   try {
                                                     await ImagePicker()
                                                         .pickImage(
