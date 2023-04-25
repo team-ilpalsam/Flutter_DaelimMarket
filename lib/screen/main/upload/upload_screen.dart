@@ -93,6 +93,7 @@ class _UploadScreenState extends State<UploadScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(

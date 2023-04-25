@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: dmWhite,
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,
           child: Padding(
