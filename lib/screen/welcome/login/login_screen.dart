@@ -52,6 +52,7 @@ class _LoginScreen extends State<LoginScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,
           child: Padding(
