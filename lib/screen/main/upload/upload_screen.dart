@@ -344,45 +344,101 @@ class _UploadScreenState extends State<UploadScreen> {
                                   ),
                                   child: _pickedImages!.length < 5
                                       ? GestureDetector(
-                                          onTap: () async {
-                                            try {
-                                              await ImagePicker()
-                                                  .pickMultiImage()
-                                                  .then(
-                                                (xfile) {
-                                                  if (xfile == null) {
-                                                    return;
-                                                  }
-                                                  if (_pickedImages!.length +
-                                                          xfile.length >
-                                                      5) {
+                                          onTap: () {
+                                            AlertDialogWidget.twoButtons(
+                                              context: context,
+                                              content: "프로필 사진을 선택해주세요!",
+                                              button: ["앨범에서 선택", "카메라로 촬영"],
+                                              color: [dmBlue, dmBlue],
+                                              action: [
+                                                () async {
+                                                  try {
+                                                    await ImagePicker()
+                                                        .pickMultiImage()
+                                                        .then(
+                                                      (xfile) {
+                                                        if (xfile == null) {
+                                                          return;
+                                                        }
+                                                        if (_pickedImages!
+                                                                    .length +
+                                                                xfile.length >
+                                                            5) {
+                                                          WarningSnackBar.show(
+                                                            context: context,
+                                                            text:
+                                                                '사진은 5장까지만 올릴 수 있어요!',
+                                                            paddingHorizontal:
+                                                                0,
+                                                            paddingBottom: 0,
+                                                          );
+                                                          return;
+                                                        }
+                                                        setState(
+                                                          () {
+                                                            _pickedImages =
+                                                                _pickedImages! +
+                                                                    (xfile);
+                                                          },
+                                                        );
+                                                      },
+                                                    );
+                                                  } catch (e) {
                                                     WarningSnackBar.show(
                                                       context: context,
-                                                      text:
-                                                          '사진은 5장까지만 올릴 수 있어요!',
+                                                      text: '사진을 불러오는 중 실패했어요.',
                                                       paddingHorizontal: 0,
                                                       paddingBottom: 0,
                                                     );
-                                                    return;
+                                                    debugPrint(e.toString());
                                                   }
-                                                  setState(
-                                                    () {
-                                                      _pickedImages =
-                                                          _pickedImages! +
-                                                              (xfile);
-                                                    },
-                                                  );
                                                 },
-                                              );
-                                            } catch (e) {
-                                              WarningSnackBar.show(
-                                                context: context,
-                                                text: '사진을 불러오는 중 실패했어요.',
-                                                paddingHorizontal: 0,
-                                                paddingBottom: 0,
-                                              );
-                                              debugPrint(e.toString());
-                                            }
+                                                () async {
+                                                  try {
+                                                    await ImagePicker()
+                                                        .pickImage(
+                                                            source: ImageSource
+                                                                .camera)
+                                                        .then(
+                                                      (xfile) {
+                                                        if (xfile == null) {
+                                                          return;
+                                                        }
+                                                        if (_pickedImages!
+                                                                    .length +
+                                                                1 >
+                                                            5) {
+                                                          WarningSnackBar.show(
+                                                            context: context,
+                                                            text:
+                                                                '사진은 5장까지만 올릴 수 있어요!',
+                                                            paddingHorizontal:
+                                                                0,
+                                                            paddingBottom: 0,
+                                                          );
+                                                          return;
+                                                        }
+                                                        setState(
+                                                          () {
+                                                            _pickedImages =
+                                                                _pickedImages! +
+                                                                    ([xfile]);
+                                                          },
+                                                        );
+                                                      },
+                                                    );
+                                                  } catch (e) {
+                                                    WarningSnackBar.show(
+                                                      context: context,
+                                                      text: '사진을 불러오는 중 실패했어요.',
+                                                      paddingHorizontal: 0,
+                                                      paddingBottom: 0,
+                                                    );
+                                                    debugPrint(e.toString());
+                                                  }
+                                                }
+                                              ],
+                                            );
                                           },
                                           child: Stack(
                                             alignment: Alignment.center,
