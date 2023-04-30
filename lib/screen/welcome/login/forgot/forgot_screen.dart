@@ -1,3 +1,4 @@
+import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
@@ -9,6 +10,7 @@ import 'package:daelim_market/styles/input_deco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotScreen extends StatefulWidget {
   const ForgotScreen({super.key});
@@ -125,6 +127,16 @@ class _ForgotScreen extends State<ForgotScreen> {
                                       setState(() {
                                         _isLoading = false;
                                       });
+                                      AlertDialogWidget.oneButton(
+                                        context: context,
+                                        content:
+                                            "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
+                                        button: "확인",
+                                        action: () {
+                                          context.go('/welcome');
+                                        },
+                                        barrierDismissible: false,
+                                      );
                                     });
                                   } on FirebaseAuthException catch (e) {
                                     switch (e.code) {

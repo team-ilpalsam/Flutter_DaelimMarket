@@ -9,14 +9,14 @@ class WarningSnackBar {
   static void show({
     required BuildContext context,
     required String text,
-    double? paddingHorizontal,
+    double? paddingHorizontal = 0.0,
     double? paddingBottom,
   }) {
     var snackBar = SnackBar(
         behavior: SnackBarBehavior.floating,
         content: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: paddingHorizontal ?? 0,
+            horizontal: paddingHorizontal!,
           ),
           child: Container(
             width: double.infinity,

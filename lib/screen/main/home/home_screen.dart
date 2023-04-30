@@ -193,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? EdgeInsets.only(
                                         top: 30.5.h, bottom: 17.5.h)
                                     : EdgeInsets.symmetric(vertical: 17.5.h),
-                                child: InkWell(
+                                child: GestureDetector(
                                   onTap: () {
                                     context.pushNamed('detail', queryParams: {
                                       'productId': snapshot.data!.docs[index]
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     });
                                   },
                                   child: SizedBox(
-                                    height: 118.h,
+                                    height: 130.h,
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -226,51 +226,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(
                                           width: 222.w,
                                           child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              SizedBox(
-                                                width: 222.w,
-                                                child: Text(
-                                                  snapshot.data!.docs[index]
-                                                      ['title'],
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
-                                                  style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontSize: 18.sp,
-                                                    fontWeight: medium,
-                                                    color: dmBlack,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 222.w,
+                                                    child: Text(
+                                                      snapshot.data!.docs[index]
+                                                          ['title'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontSize: 17.sp,
+                                                        fontWeight: medium,
+                                                        color: dmBlack,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 11.h,
-                                              ),
-                                              Text(
-                                                '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
-                                                style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontSize: 14.sp,
-                                                  fontWeight: medium,
-                                                  color: dmGrey,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 9.h,
-                                              ),
-                                              Text(
-                                                price,
-                                                style: TextStyle(
-                                                  fontFamily: 'Pretendard',
-                                                  fontSize: 18.sp,
-                                                  fontWeight: bold,
-                                                  color: dmBlue,
-                                                ),
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(),
+                                                  SizedBox(
+                                                    height: 6.h,
+                                                  ),
+                                                  Text(
+                                                    '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 14.sp,
+                                                      fontWeight: medium,
+                                                      color: dmGrey,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 9.h,
+                                                  ),
+                                                  Text(
+                                                    price,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 16.sp,
+                                                      fontWeight: bold,
+                                                      color: dmBlue,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                               Visibility(
                                                 maintainSize: true,
