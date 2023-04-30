@@ -17,6 +17,8 @@ void main() async {
     statusBarColor: dmWhite,
     statusBarBrightness: Brightness.light,
     statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: dmWhite,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
