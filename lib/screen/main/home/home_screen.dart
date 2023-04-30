@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -160,161 +161,167 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                        return ListView.separated(
-                          scrollDirection: Axis.vertical,
-                          itemCount: snapshot.data!.docs.length,
-                          separatorBuilder: (context, index) => divider,
-                          itemBuilder: (context, index) {
-                            // 가격 포맷
-                            String price = '';
-                            if (int.parse(
-                                    snapshot.data!.docs[index]['price']) >=
-                                10000) {
+                        return ScrollConfiguration(
+                          behavior: MyBehavior(),
+                          child: ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            itemCount: snapshot.data!.docs.length,
+                            separatorBuilder: (context, index) => divider,
+                            itemBuilder: (context, index) {
+                              // 가격 포맷
+                              String price = '';
                               if (int.parse(
-                                          snapshot.data!.docs[index]['price']) %
-                                      10000 ==
-                                  0) {
-                                price =
-                                    '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만원';
+                                      snapshot.data!.docs[index]['price']) >=
+                                  10000) {
+                                if (int.parse(snapshot.data!.docs[index]
+                                            ['price']) %
+                                        10000 ==
+                                    0) {
+                                  price =
+                                      '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만원';
+                                } else {
+                                  price =
+                                      '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만 ${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) % 10000)}원';
+                                }
                               } else {
                                 price =
-                                    '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) ~/ 10000)}만 ${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']) % 10000)}원';
+                                    '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']))}원';
                               }
-                            } else {
-                              price =
-                                  '${NumberFormat('#,###').format(int.parse(snapshot.data!.docs[index]['price']))}원';
-                            }
 
-                            return Padding(
-                              padding: index == 0
-                                  ? EdgeInsets.only(top: 30.5.h, bottom: 17.5.h)
-                                  : EdgeInsets.symmetric(vertical: 17.5.h),
-                              child: InkWell(
-                                onTap: () {
-                                  context.pushNamed('detail', queryParams: {
-                                    'productId': snapshot.data!.docs[index]
-                                        ['product_id']
-                                  });
-                                },
-                                child: SizedBox(
-                                  height: 118.h,
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 113.w,
-                                        height: 113.h,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: NetworkImage(snapshot.data!
-                                                .docs[index]['images'][0]),
-                                            fit: BoxFit.cover,
+                              return Padding(
+                                padding: index == 0
+                                    ? EdgeInsets.only(
+                                        top: 30.5.h, bottom: 17.5.h)
+                                    : EdgeInsets.symmetric(vertical: 17.5.h),
+                                child: InkWell(
+                                  onTap: () {
+                                    context.pushNamed('detail', queryParams: {
+                                      'productId': snapshot.data!.docs[index]
+                                          ['product_id']
+                                    });
+                                  },
+                                  child: SizedBox(
+                                    height: 118.h,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 113.w,
+                                          height: 113.h,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(snapshot.data!
+                                                  .docs[index]['images'][0]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(5.r),
+                                            color: dmGrey,
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(5.r),
-                                          color: dmGrey,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 17.w,
-                                      ),
-                                      SizedBox(
-                                        width: 222.w,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 222.w,
-                                              child: Text(
-                                                snapshot.data!.docs[index]
-                                                    ['title'],
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
+                                        SizedBox(
+                                          width: 17.w,
+                                        ),
+                                        SizedBox(
+                                          width: 222.w,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 222.w,
+                                                child: Text(
+                                                  snapshot.data!.docs[index]
+                                                      ['title'],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontSize: 18.sp,
+                                                    fontWeight: medium,
+                                                    color: dmBlack,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 11.h,
+                                              ),
+                                              Text(
+                                                '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
+                                                style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontSize: 14.sp,
+                                                  fontWeight: medium,
+                                                  color: dmGrey,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 9.h,
+                                              ),
+                                              Text(
+                                                price,
                                                 style: TextStyle(
                                                   fontFamily: 'Pretendard',
                                                   fontSize: 18.sp,
-                                                  fontWeight: medium,
-                                                  color: dmBlack,
+                                                  fontWeight: bold,
+                                                  color: dmBlue,
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 11.h,
-                                            ),
-                                            Text(
-                                              '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 14.sp,
-                                                fontWeight: medium,
-                                                color: dmGrey,
+                                              const Expanded(
+                                                child: SizedBox(),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 9.h,
-                                            ),
-                                            Text(
-                                              price,
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 18.sp,
-                                                fontWeight: bold,
-                                                color: dmBlue,
-                                              ),
-                                            ),
-                                            const Expanded(
-                                              child: SizedBox(),
-                                            ),
-                                            Visibility(
-                                              maintainSize: true,
-                                              maintainAnimation: true,
-                                              maintainState: true,
-                                              visible: snapshot
-                                                          .data!
-                                                          .docs[index]['likes']
-                                                          .length >
-                                                      0
-                                                  ? true
-                                                  : false,
-                                              child: Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/images/icons/icon_heart.png',
-                                                      width: 13.w,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5.5.w,
-                                                    ),
-                                                    Text(
-                                                      '${snapshot.data!.docs[index]['likes'].length}',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Pretendard',
-                                                        fontSize: 14.sp,
-                                                        fontWeight: bold,
-                                                        color: dmGrey,
+                                              Visibility(
+                                                maintainSize: true,
+                                                maintainAnimation: true,
+                                                maintainState: true,
+                                                visible: snapshot
+                                                            .data!
+                                                            .docs[index]
+                                                                ['likes']
+                                                            .length >
+                                                        0
+                                                    ? true
+                                                    : false,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Image.asset(
+                                                        'assets/images/icons/icon_heart.png',
+                                                        width: 13.w,
                                                       ),
-                                                    )
-                                                  ],
+                                                      SizedBox(
+                                                        width: 5.5.w,
+                                                      ),
+                                                      Text(
+                                                        '${snapshot.data!.docs[index]['likes'].length}',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Pretendard',
+                                                          fontSize: 14.sp,
+                                                          fontWeight: bold,
+                                                          color: dmGrey,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         );
                       } else {
                         return Center(

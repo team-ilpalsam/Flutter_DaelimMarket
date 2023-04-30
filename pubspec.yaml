@@ -37,6 +37,7 @@ flutter:
     # Images
     - assets/images/icons/
     - assets/images/logo/
+    - assets/images/splash/
 
   fonts:
     - family: Jalnan
@@ -57,3 +58,15 @@ flutter:
 
 flutter_native_splash:
   color: "#FFFFFF"
+  android_12:
+    # Light Mode
+    image: assets/images/splash/ffffff.png
+    branding: assets/images/splash/ffffff.png
+    color: "#FFFFFF"
+    icon_background_color: "#FFFFFF"
+
+    # Dark Mode
+    image_dark: assets/images/splash/ffffff.png
+    branding_dark: assets/images/splash/ffffff.png
+    color_dark: "#FFFFFF"
+    icon_background_color_dark: "#FFFFFF"

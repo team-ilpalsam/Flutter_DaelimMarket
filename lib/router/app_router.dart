@@ -6,8 +6,6 @@ import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
 import 'package:daelim_market/screen/welcome/account_done_screen.dart';
 import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
-import 'package:daelim_market/screen/welcome/login/forgot/forgot_authcode_screen.dart';
-import 'package:daelim_market/screen/welcome/login/forgot/forgot_change_screen.dart';
 import 'package:daelim_market/screen/welcome/login/forgot/forgot_screen.dart';
 import 'package:daelim_market/screen/welcome/login/login_screen.dart';
 import 'package:daelim_market/screen/welcome/register/register_vefiry_screen.dart';
@@ -21,7 +19,9 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: SplashScreen(),
+        ),
       ),
 
       GoRoute(
@@ -34,52 +34,50 @@ class AppRouter {
       // 회원가입
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterScreen(),
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: RegisterScreen(),
+        ),
       ),
 
       GoRoute(
         name: 'registerAuthLink',
         path: '/register/authlink',
-        builder: (context, state) => RegisterVefiryScreen(
-          email: state.queryParams['email'] ?? '',
+        pageBuilder: (context, state) => CupertinoPage(
+          child: RegisterVefiryScreen(
+            email: state.queryParams['email'] ?? '',
+          ),
         ),
       ),
 
       GoRoute(
         name: 'accountSetting',
         path: '/register/setting',
-        builder: (context, state) => const AccountSettingScreen(),
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: AccountSettingScreen(),
+        ),
       ),
 
       GoRoute(
         name: 'accountSettingDone',
         path: '/register/setting/done',
-        builder: (context, state) => const AccountDoneScreen(),
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: AccountDoneScreen(),
+        ),
       ),
 
       // 로그인
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-
-      GoRoute(
-        path: '/login/forgot',
-        builder: (context, state) => const ForgotScreen(),
-      ),
-
-      GoRoute(
-        name: 'forgotAuthCode',
-        path: '/login/forgot/authcode',
-        builder: (context, state) => ForgotAuthCodeScreen(
-          email: state.queryParams['email'] ?? '',
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: LoginScreen(),
         ),
       ),
 
       GoRoute(
-        name: 'changePassword',
-        path: '/login/forgot/change',
-        builder: (context, state) => const ForgotChangeScreen(),
+        path: '/login/forgot',
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: ForgotScreen(),
+        ),
       ),
 
       // 메인 페이지
@@ -96,8 +94,10 @@ class AppRouter {
       GoRoute(
         name: 'detail',
         path: '/detail',
-        builder: (context, state) => DetailScreen(
-          productId: state.queryParams['productId']!,
+        pageBuilder: (context, state) => CupertinoPage(
+          child: DetailScreen(
+            productId: state.queryParams['productId']!,
+          ),
         ),
       ),
 

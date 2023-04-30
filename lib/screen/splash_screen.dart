@@ -55,12 +55,17 @@ class _SplashScreenState extends State<SplashScreen> {
               context.go('/main');
             } else {
               WarningSnackBar.show(
-                  context: context, text: '이메일 인증이 안 된 계정이에요.');
+                context: context,
+                text: '이메일 인증이 안 된 계정이에요.',
+              );
               context.go('/login');
             }
           });
         } on FirebaseAuthException {
-          WarningSnackBar.show(context: context, text: '자동 로그인에 실패했어요.');
+          WarningSnackBar.show(
+            context: context,
+            text: '자동 로그인에 실패했어요.',
+          );
           await const FlutterSecureStorage().deleteAll();
           context.go('/welcome');
         }

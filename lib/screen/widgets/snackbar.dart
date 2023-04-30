@@ -16,7 +16,7 @@ class WarningSnackBar {
         behavior: SnackBarBehavior.floating,
         content: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: paddingHorizontal ?? 20.w,
+            horizontal: paddingHorizontal ?? 0,
           ),
           child: Container(
             width: double.infinity,

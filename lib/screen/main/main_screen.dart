@@ -1,6 +1,6 @@
 import 'package:daelim_market/screen/main/chat/chat_list_screen.dart';
 import 'package:daelim_market/screen/main/home/home_screen.dart';
-import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_setting_screen.dart';
 import 'package:daelim_market/screen/main/search/search_screen.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     const SearchScreen(),
     null,
     const ChatListScreen(),
-    const MypageScreen(),
+    const MypageSettingScreen(),
   ];
 
   void _onItemTapped(int index) {
