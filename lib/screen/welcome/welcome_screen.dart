@@ -69,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     Column(
                       children: [
-                        InkWell(
+                        GestureDetector(
                             onTap: () {
                               context.push('/register');
                             },
@@ -77,7 +77,7 @@ class WelcomeScreen extends StatelessWidget {
                         SizedBox(
                           height: 10.h,
                         ),
-                        InkWell(
+                        GestureDetector(
                           onTap: () {
                             context.push('/login');
                           },

@@ -109,7 +109,7 @@ class _UploadScreenState extends State<UploadScreen> {
                           : AlertDialogWidget.twoButtons(
                               context: context,
                               content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
-                              button: ['취소', '나갈래요'],
+                              button: ['아직이요', '나갈래요'],
                               color: [dmGrey, dmBlue],
                               action: [
                                 () {
