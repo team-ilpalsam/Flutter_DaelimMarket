@@ -57,6 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
               WarningSnackBar.show(
                 context: context,
                 text: '이메일 인증이 안 된 계정이에요.',
+                paddingHorizontal: 20.w,
               );
               context.go('/login');
             }
@@ -65,6 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
           WarningSnackBar.show(
             context: context,
             text: '자동 로그인에 실패했어요.',
+            paddingHorizontal: 20.w,
           );
           await const FlutterSecureStorage().deleteAll();
           context.go('/welcome');
