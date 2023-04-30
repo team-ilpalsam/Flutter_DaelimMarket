@@ -201,14 +201,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                     });
                                   },
                                   child: SizedBox(
-                                    height: 130.h,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.312,
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          width: 113.w,
-                                          height: 113.h,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.312,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.312,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(snapshot.data!
@@ -223,102 +230,107 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(
                                           width: 17.w,
                                         ),
-                                        SizedBox(
-                                          width: 222.w,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 222.w,
-                                                    child: Text(
-                                                      snapshot.data!.docs[index]
-                                                          ['title'],
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Pretendard',
-                                                        fontSize: 17.sp,
-                                                        fontWeight: medium,
-                                                        color: dmBlack,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 6.h,
-                                                  ),
-                                                  Text(
-                                                    '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontSize: 14.sp,
-                                                      fontWeight: medium,
-                                                      color: dmGrey,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 9.h,
-                                                  ),
-                                                  Text(
-                                                    price,
-                                                    style: TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontSize: 16.sp,
-                                                      fontWeight: bold,
-                                                      color: dmBlue,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Visibility(
-                                                maintainSize: true,
-                                                maintainAnimation: true,
-                                                maintainState: true,
-                                                visible: snapshot
-                                                            .data!
-                                                            .docs[index]
-                                                                ['likes']
-                                                            .length >
-                                                        0
-                                                    ? true
-                                                    : false,
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Image.asset(
-                                                        'assets/images/icons/icon_heart.png',
-                                                        width: 13.w,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5.5.w,
-                                                      ),
-                                                      Text(
-                                                        '${snapshot.data!.docs[index]['likes'].length}',
+                                        Expanded(
+                                          child: SizedBox(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 222.w,
+                                                      child: Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['title'],
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 2,
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Pretendard',
-                                                          fontSize: 14.sp,
-                                                          fontWeight: bold,
-                                                          color: dmGrey,
+                                                          fontSize: 17.sp,
+                                                          fontWeight: medium,
+                                                          color: dmBlack,
                                                         ),
-                                                      )
-                                                    ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 6.h,
+                                                    ),
+                                                    Text(
+                                                      '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontSize: 14.sp,
+                                                        fontWeight: medium,
+                                                        color: dmGrey,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 9.h,
+                                                    ),
+                                                    Text(
+                                                      price,
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Pretendard',
+                                                        fontSize: 16.sp,
+                                                        fontWeight: bold,
+                                                        color: dmBlue,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Visibility(
+                                                  maintainSize: true,
+                                                  maintainAnimation: true,
+                                                  maintainState: true,
+                                                  visible: snapshot
+                                                              .data!
+                                                              .docs[index]
+                                                                  ['likes']
+                                                              .length >
+                                                          0
+                                                      ? true
+                                                      : false,
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Image.asset(
+                                                          'assets/images/icons/icon_heart.png',
+                                                          width: 13.w,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5.5.w,
+                                                        ),
+                                                        Text(
+                                                          '${snapshot.data!.docs[index]['likes'].length}',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Pretendard',
+                                                            fontSize: 14.sp,
+                                                            fontWeight: bold,
+                                                            color: dmGrey,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         )
                                       ],

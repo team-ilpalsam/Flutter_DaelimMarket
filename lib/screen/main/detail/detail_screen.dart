@@ -195,10 +195,16 @@ class _DetailScreenState extends State<DetailScreen> {
                                         child: Stack(
                                           children: [
                                             SizedBox(
-                                              height: 351.h,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.881,
                                               child: Image.network(
                                                 value,
-                                                width: 351.w,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.881,
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -241,7 +247,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                     viewportFraction: 1,
                                     autoPlay: false,
                                     enableInfiniteScroll: false,
-                                    height: 351.h,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.881,
                                   ),
                                 ),
                               ],
