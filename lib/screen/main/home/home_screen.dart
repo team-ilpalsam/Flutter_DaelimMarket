@@ -200,7 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ['product_id']
                                     });
                                   },
-                                  child: SizedBox(
+                                  child: Container(
+                                    color: dmWhite,
                                     height: MediaQuery.of(context).size.width *
                                         0.312,
                                     child: Row(
@@ -262,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                     ),
                                                     SizedBox(
-                                                      height: 6.h,
+                                                      height: 11.h,
                                                     ),
                                                     Text(
                                                       '${snapshot.data!.docs[index]['location']} | ${DateFormat('yy.MM.dd').format((snapshot.data!.docs[index]['uploadTime'].toDate()))}',
