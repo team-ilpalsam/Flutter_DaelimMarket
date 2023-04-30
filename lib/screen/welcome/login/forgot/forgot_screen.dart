@@ -1,13 +1,14 @@
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class ForgotScreen extends StatefulWidget {
   const ForgotScreen({super.key});
@@ -18,6 +19,8 @@ class ForgotScreen extends StatefulWidget {
 
 class _ForgotScreen extends State<ForgotScreen> {
   late TextEditingController emailController;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _ForgotScreen extends State<ForgotScreen> {
               horizontal: 20.w,
             ),
             child: CustomScrollView(
+              scrollBehavior: MyBehavior(),
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
@@ -102,23 +106,62 @@ class _ForgotScreen extends State<ForgotScreen> {
                       const Expanded(child: SizedBox()),
                       emailController.text.length >= 3
                           ? GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 if (!emailController.text
                                     .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
                                   WarningSnackBar.show(
                                       context: context,
                                       text: '이메일에 포함할 수 없는 문자가 있어요.');
                                 } else {
-                                  context.pushNamed(
-                                    'forgotAuthCode',
-                                    queryParams: {
-                                      'email':
-                                          ('${emailController.text}@daelim.ac.kr'),
-                                    },
-                                  );
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .sendPasswordResetEmail(
+                                            email:
+                                                "${emailController.text}@email.daelim.ac.kr")
+                                        .then((value) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    });
+                                  } on FirebaseAuthException catch (e) {
+                                    switch (e.code) {
+                                      case "auth/invalid-email":
+                                        WarningSnackBar.show(
+                                            context: context,
+                                            text: '이메일 주소를 다시 확인해주세요.');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        break;
+                                      case "auth/user-not-found":
+                                        WarningSnackBar.show(
+                                            context: context,
+                                            text: '일치하는 정보가 없어요.');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        break;
+                                      default:
+                                        WarningSnackBar.show(
+                                            context: context,
+                                            text: e.code.toString());
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        break;
+                                    }
+                                  }
                                 }
+                                return;
                               },
-                              child: const BlueButton(text: '인증메일 받기'),
+                              child: _isLoading
+                                  ? const LoadingButton(
+                                      color: dmLightGrey,
+                                    )
+                                  : const BlueButton(text: '인증메일 받기'),
                             )
                           : const BlueButton(
                               text: '인증메일 받기', color: dmLightGrey),

@@ -222,7 +222,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                           DoneSnackBar.show(
                                             context: context,
                                             text: '성공적으로 등록했어요!',
-                                            paddingHorizontal: 0,
                                             paddingBottom: 0,
                                           );
                                         } catch (e) {
@@ -230,7 +229,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                           WarningSnackBar.show(
                                             context: context,
                                             text: '판매글 등록 중 문제가 생겼어요.',
-                                            paddingHorizontal: 0,
                                             paddingBottom: 0,
                                           );
                                           debugPrint(e.toString());
@@ -370,8 +368,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                                             context: context,
                                                             text:
                                                                 '사진은 5장까지만 올릴 수 있어요!',
-                                                            paddingHorizontal:
-                                                                0,
                                                             paddingBottom: 0,
                                                           );
                                                           return;
@@ -389,7 +385,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                                     WarningSnackBar.show(
                                                       context: context,
                                                       text: '사진을 불러오는 중 실패했어요.',
-                                                      paddingHorizontal: 0,
                                                       paddingBottom: 0,
                                                     );
                                                     debugPrint(e.toString());
@@ -415,8 +410,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                                             context: context,
                                                             text:
                                                                 '사진은 5장까지만 올릴 수 있어요!',
-                                                            paddingHorizontal:
-                                                                0,
                                                             paddingBottom: 0,
                                                           );
                                                           return;
@@ -434,7 +427,6 @@ class _UploadScreenState extends State<UploadScreen> {
                                                     WarningSnackBar.show(
                                                       context: context,
                                                       text: '사진을 불러오는 중 실패했어요.',
-                                                      paddingHorizontal: 0,
                                                       paddingBottom: 0,
                                                     );
                                                     debugPrint(e.toString());

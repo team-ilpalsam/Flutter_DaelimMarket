@@ -1,5 +1,6 @@
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -60,6 +61,7 @@ class _LoginScreen extends State<LoginScreen> {
               horizontal: 20.w,
             ),
             child: CustomScrollView(
+              scrollBehavior: MyBehavior(),
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,

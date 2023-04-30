@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -67,6 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               horizontal: 20.w,
             ),
             child: CustomScrollView(
+              scrollBehavior: MyBehavior(),
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
@@ -176,7 +178,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 } else if (passwordController.text !=
                                     confirmController.text) {
                                   WarningSnackBar.show(
-                                      context: context, text: '비밀번호가 맞지 않아요.');
+                                    context: context,
+                                    text: '비밀번호가 맞지 않아요.',
+                                  );
                                 } else {
                                   try {
                                     setState(() {
@@ -217,40 +221,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     switch (e.code) {
                                       case 'weak-password':
                                         WarningSnackBar.show(
-                                            context: context,
-                                            text: '비밀번호 보안을 신경써주세요.');
+                                          context: context,
+                                          text: '비밀번호 보안을 신경써주세요.',
+                                        );
                                         setState(() {
                                           _isLoading = false;
                                         });
                                         break;
                                       case 'email-already-in-use':
                                         WarningSnackBar.show(
-                                            context: context,
-                                            text: '이미 존재하는 계정이에요.');
+                                          context: context,
+                                          text: '이미 존재하는 계정이에요.',
+                                        );
                                         setState(() {
                                           _isLoading = false;
                                         });
                                         break;
                                       case 'invalid-email':
                                         WarningSnackBar.show(
-                                            context: context,
-                                            text: '이메일 주소 형식을 다시 확인해주세요.');
+                                          context: context,
+                                          text: '이메일 주소 형식을 다시 확인해주세요.',
+                                        );
                                         setState(() {
                                           _isLoading = false;
                                         });
                                         break;
                                       case 'operation-not-allowed':
                                         WarningSnackBar.show(
-                                            context: context,
-                                            text: '허용되지 않은 작업이에요.');
+                                          context: context,
+                                          text: '허용되지 않은 작업이에요.',
+                                        );
                                         setState(() {
                                           _isLoading = false;
                                         });
                                         break;
                                       default:
                                         WarningSnackBar.show(
-                                            context: context,
-                                            text: e.code.toString());
+                                          context: context,
+                                          text: e.code.toString(),
+                                        );
                                         setState(() {
                                           _isLoading = false;
                                         });
@@ -266,7 +275,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   : const BlueButton(text: '계정 등록하기'),
                             )
                           : const BlueButton(
-                              text: '계정 등록하기', color: dmLightGrey),
+                              text: '계정 등록하기',
+                              color: dmLightGrey,
+                            ),
                       bottomPadding,
                     ],
                   ),
