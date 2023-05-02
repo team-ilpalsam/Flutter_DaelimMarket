@@ -25,7 +25,7 @@ class BlueButton extends StatelessWidget {
         ),
       ),
       width: double.infinity,
-      height: 42.h,
+      height: MediaQuery.of(context).size.height * 0.04929,
       child: Center(
         child: Text(
           text,
@@ -56,7 +56,7 @@ class LoadingButton extends StatelessWidget {
         ),
       ),
       width: double.infinity,
-      height: 42.h,
+      height: MediaQuery.of(context).size.height * 0.04929,
       child: Center(
         child: SizedBox(
           width: 21.w,
