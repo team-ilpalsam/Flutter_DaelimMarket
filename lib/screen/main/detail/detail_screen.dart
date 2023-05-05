@@ -124,7 +124,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                   () {
                                     Navigator.pop(context);
                                   },
-                                  onTapDelete(snapshot)
+                                  () {
+                                    onTapDelete(snapshot);
+                                  }
                                 ],
                               );
                             },
@@ -344,7 +346,9 @@ class _DetailScreenState extends State<DetailScreen> {
                               // 판매글의 likes 리스트에 사용자의 UID가 포함되어 있다면
                               snapshot.data!['likes'].contains(uid)
                                   ? GestureDetector(
-                                      onTap: onTapCancelLike(snapshot),
+                                      onTap: () {
+                                        onTapCancelLike(snapshot);
+                                      },
                                       child: Image.asset(
                                         'assets/images/icons/icon_heart_fill.png',
                                         height: 27.h,
@@ -353,7 +357,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                   :
                                   // 판매글의 likes 리스트에 사용자의 UID가 포함되어있지 않다면
                                   GestureDetector(
-                                      onTap: onTapLike(snapshot),
+                                      onTap: () {
+                                        onTapLike(snapshot);
+                                      },
                                       child: Image.asset(
                                         'assets/images/icons/icon_heart.png',
                                         height: 27.h,
@@ -486,7 +492,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   // 좋아요 취소 메소드
-  onTapCancelLike(snapshot) async {
+  Future<void> onTapCancelLike(snapshot) async {
     try {
       // Future.wait 내 코드가 다 수행될 때까지 대기
       await Future.wait(
@@ -519,7 +525,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   // 좋아요 메소드
-  onTapLike(snapshot) async {
+  Future<void> onTapLike(snapshot) async {
     try {
       // Future.wait 내 코드가 다 수행될 때까지 대기
       await Future.wait(

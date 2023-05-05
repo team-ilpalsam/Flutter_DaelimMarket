@@ -27,6 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _asyncMethod() async {
     var result = await (Connectivity().checkConnectivity());
+    // 인터넷 연결 확인
     if (result == ConnectivityResult.none) {
       AlertDialogWidget.oneButton(
         context: context,
@@ -41,16 +42,20 @@ class _SplashScreenState extends State<SplashScreen> {
         },
       );
     } else {
+      // FlutterSecureStorage의 email, password, uid 데이터를 변수에 대입
       String? email = await const FlutterSecureStorage().read(key: "email");
       String? password =
           await const FlutterSecureStorage().read(key: "password");
       String? uid = await const FlutterSecureStorage().read(key: "uid");
 
+      // 만약 FlutterSecureStorage에서 받아온 데이터가 있을 경우
       if (email != null && uid != null) {
         try {
+          // 로그인 시도
           await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: email, password: password!)
               .then((value) async {
+            // 계정 인증 여부 확인
             if (value.user!.emailVerified == true) {
               context.go('/main');
             } else {
@@ -68,6 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
             text: '자동 로그인에 실패했어요.',
             paddingHorizontal: 20.w,
           );
+          // 로그인 실패 시 FlutterSecureStorage 내 데이터 모두 삭제
           await const FlutterSecureStorage().deleteAll();
           context.go('/welcome');
         }
