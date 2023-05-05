@@ -53,6 +53,7 @@ class _LoginScreen extends State<LoginScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,
@@ -77,6 +78,7 @@ class _LoginScreen extends State<LoginScreen> {
                           context.go('/welcome');
                         },
                       ),
+
                       // Contents
                       SizedBox(
                         height: 101.h,
@@ -130,7 +132,7 @@ class _LoginScreen extends State<LoginScreen> {
                       TextField(
                         controller: passwordController,
                         cursorHeight: 24.h,
-                        obscureText: true,
+                        obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
                         decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
@@ -154,98 +156,12 @@ class _LoginScreen extends State<LoginScreen> {
 
                       // Bottom
                       const Expanded(child: SizedBox()),
+                      // 이메일 TextField의 글자 수가 3 글자 이상
                       emailController.text.length >= 3 &&
+                              // 비밀번호 TextField의 글자 수가 4 글자 이상
                               passwordController.text.length >= 4
                           ? GestureDetector(
-                              onTap: () async {
-                                if (!emailController.text
-                                    .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-                                  WarningSnackBar.show(
-                                      context: context,
-                                      text: '이메일에 포함할 수 없는 문자가 있어요.');
-                                } else {
-                                  try {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                    await FirebaseAuth.instance
-                                        .signInWithEmailAndPassword(
-                                            email:
-                                                '${emailController.text}@email.daelim.ac.kr',
-                                            password: passwordController.text)
-                                        .then(
-                                      (value) async {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        if (value.user!.emailVerified == true) {
-                                          await const FlutterSecureStorage()
-                                              .deleteAll();
-                                          await const FlutterSecureStorage().write(
-                                              key: 'email',
-                                              value:
-                                                  '${emailController.text}@email.daelim.ac.kr');
-                                          await const FlutterSecureStorage()
-                                              .write(
-                                                  key: 'password',
-                                                  value:
-                                                      passwordController.text);
-                                          await const FlutterSecureStorage()
-                                              .write(
-                                                  key: 'id',
-                                                  value: emailController.text);
-                                          await const FlutterSecureStorage()
-                                              .write(
-                                                  key: 'uid',
-                                                  value: value.user!.uid);
-                                          context.go('/main');
-                                        } else {
-                                          WarningSnackBar.show(
-                                              context: context,
-                                              text: '이메일 인증이 안 된 계정이에요.');
-                                        }
-                                        return value;
-                                      },
-                                    );
-                                  } on FirebaseAuthException catch (e) {
-                                    switch (e.code) {
-                                      case 'user-not-found':
-                                      case 'wrong-password':
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: '일치하는 정보가 없어요.');
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case 'user-disabled':
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: '사용할 수 없는 계정이에요.');
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case 'invalid-email':
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: '이메일 주소 형식을 다시 확인해주세요.');
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      default:
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: e.code.toString());
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                    }
-                                  }
-                                }
-                              },
+                              onTap: onTapLogin,
                               child: _isLoading
                                   ? const LoadingButton(
                                       color: dmLightGrey,
@@ -263,5 +179,89 @@ class _LoginScreen extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> onTapLogin() async {
+    // 이메일 유효성 검사
+    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+    } else {
+      try {
+        // Loading 상태를 true로 변경
+        setState(() {
+          _isLoading = true;
+        });
+        // Firebase에 이메일/패스워드 형식의 로그인 요청
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: '${emailController.text}@email.daelim.ac.kr',
+                password: passwordController.text)
+            .then(
+          // 성공 시
+          (value) async {
+            // Loading 상태를 false로 변경
+            setState(() {
+              _isLoading = false;
+            });
+            // 이메일 링크를 눌러 인증이 완료된 계정이면,
+            if (value.user!.emailVerified == true) {
+              // FlutterSecureStorage 내의 데이터를 삭제하여 초기화
+              await const FlutterSecureStorage().deleteAll();
+              // FlutterSecureStorage에 이메일 주소 저장
+              await const FlutterSecureStorage().write(
+                  key: 'email',
+                  value: '${emailController.text}@email.daelim.ac.kr');
+              // FlutterSecureStorage에 비밀번호 저장
+              await const FlutterSecureStorage()
+                  .write(key: 'password', value: passwordController.text);
+              // FlutterSecureStorage에 ID 저장
+              await const FlutterSecureStorage()
+                  .write(key: 'id', value: emailController.text);
+              // FlutterSecureStorage에 UID 저장
+              await const FlutterSecureStorage()
+                  .write(key: 'uid', value: value.user!.uid);
+              // MainScreen으로 이동
+              context.go('/main');
+            }
+            // 만약 인증이 안 된 계정이면,
+            else {
+              WarningSnackBar.show(
+                  context: context, text: '이메일 인증이 안 된 계정이에요.');
+            }
+            return value;
+          },
+        );
+      } on FirebaseAuthException catch (e) {
+        // 실패(Exception) 시
+        switch (e.code) {
+          case 'user-not-found':
+          case 'wrong-password':
+            WarningSnackBar.show(context: context, text: '일치하는 정보가 없어요.');
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case 'user-disabled':
+            WarningSnackBar.show(context: context, text: '사용할 수 없는 계정이에요.');
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case 'invalid-email':
+            WarningSnackBar.show(
+                context: context, text: '이메일 주소 형식을 다시 확인해주세요.');
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          default:
+            WarningSnackBar.show(context: context, text: e.code.toString());
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+        }
+      }
+    }
   }
 }

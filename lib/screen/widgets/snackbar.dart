@@ -5,6 +5,7 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+// 경고 SnackBar
 class WarningSnackBar {
   static void show({
     required BuildContext context,
@@ -65,6 +66,7 @@ class WarningSnackBar {
   }
 }
 
+// 완료 SnackBar
 class DoneSnackBar {
   static void show({
     required BuildContext context,

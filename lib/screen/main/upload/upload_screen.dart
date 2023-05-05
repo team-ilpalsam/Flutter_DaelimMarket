@@ -93,6 +93,7 @@ class _UploadScreenState extends State<UploadScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SingleChildScrollView(
@@ -100,6 +101,7 @@ class _UploadScreenState extends State<UploadScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 MainAppbar.show(
                   title: '물건 등록',
                   leading: GestureDetector(
@@ -128,10 +130,10 @@ class _UploadScreenState extends State<UploadScreen> {
                       height: 18.h,
                     ),
                   ),
-                  action: titleController.text.length >= 3 &&
-                          priceController.text.isNotEmpty &&
-                          _selectedLocation != '장소 선택' &&
-                          _pickedImages != null
+                  action: titleController.text.length >= 3 && // 제목이 3글자 이상이거나
+                          priceController.text.isNotEmpty && // 가격을 작성하였거나
+                          _selectedLocation != '장소 선택' && // 장소가 '장소 선택'이 아니거나
+                          _pickedImages != null // 이미지를 선택하였거나
                       ? GestureDetector(
                           onTap: () {
                             _isLoading
@@ -145,99 +147,11 @@ class _UploadScreenState extends State<UploadScreen> {
                                       () {
                                         Navigator.pop(context);
                                       },
-                                      () async {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                        try {
-                                          String id =
-                                              await const FlutterSecureStorage()
-                                                      .read(key: "id") ??
-                                                  'null';
-                                          String uid =
-                                              await const FlutterSecureStorage()
-                                                      .read(key: "uid") ??
-                                                  'null';
-                                          String productId =
-                                              '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
-
-                                          await Future.wait(_pickedImages!
-                                              .asMap()
-                                              .entries
-                                              .map((entry) async {
-                                            final index = entry.key;
-                                            final value = entry.value;
-
-                                            Reference ref = FirebaseStorage
-                                                .instance
-                                                .ref()
-                                                .child(
-                                                    'product/$productId/${productId}_$index.${value.path.split('.').last}');
-                                            final UploadTask uploadTask =
-                                                ref.putData(File(value.path)
-                                                    .readAsBytesSync());
-                                            final TaskSnapshot taskSnapshot =
-                                                await uploadTask
-                                                    .whenComplete(() {});
-
-                                            final url = await taskSnapshot.ref
-                                                .getDownloadURL();
-
-                                            downloadUrls.add(url.toString());
-
-                                            debugPrint(uploadTask.toString());
-                                            debugPrint(taskSnapshot.toString());
-
-                                            await FirebaseFirestore.instance
-                                                .collection('user')
-                                                .doc(uid)
-                                                .update({
-                                              'posts': FieldValue.arrayUnion(
-                                                  [productId])
-                                            });
-
-                                            await FirebaseFirestore.instance
-                                                .collection('product')
-                                                .doc(productId)
-                                                .set({
-                                              'id': id,
-                                              'uid': uid,
-                                              'product_id': productId,
-                                              'nickName': '',
-                                              'price': priceController.text,
-                                              'title': titleController.text,
-                                              'location':
-                                                  _selectedLocation == '장소 선택'
-                                                      ? _locationList[0]
-                                                      : _selectedLocation,
-                                              'desc': descController.text,
-                                              'images': downloadUrls,
-                                              'likes': [],
-                                              'uploadTime': now,
-                                            });
-                                          }));
-
-                                          context.go('/main');
-                                          DoneSnackBar.show(
-                                            context: context,
-                                            text: '성공적으로 등록했어요!',
-                                            paddingBottom: 0,
-                                          );
-                                        } catch (e) {
-                                          context.go('/main');
-                                          WarningSnackBar.show(
-                                            context: context,
-                                            text: '판매글 등록 중 문제가 생겼어요.',
-                                            paddingBottom: 0,
-                                          );
-                                          debugPrint(e.toString());
-                                        }
-                                      }
+                                      onTapUpload
                                     ],
                                   );
                           },
-                          child: _isLoading == true
+                          child: _isLoading == true // Loading 상태일 경우
                               ? const CupertinoActivityIndicator()
                               : Text(
                                   "완료",
@@ -249,7 +163,9 @@ class _UploadScreenState extends State<UploadScreen> {
                                   ),
                                 ),
                         )
-                      : Text(
+                      :
+                      // 조건에 충족하지 못 하였을 경우 회색 글씨
+                      Text(
                           "완료",
                           style: TextStyle(
                             fontFamily: 'Pretendard',
@@ -281,13 +197,16 @@ class _UploadScreenState extends State<UploadScreen> {
                           children: _pickedImages!.map(
                                 (value) {
                                   return Padding(
+                                    // 사진마다의 오른쪽 padding 부여
                                     padding: EdgeInsets.only(
+                                        // 마지막 요소를 제외하고 오른쪽 padding 부여
                                         right: value == _pickedImages!.last &&
                                                 _pickedImages!.length >= 5
                                             ? 0
                                             : 10.w),
                                     child: Stack(
-                                      clipBehavior: Clip.none,
+                                      clipBehavior:
+                                          Clip.none, // 부모 위젯을 벗어나도 잘리지 않게
                                       children: [
                                         Container(
                                           width: 96.w,
@@ -301,8 +220,10 @@ class _UploadScreenState extends State<UploadScreen> {
                                             ),
                                           ),
                                         ),
+                                        // Loading 상태일 경우
                                         _isLoading
                                             ? Container()
+                                            // 이미지 리스트 제거
                                             : Positioned(
                                                 top: 5.h,
                                                 right: 5.w,
@@ -337,12 +258,15 @@ class _UploadScreenState extends State<UploadScreen> {
                                 },
                               ).toList() +
                               [
+                                // 이미지 추가
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     right: 0,
                                   ),
                                   child: _pickedImages!.length < 5
-                                      ? GestureDetector(
+                                      ?
+                                      // 5장 미만일 경우
+                                      GestureDetector(
                                           onTap: () {
                                             AlertDialogWidget.twoButtons(
                                               context: context,
@@ -350,88 +274,8 @@ class _UploadScreenState extends State<UploadScreen> {
                                               button: ["앨범에서 선택", "카메라로 촬영"],
                                               color: [dmBlue, dmBlue],
                                               action: [
-                                                () async {
-                                                  Navigator.pop(context);
-                                                  try {
-                                                    await ImagePicker()
-                                                        .pickMultiImage()
-                                                        .then(
-                                                      (xfile) {
-                                                        if (xfile == null) {
-                                                          return;
-                                                        }
-                                                        if (_pickedImages!
-                                                                    .length +
-                                                                xfile.length >
-                                                            5) {
-                                                          WarningSnackBar.show(
-                                                            context: context,
-                                                            text:
-                                                                '사진은 5장까지만 올릴 수 있어요!',
-                                                            paddingBottom: 0,
-                                                          );
-                                                          return;
-                                                        }
-                                                        setState(
-                                                          () {
-                                                            _pickedImages =
-                                                                _pickedImages! +
-                                                                    (xfile);
-                                                          },
-                                                        );
-                                                      },
-                                                    );
-                                                  } catch (e) {
-                                                    WarningSnackBar.show(
-                                                      context: context,
-                                                      text: '사진을 불러오는 중 실패했어요.',
-                                                      paddingBottom: 0,
-                                                    );
-                                                    debugPrint(e.toString());
-                                                  }
-                                                },
-                                                () async {
-                                                  Navigator.pop(context);
-                                                  try {
-                                                    await ImagePicker()
-                                                        .pickImage(
-                                                            source: ImageSource
-                                                                .camera)
-                                                        .then(
-                                                      (xfile) {
-                                                        if (xfile == null) {
-                                                          return;
-                                                        }
-                                                        if (_pickedImages!
-                                                                    .length +
-                                                                1 >
-                                                            5) {
-                                                          WarningSnackBar.show(
-                                                            context: context,
-                                                            text:
-                                                                '사진은 5장까지만 올릴 수 있어요!',
-                                                            paddingBottom: 0,
-                                                          );
-                                                          return;
-                                                        }
-                                                        setState(
-                                                          () {
-                                                            _pickedImages =
-                                                                _pickedImages! +
-                                                                    ([xfile]);
-                                                          },
-                                                        );
-                                                      },
-                                                    );
-                                                  } catch (e) {
-                                                    WarningSnackBar.show(
-                                                      context: context,
-                                                      text: '사진을 불러오는 중 실패했어요.',
-                                                      paddingBottom: 0,
-                                                    );
-                                                    debugPrint(e.toString());
-                                                  }
-                                                }
+                                                onTapAddPhotoFromAlbum,
+                                                onTapAddPhotoFromCamera,
                                               ],
                                             );
                                           },
@@ -499,31 +343,38 @@ class _UploadScreenState extends State<UploadScreen> {
                         height: 20.h,
                       ),
                       GestureDetector(
-                        onTap: _isLoading
-                            ? () {}
-                            : () {
-                                showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (_) {
-                                      return SizedBox(
-                                        width: double.infinity,
-                                        height: 250.h,
-                                        child: CupertinoPicker(
-                                          backgroundColor: Colors.white,
-                                          onSelectedItemChanged: (index) {
-                                            setState(() {
-                                              _selectedLocation =
-                                                  _locationList[index];
-                                            });
-                                          },
-                                          itemExtent: 40.h,
-                                          children: _locationList.map((value) {
-                                            return Center(child: Text(value));
-                                          }).toList(),
-                                        ),
-                                      );
-                                    });
-                              },
+                        onTap:
+                            // Loading 상태일 경우
+                            _isLoading
+                                ? () {}
+                                : () {
+                                    showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (_) {
+                                          return SizedBox(
+                                            width: double.infinity,
+                                            height: 250.h,
+                                            child: CupertinoPicker(
+                                              backgroundColor: Colors.white,
+                                              onSelectedItemChanged:
+                                                  // item이 변경될 때마다 setState 설정
+                                                  (index) {
+                                                setState(() {
+                                                  _selectedLocation =
+                                                      _locationList[index];
+                                                });
+                                              },
+                                              itemExtent: 40.h,
+                                              children:
+                                                  // _locationList 리스트를 picker의 item으로 변환
+                                                  _locationList.map((value) {
+                                                return Center(
+                                                    child: Text(value));
+                                              }).toList(),
+                                            ),
+                                          );
+                                        });
+                                  },
                         child: Container(
                           height: 40.h,
                           decoration: BoxDecoration(
@@ -586,5 +437,160 @@ class _UploadScreenState extends State<UploadScreen> {
         ),
       ),
     );
+  }
+
+  // 업로드 처리 메소드
+  onTapUpload() async {
+    // 확인창 닫기
+    Navigator.pop(context);
+    // Loading 상태를 true로 변경
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      // FlutterSecureStorage에서 id값을 불러온 후 변수에 대입
+      String id = await const FlutterSecureStorage().read(key: "id") ?? 'null';
+      // FlutterSecureStorage에서 uid값을 불러온 후 변수에 대입
+      String uid =
+          await const FlutterSecureStorage().read(key: "uid") ?? 'null';
+      // productId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
+      String productId = '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
+
+      // Future.wait 내 코드가 다 수행될 때까지 대기
+      await Future.wait(_pickedImages!.asMap().entries.map((entry) async {
+        final index = entry.key;
+        final value = entry.value;
+
+        // Firebase Storage에 product 디렉터리 내 productId 디렉터리를 생성한 후 'productId_index.파일확장자' 형식으로 저장
+        Reference ref = FirebaseStorage.instance.ref().child(
+            'product/$productId/${productId}_$index.${value.path.split('.').last}');
+        final UploadTask uploadTask =
+            ref.putData(File(value.path).readAsBytesSync());
+        // 만약 사진 업로드 성공 시
+        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+
+        // 사진의 다운로드 가능한 url을 불러온 후
+        final url = await taskSnapshot.ref.getDownloadURL();
+
+        // downloadUrls 리스트에 추가
+        downloadUrls.add(url.toString());
+
+        debugPrint(uploadTask.toString());
+        debugPrint(taskSnapshot.toString());
+
+        // user 컬렉션 내 사용자의 uid 문서의 posts 리스트에 productId 값 추가
+        await FirebaseFirestore.instance.collection('user').doc(uid).update({
+          'posts': FieldValue.arrayUnion([productId])
+        });
+
+        // product 컬렉션 내 productId 문서에 데이터 저장
+        await FirebaseFirestore.instance
+            .collection('product')
+            .doc(productId)
+            .set({
+          'id': id,
+          'uid': uid,
+          'product_id': productId,
+          'nickName': '',
+          'price': priceController.text,
+          'title': titleController.text,
+          'location': _selectedLocation == '장소 선택'
+              ? _locationList[0]
+              : _selectedLocation,
+          'desc': descController.text,
+          'images': downloadUrls,
+          'likes': [],
+          'uploadTime': now,
+        });
+      }));
+
+      context.go('/main');
+      DoneSnackBar.show(
+        context: context,
+        text: '성공적으로 등록했어요!',
+        paddingBottom: 0,
+      );
+    } catch (e) {
+      context.go('/main');
+      WarningSnackBar.show(
+        context: context,
+        text: '판매글 등록 중 문제가 생겼어요.',
+        paddingBottom: 0,
+      );
+      debugPrint(e.toString());
+    }
+  }
+
+  onTapAddPhotoFromAlbum() async {
+    Navigator.pop(context);
+    try {
+      // 앨범에 여러 장 선택할 수 있는 ImagePicker 불러옴
+      await ImagePicker().pickMultiImage().then(
+        (xfile) {
+          // 아무것도 고르지 않았다면
+          if (xfile == null) {
+            return;
+          }
+          // 기존 이미지 개수와 선택한 이미지 개수를 합쳤을 때 5장을 넘겼을 시
+          if (_pickedImages!.length + xfile.length > 5) {
+            WarningSnackBar.show(
+              context: context,
+              text: '사진은 5장까지만 올릴 수 있어요!',
+              paddingBottom: 0,
+            );
+            return;
+          }
+          // 선택한 이미지와 리스트 병합
+          setState(
+            () {
+              _pickedImages = _pickedImages! + (xfile);
+            },
+          );
+        },
+      );
+    } catch (e) {
+      WarningSnackBar.show(
+        context: context,
+        text: '사진을 불러오는 중 실패했어요.',
+        paddingBottom: 0,
+      );
+      debugPrint(e.toString());
+    }
+  }
+
+  onTapAddPhotoFromCamera() async {
+    Navigator.pop(context);
+    try {
+      // 카메라를 불러옴
+      await ImagePicker().pickImage(source: ImageSource.camera).then(
+        (xfile) {
+          // 아무것도 고르지 않았다면
+          if (xfile == null) {
+            return;
+          }
+          // 기존 이미지 개수와 카메라로 촬영한 이미지 한 장을 합쳤을 때 5장을 넘겼을 시
+          if (_pickedImages!.length + 1 > 5) {
+            WarningSnackBar.show(
+              context: context,
+              text: '사진은 5장까지만 올릴 수 있어요!',
+              paddingBottom: 0,
+            );
+            return;
+          }
+          setState(
+            () {
+              _pickedImages = _pickedImages! + ([xfile]); // 한 장이므로 대괄호에 감싸서 계산
+            },
+          );
+        },
+      );
+    } catch (e) {
+      WarningSnackBar.show(
+        context: context,
+        text: '사진을 불러오는 중 실패했어요.',
+        paddingBottom: 0,
+      );
+      debugPrint(e.toString());
+    }
   }
 }
