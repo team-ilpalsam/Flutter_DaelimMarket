@@ -47,6 +47,8 @@ class _ForgotScreen extends State<ForgotScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        // 키보드 위에 입력 창 띄우기 여부
+        resizeToAvoidBottomInset: true,
         backgroundColor: dmWhite,
         body: SafeArea(
           top: false,
@@ -64,8 +66,11 @@ class _ForgotScreen extends State<ForgotScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeAppbar(
-                        image: 'assets/images/icons/icon_close.png',
+                      WelcomeAppbar(
+                        // Loading 상태일 경우 뒤로가기 방지
+                        image: _isLoading
+                            ? null
+                            : 'assets/images/icons/icon_close.png',
                         title: '비밀번호 찾기',
                       ),
                       // Contents
@@ -108,67 +113,7 @@ class _ForgotScreen extends State<ForgotScreen> {
                       const Expanded(child: SizedBox()),
                       emailController.text.length >= 3
                           ? GestureDetector(
-                              onTap: () async {
-                                if (!emailController.text
-                                    .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-                                  WarningSnackBar.show(
-                                      context: context,
-                                      text: '이메일에 포함할 수 없는 문자가 있어요.');
-                                } else {
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
-                                  try {
-                                    await FirebaseAuth.instance
-                                        .sendPasswordResetEmail(
-                                            email:
-                                                "${emailController.text}@email.daelim.ac.kr")
-                                        .then((value) {
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                      AlertDialogWidget.oneButton(
-                                        context: context,
-                                        content:
-                                            "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
-                                        button: "확인",
-                                        action: () {
-                                          context.go('/welcome');
-                                        },
-                                        barrierDismissible: false,
-                                      );
-                                    });
-                                  } on FirebaseAuthException catch (e) {
-                                    switch (e.code) {
-                                      case "auth/invalid-email":
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: '이메일 주소를 다시 확인해주세요.');
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case "auth/user-not-found":
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: '일치하는 정보가 없어요.');
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      default:
-                                        WarningSnackBar.show(
-                                            context: context,
-                                            text: e.code.toString());
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                    }
-                                  }
-                                }
-                                return;
-                              },
+                              onTap: onTapResetPassword,
                               child: _isLoading
                                   ? const LoadingButton(
                                       color: dmLightGrey,
@@ -187,5 +132,63 @@ class _ForgotScreen extends State<ForgotScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> onTapResetPassword() async {
+    // 이메일 유효성 검사
+    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+    } else {
+      // Loading 상태를 true로 변경
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        // Firebase에 비밀번호 초기화 메일 전송 요청
+        await FirebaseAuth.instance
+            .sendPasswordResetEmail(
+                email: "${emailController.text}@email.daelim.ac.kr")
+            .then((value) {
+          // 성공 시
+          // Loading 상태를 false로 변경
+          setState(() {
+            _isLoading = false;
+          });
+          // WelcomeScreen으로 이동하는 알림창 띄우기
+          AlertDialogWidget.oneButton(
+            context: context,
+            content: "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
+            button: "확인",
+            action: () {
+              context.go('/welcome');
+            },
+            barrierDismissible: false, // 바깥 부분 눌렀을 때 알림 창 닫는지의 여부
+          );
+        });
+      } on FirebaseAuthException catch (e) {
+        // 실패(Exception) 시
+        switch (e.code) {
+          case "auth/invalid-email":
+            WarningSnackBar.show(context: context, text: '이메일 주소를 다시 확인해주세요.');
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case "auth/user-not-found":
+            WarningSnackBar.show(context: context, text: '일치하는 정보가 없어요.');
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          default:
+            WarningSnackBar.show(context: context, text: e.code.toString());
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+        }
+      }
+    }
+    return;
   }
 }

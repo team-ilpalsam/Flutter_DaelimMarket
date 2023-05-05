@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +29,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   String? uid;
 
+  // FlutterSecureStorage에 저장된 UID 불러오는 메소드
   _asyncMethod() async {
     uid = await const FlutterSecureStorage().read(key: "uid");
   }
@@ -38,18 +40,22 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       backgroundColor: dmWhite,
       body: SafeArea(
-        child: FutureBuilder(
+        child:
+            // Firebase의 Firestore 데이터 불러오기
+            FutureBuilder(
           future: FirebaseFirestore.instance
-              .collection('product')
-              .doc(widget.productId)
-              .get(),
+              .collection('product') // product 컬렉션으로부터
+              .doc(widget.productId) // 넘겨받은 productID 문서의 데이터를
+              .get(), // 불러온다
           builder: (context, snapshot) {
+            // 만약 불러오는 상태라면 로딩 인디케이터를 중앙에 배치
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CupertinoActivityIndicator(),
               );
             }
 
+            // 만약 판매글의 데이터가 없거나 삭제된 경우
             if (snapshot.data?.exists == false) {
               return Column(
                 children: [
@@ -82,11 +88,17 @@ class _DetailScreenState extends State<DetailScreen> {
                   )
                 ],
               );
-            } else if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
+            }
+            // 판매글의 데이터가 존재하는 경우
+            else if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
               return Column(
                 children: [
+                  // Title
                   MainAppbar.show(
+                    // 제목
                     title: snapshot.data!['title'],
+
+                    // 왼쪽 아이콘
                     leading: GestureDetector(
                       onTap: () {
                         context.go('/main');
@@ -97,6 +109,9 @@ class _DetailScreenState extends State<DetailScreen> {
                         height: 18.h,
                       ),
                     ),
+
+                    // 오른쪽 아이콘
+                    // 만약 FlutterSecureStorage의 UID와 게시글의 UID가 일치한다면 삭제 버튼 표시
                     action: uid == snapshot.data!['uid']
                         ? GestureDetector(
                             onTap: () {
@@ -109,48 +124,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   () {
                                     Navigator.pop(context);
                                   },
-                                  () async {
-                                    Navigator.pop(context);
-                                    try {
-                                      await Future.wait([
-                                        FirebaseFirestore.instance
-                                            .collection('product')
-                                            .doc(snapshot.data!['product_id'])
-                                            .delete(),
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(snapshot.data!['uid'])
-                                            .update({
-                                          'posts': FieldValue.arrayRemove(
-                                              [snapshot.data!['product_id']]),
-                                        }),
-                                        FirebaseStorage.instance
-                                            .ref(
-                                                'product/${snapshot.data!['product_id']}')
-                                            .listAll()
-                                            .then((value) => Future.wait(value
-                                                .items
-                                                .map((e) => e.delete())))
-                                      ]);
-
-                                      context.go('/main');
-                                      DoneSnackBar.show(
-                                        context: context,
-                                        text: '판매글을 삭제했어요.',
-                                        paddingHorizontal: 0,
-                                        paddingBottom: 0,
-                                      );
-                                    } catch (e) {
-                                      context.go('/main');
-                                      WarningSnackBar.show(
-                                        context: context,
-                                        text: '판매글 삭제 중 문제가 생겼어요.',
-                                        paddingHorizontal: 0,
-                                        paddingBottom: 0,
-                                      );
-                                      debugPrint(e.toString());
-                                    }
-                                  }
+                                  onTapDelete(snapshot)
                                 ],
                               );
                             },
@@ -164,173 +138,187 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                             ),
                           )
-                        : const SizedBox(),
+                        :
+                        // 일치하지 않는다면 미표시
+                        const SizedBox(),
                   ),
+
+                  // Content
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 18.5.h,
-                          ),
-                          Center(
-                            child: Column(
-                              children: [
-                                CarouselSlider(
-                                  items: List<Widget>.from(
-                                    snapshot.data!['images']
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      String value = entry.value;
-                                      int index = entry.key;
-                                      return GestureDetector(
-                                        onTap: () {
-                                          context.pushNamed(
-                                            'imageviewer',
-                                            queryParams: {'src': value},
-                                          );
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.881,
-                                              child: Image.network(
-                                                value,
-                                                width: MediaQuery.of(context)
+                    child:
+                        // 안드로이드 스와이프 Glow 애니메이션 제거
+                        ScrollConfiguration(
+                      behavior: MyBehavior(),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 18.5.h,
+                            ),
+                            // 캐로셀 이미지
+                            Center(
+                              child: Column(
+                                children: [
+                                  CarouselSlider(
+                                    items: List<Widget>.from(
+                                      snapshot.data!['images']
+                                          .asMap()
+                                          .entries // value와 index를 가져오기 위함
+                                          .map((entry) {
+                                        String value = entry.value;
+                                        int index = entry.key;
+                                        return GestureDetector(
+                                          onTap: () {
+                                            // 이미지를 누를 시 src 데이터와 함께 ImageViewerScreen으로 이동
+                                            context.pushNamed(
+                                              'imageviewer',
+                                              queryParams: {'src': value},
+                                            );
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              // 이미지의 크기는 디바이스 너비의 0.881배
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
                                                         .size
                                                         .width *
                                                     0.881,
-                                                fit: BoxFit.cover,
+                                                child: Image.network(
+                                                  value,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.881,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
-                                            ),
-                                            snapshot.data!['images'].length > 1
-                                                ? Positioned(
-                                                    left: 10.w,
-                                                    bottom: 10.h,
-                                                    child: Container(
-                                                      width: 75.w,
-                                                      height: 35.h,
-                                                      decoration: BoxDecoration(
-                                                        color: dmBlack
-                                                            .withOpacity(0.7),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    3.40e+38),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          '${index + 1} / ${snapshot.data!['images'].length}',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 16.sp,
-                                                              fontWeight: bold,
-                                                              color:
-                                                                  dmLightGrey),
-                                                        ),
-                                                      ),
+                                              // index 표시
+                                              Positioned(
+                                                left: 10.w,
+                                                bottom: 10.h,
+                                                child: Container(
+                                                  width: 75.w,
+                                                  height: 35.h,
+                                                  decoration: BoxDecoration(
+                                                    color: dmBlack
+                                                        .withOpacity(0.7),
+                                                    borderRadius:
+                                                        // 타원형
+                                                        BorderRadius.circular(
+                                                            3.40e+38),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      '${index + 1} / ${snapshot.data!['images'].length}',
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'Pretendard',
+                                                          fontSize: 16.sp,
+                                                          fontWeight: bold,
+                                                          color: dmLightGrey),
                                                     ),
-                                                  )
-                                                : const SizedBox(),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                  options: CarouselOptions(
-                                    viewportFraction: 1,
-                                    autoPlay: false,
-                                    enableInfiniteScroll: false,
-                                    height: MediaQuery.of(context).size.width *
-                                        0.881,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 19.h,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  //상세페이지 제목
-                                  child: Text(
-                                    snapshot.data!['title'],
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: dmBlack,
-                                      fontSize: 21.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 15.h,
-                                ),
-                                SizedBox(
-                                  //닉네임 + 건물
-                                  child: Text(
-                                    '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}', //전산관이랑 따로 해야하겠지? 잠시 보류
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: dmDarkGrey,
-                                      fontSize: 18.sp,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 22.h,
-                                ),
-                                snapshot.data!['desc'] != ''
-                                    ? SizedBox(
-                                        //상세페이지 내용
-                                        child: Text(
-                                          snapshot.data!['desc'],
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            color: dmBlack,
-                                            fontSize: 16.sp,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                      )
-                                    : const SizedBox(),
-                                snapshot.data!['desc'] != ''
-                                    ? SizedBox(
-                                        height: 22.h,
-                                      )
-                                    : const SizedBox(),
-                                SizedBox(
-                                  //하단 날짜
-                                  child: Text(
-                                    DateFormat('y년 MMM d일 a h시 mm분', 'ko_KR')
-                                        .format(snapshot.data!['uploadTime']
-                                            .toDate()),
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: dmDarkGrey,
-                                      fontSize: 13.sp,
+                                        );
+                                      }),
+                                    ),
+                                    options: CarouselOptions(
+                                      viewportFraction: 1,
+                                      autoPlay: false,
+                                      enableInfiniteScroll: false, // 무한스크롤
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.881,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 19.h,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    // 판매글 제목
+                                    child: Text(
+                                      snapshot.data!['title'],
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmBlack,
+                                        fontSize: 21.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 15.h,
+                                  ),
+                                  SizedBox(
+                                    // 닉네임과 거래 희망 장소
+                                    child: Text(
+                                      '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}', //전산관이랑 따로 해야하겠지? 잠시 보류
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmDarkGrey,
+                                        fontSize: 18.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 22.h,
+                                  ),
+                                  // 설명글의 데이터가 존재할 경우
+                                  snapshot.data!['desc'] != ''
+                                      ? SizedBox(
+                                          child: Text(
+                                            snapshot.data!['desc'],
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              color: dmBlack,
+                                              fontSize: 16.sp,
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                  snapshot.data!['desc'] != ''
+                                      ? SizedBox(
+                                          height: 22.h,
+                                        )
+                                      : const SizedBox(),
+                                  SizedBox(
+                                    // 업로드 시간
+                                    child: Text(
+                                      DateFormat('y년 MMM d일 a h시 mm분', 'ko_KR')
+                                          .format(snapshot.data!['uploadTime']
+                                              .toDate()),
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmDarkGrey,
+                                        fontSize: 13.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+
+                  // Bottom
                   Container(
                     width: double.infinity,
+                    // Android 대응
                     height: window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
                     decoration: BoxDecoration(
                       border: Border(
@@ -342,6 +330,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(
+                        // Android 대응
                         top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
                         left: 32.w,
                         right: 20.w,
@@ -352,84 +341,19 @@ class _DetailScreenState extends State<DetailScreen> {
                         children: [
                           Row(
                             children: [
+                              // 판매글의 likes 리스트에 사용자의 UID가 포함되어 있다면
                               snapshot.data!['likes'].contains(uid)
                                   ? GestureDetector(
-                                      onTap: () async {
-                                        try {
-                                          await Future.wait(
-                                            [
-                                              FirebaseFirestore.instance
-                                                  .collection('product')
-                                                  .doc(snapshot
-                                                      .data!['product_id'])
-                                                  .update({
-                                                'likes': FieldValue.arrayRemove(
-                                                    [uid!])
-                                              }),
-                                              FirebaseFirestore.instance
-                                                  .collection('user')
-                                                  .doc(uid)
-                                                  .update(
-                                                {
-                                                  'watchlist':
-                                                      FieldValue.arrayRemove([
-                                                    snapshot.data!['product_id']
-                                                  ])
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                          setState(() {});
-                                        } catch (e) {
-                                          WarningSnackBar.show(
-                                            context: context,
-                                            text: '관심을 누르던 중 문제가 생겼어요.',
-                                            paddingHorizontal: 0,
-                                          );
-                                          debugPrint(e.toString());
-                                        }
-                                      },
+                                      onTap: onTapCancelLike(snapshot),
                                       child: Image.asset(
                                         'assets/images/icons/icon_heart_fill.png',
                                         height: 27.h,
                                       ),
                                     )
-                                  : GestureDetector(
-                                      onTap: () async {
-                                        try {
-                                          await Future.wait(
-                                            [
-                                              FirebaseFirestore.instance
-                                                  .collection('product')
-                                                  .doc(snapshot
-                                                      .data!['product_id'])
-                                                  .update({
-                                                'likes': FieldValue.arrayUnion(
-                                                    [uid!])
-                                              }),
-                                              FirebaseFirestore.instance
-                                                  .collection('user')
-                                                  .doc(uid)
-                                                  .update(
-                                                {
-                                                  'watchlist':
-                                                      FieldValue.arrayUnion([
-                                                    snapshot.data!['product_id']
-                                                  ])
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                          setState(() {});
-                                        } catch (e) {
-                                          WarningSnackBar.show(
-                                            context: context,
-                                            text: '관심을 누르던 중 문제가 생겼어요.',
-                                            paddingHorizontal: 0,
-                                          );
-                                          debugPrint(e.toString());
-                                        }
-                                      },
+                                  :
+                                  // 판매글의 likes 리스트에 사용자의 UID가 포함되어있지 않다면
+                                  GestureDetector(
+                                      onTap: onTapLike(snapshot),
                                       child: Image.asset(
                                         'assets/images/icons/icon_heart.png',
                                         height: 27.h,
@@ -447,6 +371,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 width: 20.5.w,
                               ),
                               Text(
+                                // #,###원 형식으로 price 데이터를 표시
                                 '${NumberFormat('#,###').format(int.parse(snapshot.data!['price']))}원',
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
@@ -482,14 +407,146 @@ class _DetailScreenState extends State<DetailScreen> {
                   )
                 ],
               );
-            } else {
-              return const Center(
-                child: CupertinoActivityIndicator(),
+            }
+            // 그 외 오류 발생 시
+            else {
+              return Column(
+                children: [
+                  MainAppbar.show(
+                    title: '',
+                    leading: GestureDetector(
+                      onTap: () {
+                        context.go('/main');
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/icon_back.png',
+                        alignment: Alignment.topLeft,
+                        height: 18.h,
+                      ),
+                    ),
+                    action: const SizedBox(),
+                  ),
+                  const Expanded(
+                    child: Center(
+                      child: CupertinoActivityIndicator(),
+                    ),
+                  ),
+                ],
               );
             }
           },
         ),
       ),
     );
+  }
+
+  // 삭제 처리 메소드
+  onTapDelete(snapshot) async {
+    // 확인 창 닫기
+    Navigator.pop(context);
+    try {
+      // Future.wait 내 코드가 다 수행될 때까지 대기
+      await Future.wait([
+        // product 컬렉션 내 product_id 문서 삭제
+        FirebaseFirestore.instance
+            .collection('product')
+            .doc(snapshot.data!['product_id'])
+            .delete(),
+        // user 컬렉션 내 업로드 한 user 문서의 posts 리스트 중 product_id를 가진 값을 삭제 후 업데이트
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(snapshot.data!['uid'])
+            .update({
+          'posts': FieldValue.arrayRemove([snapshot.data!['product_id']]),
+        }),
+        // FirebaseStorage에서 product 디렉토리 내 product_id를 가진 디렉토리의 파일을 모두 삭제
+        FirebaseStorage.instance
+            .ref('product/${snapshot.data!['product_id']}')
+            .listAll()
+            .then((value) => Future.wait(value.items.map((e) => e.delete())))
+      ]);
+
+      context.go('/main');
+      DoneSnackBar.show(
+        context: context,
+        text: '판매글을 삭제했어요.',
+        paddingHorizontal: 0,
+        paddingBottom: 0,
+      );
+    } catch (e) {
+      context.go('/main');
+      WarningSnackBar.show(
+        context: context,
+        text: '판매글 삭제 중 문제가 생겼어요.',
+        paddingHorizontal: 0,
+        paddingBottom: 0,
+      );
+      debugPrint(e.toString());
+    }
+  }
+
+  // 좋아요 취소 메소드
+  onTapCancelLike(snapshot) async {
+    try {
+      // Future.wait 내 코드가 다 수행될 때까지 대기
+      await Future.wait(
+        [
+          FirebaseFirestore.instance
+              .collection('product') // product 컬렉션에서
+              .doc(snapshot.data!['product_id']) // product_id의 문서 내
+              .update({
+            'likes': FieldValue.arrayRemove([uid!]) // likes 리스트에 사용자 UID 값을 제거
+          }),
+          // user 컬렉션에서 사용자의 UID의 watchlist 리스트에 product_id 값 제거
+          FirebaseFirestore.instance.collection('user').doc(uid).update(
+            {
+              'watchlist':
+                  FieldValue.arrayRemove([snapshot.data!['product_id']])
+            },
+          ),
+        ],
+      );
+      // 새로고침
+      setState(() {});
+    } catch (e) {
+      WarningSnackBar.show(
+        context: context,
+        text: '관심을 누르던 중 문제가 생겼어요.',
+        paddingHorizontal: 0,
+      );
+      debugPrint(e.toString());
+    }
+  }
+
+  // 좋아요 메소드
+  onTapLike(snapshot) async {
+    try {
+      // Future.wait 내 코드가 다 수행될 때까지 대기
+      await Future.wait(
+        [
+          FirebaseFirestore.instance
+              .collection('product') // product 컬렉션에서
+              .doc(snapshot.data!['product_id']) // product_id의 문서 내
+              .update({
+            'likes': FieldValue.arrayUnion([uid!]) // likes 리스트에 사용자 UID 값을 추가
+          }),
+          // user 컬렉션에서 사용자의 UID의 watchlist 리스트에 product_id 값 추가
+          FirebaseFirestore.instance.collection('user').doc(uid).update(
+            {
+              'watchlist': FieldValue.arrayUnion([snapshot.data!['product_id']])
+            },
+          ),
+        ],
+      );
+      // 새로고침
+      setState(() {});
+    } catch (e) {
+      WarningSnackBar.show(
+        context: context,
+        text: '관심을 누르던 중 문제가 생겼어요.',
+        paddingHorizontal: 0,
+      );
+      debugPrint(e.toString());
+    }
   }
 }

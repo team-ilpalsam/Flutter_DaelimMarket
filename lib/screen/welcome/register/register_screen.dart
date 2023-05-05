@@ -60,6 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,
@@ -81,6 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         image: 'assets/images/icons/icon_close.png',
                         title: '회원가입',
                       ),
+
                       // Contents
                       SizedBox(
                         height: 55.h,
@@ -132,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       TextField(
                         controller: passwordController,
-                        obscureText: true,
+                        obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
                         decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
@@ -155,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextField(
                         controller: confirmController,
                         cursorHeight: 24.h,
-                        obscureText: true,
+                        obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
                         decoration: welcomeInputDeco,
                         cursorColor: dmBlack,
@@ -163,111 +165,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         height: 63.5.h,
                       ),
+
                       // Bottom
                       const Expanded(child: SizedBox()),
+                      // 이메일 TextField의 글자 수가 3 글자 이상
                       emailController.text.length >= 3 &&
+                              // 비밀번호 TextField의 글자 수가 3 글자 이상
                               passwordController.text.length >= 4 &&
+                              // 비밀번호 확인 TextField의 글자 수가 3 글자 이상
                               confirmController.text.length >= 4
                           ? GestureDetector(
-                              onTap: () async {
-                                if (!emailController.text
-                                    .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-                                  WarningSnackBar.show(
-                                      context: context,
-                                      text: '이메일에 포함할 수 없는 문자가 있어요.');
-                                } else if (passwordController.text !=
-                                    confirmController.text) {
-                                  WarningSnackBar.show(
-                                    context: context,
-                                    text: '비밀번호가 맞지 않아요.',
-                                  );
-                                } else {
-                                  try {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                    await FirebaseAuth.instance
-                                        .createUserWithEmailAndPassword(
-                                            email:
-                                                '${emailController.text}@email.daelim.ac.kr',
-                                            password: passwordController.text)
-                                        .then((value) {
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                      FirebaseFirestore.instance
-                                          .collection('user')
-                                          .doc(value.user!.uid)
-                                          .set({
-                                        'nickName': "",
-                                        'id': emailController.text,
-                                        'email':
-                                            '${emailController.text}@email.daelim.ac.kr',
-                                        'profile_image': "",
-                                        'posts': []
-                                      });
-                                      context.goNamed(
-                                        'registerAuthLink',
-                                        queryParams: {
-                                          'email':
-                                              ('${emailController.text}@email.daelim.ac.kr'),
-                                        },
-                                      );
-                                      return value;
-                                    });
-                                    FirebaseAuth.instance.currentUser
-                                        ?.sendEmailVerification();
-                                  } on FirebaseAuthException catch (e) {
-                                    switch (e.code) {
-                                      case 'weak-password':
-                                        WarningSnackBar.show(
-                                          context: context,
-                                          text: '비밀번호 보안을 신경써주세요.',
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case 'email-already-in-use':
-                                        WarningSnackBar.show(
-                                          context: context,
-                                          text: '이미 존재하는 계정이에요.',
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case 'invalid-email':
-                                        WarningSnackBar.show(
-                                          context: context,
-                                          text: '이메일 주소 형식을 다시 확인해주세요.',
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      case 'operation-not-allowed':
-                                        WarningSnackBar.show(
-                                          context: context,
-                                          text: '허용되지 않은 작업이에요.',
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                      default:
-                                        WarningSnackBar.show(
-                                          context: context,
-                                          text: e.code.toString(),
-                                        );
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                        break;
-                                    }
-                                  }
-                                }
-                              },
+                              onTap: onTapRegister,
                               child: _isLoading
                                   ? const LoadingButton(
                                       color: dmLightGrey,
@@ -288,5 +196,112 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> onTapRegister() async {
+    // 이메일 유효성 검사
+    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+    }
+    // 비밀번호와 비밀번호 확인 일치 검사
+    else if (passwordController.text != confirmController.text) {
+      WarningSnackBar.show(
+        context: context,
+        text: '비밀번호가 맞지 않아요.',
+      );
+    } else {
+      try {
+        // Loading 상태를 true로 변경
+        setState(() {
+          _isLoading = true;
+        });
+        // Firebase에 회원가입 요청
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: '${emailController.text}@email.daelim.ac.kr',
+                password: passwordController.text)
+            .then((value) {
+          // 성공 시
+          // Loading 상태를 false로 변경
+          setState(() {
+            _isLoading = false;
+          });
+          // Firebase Firestore에 정보 저장 요청
+          FirebaseFirestore.instance
+              // user 컬렉션 내
+              .collection('user')
+              // 사용자의 UID 문서 생성
+              .doc(value.user!.uid)
+              // 다음과 같은 정보를 저장
+              .set({
+            'nickName': "", // 닉네임
+            'id': emailController.text, // ID
+            'email': '${emailController.text}@email.daelim.ac.kr', // 이메일
+            'profile_image': "", // 프로필 사진
+            'posts': [], // 포스트 내역
+            'watchlist': [],
+          });
+          // 회원가입 후 이메일 인증 안내 페이지로 이동
+          context.goNamed(
+            'registerAuthLink',
+            queryParams: {
+              'email': ('${emailController.text}@email.daelim.ac.kr'),
+            },
+          );
+          return value;
+        });
+        // 이메일 인증 메일 전송
+        FirebaseAuth.instance.currentUser?.sendEmailVerification();
+      } on FirebaseAuthException catch (e) {
+        // 실패(Exception) 시
+        switch (e.code) {
+          case 'weak-password':
+            WarningSnackBar.show(
+              context: context,
+              text: '비밀번호 보안을 신경써주세요.',
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case 'email-already-in-use':
+            WarningSnackBar.show(
+              context: context,
+              text: '이미 존재하는 계정이에요.',
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case 'invalid-email':
+            WarningSnackBar.show(
+              context: context,
+              text: '이메일 주소 형식을 다시 확인해주세요.',
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          case 'operation-not-allowed':
+            WarningSnackBar.show(
+              context: context,
+              text: '허용되지 않은 작업이에요.',
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+          default:
+            WarningSnackBar.show(
+              context: context,
+              text: e.code.toString(),
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            break;
+        }
+      }
+    }
   }
 }

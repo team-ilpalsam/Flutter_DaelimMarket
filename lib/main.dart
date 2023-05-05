@@ -8,11 +8,18 @@ import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  // 비동기 메소드 사용시 필수
   WidgetsFlutterBinding.ensureInitialized();
+
+  // intl 초기화
   await initializeDateFormatting('ko_KR', null);
+
+  // Firebase 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // 운영체제의 상태 바와 네비게이션 바의 색상 조정
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: dmWhite,
     statusBarBrightness: Brightness.light,
@@ -20,6 +27,8 @@ void main() async {
     systemNavigationBarColor: dmWhite,
     systemNavigationBarIconBrightness: Brightness.light,
   ));
+
+  // 세로 방향 고정
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

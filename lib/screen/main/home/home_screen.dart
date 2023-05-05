@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Title
             topPadding,
             SizedBox(
               height: 10.h,
@@ -52,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // 거래 장소 선택
                   DropdownButtonHideUnderline(
                     child: DropdownButton2(
                       menuItemStyleData: MenuItemStyleData(
@@ -80,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       onChanged: (value) {
+                        // Dropdown의 값을 _selectedLocation에 대입
                         setState(() {
                           _selectedLocation = value!;
                         });
@@ -129,38 +132,42 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 17.5.h),
             divider,
+
+            // Content
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
+                // ListView를 아래로 스와이프할 경우 Refresh
                 child: RefreshIndicator(
-                  onRefresh: () async {
-                    return Future.delayed(const Duration(milliseconds: 1000),
-                        () {
-                      setState(() {});
-                    });
-                  },
+                  onRefresh: onRefresh,
                   backgroundColor: dmWhite,
                   color: dmDarkGrey,
                   strokeWidth: 2.w,
-                  child: FutureBuilder<QuerySnapshot>(
+                  child:
+                      // Firebase의 Firestore 데이터 불러오기
+                      FutureBuilder<QuerySnapshot>(
                     future: FirebaseFirestore.instance
-                        .collection('product')
-                        .where('location',
+                        .collection('product') // product 컬렉션으로부터
+                        .where('location', // Dropdown의 장소 값의 조건으로
                             isEqualTo: _selectedLocation == '전체'
                                 ? null
                                 : _selectedLocation)
-                        .orderBy("uploadTime", descending: true)
-                        .get(),
+                        .orderBy("uploadTime",
+                            descending: true) // uploadTime 정렬은 내림차순으로
+                        .get(), // 데이터를 불러온다
                     builder: (context, snapshot) {
+                      // 만약 불러오는 상태라면 로딩 인디케이터를 중앙에 배치
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: CupertinoActivityIndicator(),
                         );
                       }
 
+                      // 데이터가 존재한다면
                       if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                        // 안드로이드 스와이프 Glow 애니메이션 제거
                         return ScrollConfiguration(
                           behavior: MyBehavior(),
                           child: ListView.separated(
@@ -189,11 +196,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
 
                               return Padding(
+                                // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
                                 padding: index == 0
                                     ? EdgeInsets.only(
                                         top: 30.5.h, bottom: 17.5.h)
                                     : EdgeInsets.symmetric(vertical: 17.5.h),
                                 child: GestureDetector(
+                                  // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
                                   onTap: () {
                                     context.pushNamed('detail', queryParams: {
                                       'productId': snapshot.data!.docs[index]
@@ -202,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   child: Container(
                                     color: dmWhite,
+                                    // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
                                     height: MediaQuery.of(context).size.width *
                                         0.312,
                                     child: Row(
@@ -209,15 +219,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
+                                          // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.312,
+                                          // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.312,
                                           decoration: BoxDecoration(
+                                            // 이미지는 요소의 0번째 이미지를 썸네일로 보여줌
                                             image: DecorationImage(
                                               image: NetworkImage(snapshot.data!
                                                   .docs[index]['images'][0]),
@@ -238,12 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: 222.w,
+                                                  width: 222.w, // 얘 지워도 되나
                                                   child: Text(
                                                     snapshot.data!.docs[index]
                                                         ['title'],
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
                                                     maxLines: 2,
                                                     style: TextStyle(
                                                       fontFamily: 'Pretendard',
@@ -279,6 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 const Expanded(
                                                     child: SizedBox()),
+                                                // likes가 1개 이상일 때만 표시
                                                 Visibility(
                                                   maintainSize: true,
                                                   maintainAnimation: true,
@@ -331,7 +345,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                         );
-                      } else {
+                      }
+                      // 데이터가 존재하지 않는다면
+                      else {
                         return Center(
                           child: Text(
                             '등록된 게시글이 없어요.',
@@ -353,5 +369,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  // 새로고침 메소드
+  Future<void> onRefresh() async {
+    // 1초 뒤에 setState를 이용하여 새로고침
+    return Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {});
+    });
   }
 }
