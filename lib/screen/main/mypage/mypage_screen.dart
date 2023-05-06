@@ -17,11 +17,15 @@ class MypageScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title
             topPadding,
+            SizedBox(
+              height: 10.h,
+            ),
             Padding(
-              padding: EdgeInsets.only(left: 21.w, top: 5.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.h),
               child: Text(
-                "마이페이지",
+                '마이페이지',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 28.sp,
@@ -30,10 +34,10 @@ class MypageScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 22.5.h,
-            ),
+            SizedBox(height: 17.5.h),
             divider,
+
+            // Content
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
@@ -45,9 +49,11 @@ class MypageScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Container(
-                              width: 58.w,
-                              height: 58.h,
-                              decoration: BoxDecoration(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.14758,
+                              height:
+                                  MediaQuery.of(context).size.width * 0.14758,
+                              decoration: const BoxDecoration(
                                 // image: _pickedImage != null
                                 //     ? DecorationImage(
                                 //         image:
@@ -58,10 +64,6 @@ class MypageScreen extends StatelessWidget {
                                 //     : null,
                                 shape: BoxShape.circle,
                                 color: dmLightGrey,
-                                border: Border.all(
-                                  color: dmDarkGrey,
-                                  width: 1.w,
-                                ),
                               ),
                             ),
                             Padding(
