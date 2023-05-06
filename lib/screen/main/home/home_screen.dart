@@ -251,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: 222.w, // 얘 지워도 되나
                                                   child: Text(
                                                     snapshot.data!.docs[index]
                                                         ['title'],
