@@ -1,4 +1,5 @@
 // import 'package:daelim_market/screen/welcome/account_setting_screen.dart';
+import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/detail/detail_screen.dart';
@@ -130,6 +131,17 @@ class AppRouter {
         path: '/mypage_setting',
         pageBuilder: (context, state) => const CupertinoPage(
           child: MypageSettingScreen(),
+        ),
+      ),
+
+      // 마이페이지 설정 페이지
+      GoRoute(
+        name: 'chat',
+        path: '/chat',
+        pageBuilder: (context, state) => CupertinoPage(
+          child: ChatScreen(
+            userUID: state.queryParams['userUID']!,
+          ),
         ),
       )
     ],
