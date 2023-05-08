@@ -10,10 +10,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../main.dart';
 import '../../../styles/fonts.dart';
 import '../../widgets/snackbar.dart';
 
@@ -27,18 +27,9 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  String? uid;
-
-  // FlutterSecureStorage에 저장된 UID 불러오는 메소드
-  _asyncMethod() async {
-    uid = await const FlutterSecureStorage().read(key: "uid");
-  }
-
   @override
   Widget build(BuildContext context) {
-    _asyncMethod();
     return Scaffold(
-      backgroundColor: dmWhite,
       body: SafeArea(
         child:
             // Firebase의 Firestore 데이터 불러오기

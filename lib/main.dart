@@ -4,12 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+String? uid;
+String? email;
+String? password;
 
 void main() async {
   // 비동기 메소드 사용시 필수
   WidgetsFlutterBinding.ensureInitialized();
+
+  uid = await const FlutterSecureStorage().read(key: 'uid');
+  email = await const FlutterSecureStorage().read(key: 'email');
+  password = await const FlutterSecureStorage().read(key: 'password');
 
   // intl 초기화
   await initializeDateFormatting('ko_KR', null);
