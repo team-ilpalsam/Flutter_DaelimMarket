@@ -460,8 +460,20 @@ class _DetailScreenState extends State<DetailScreen> {
         FirebaseStorage.instance
             .ref('product/${snapshot.data!['product_id']}')
             .listAll()
-            .then((value) => Future.wait(value.items.map((e) => e.delete())))
+            .then((value) => Future.wait(value.items.map((e) => e.delete()))),
       ]);
+
+      // user 컬렉션 내 likes 배열에 있는 UID의 문서 내 watch_list 배열에 해당 product_id 요소를 제거 후 업데이트한다.
+      if (snapshot.data!['likes'] != null) {
+        snapshot.data!['likes'].forEach((element) async {
+          await Future.wait([
+            FirebaseFirestore.instance.collection('user').doc(element).update({
+              'watchlist':
+                  FieldValue.arrayRemove([snapshot.data!['product_id']])
+            })
+          ]);
+        });
+      }
 
       context.go('/main');
       DoneSnackBar.show(
