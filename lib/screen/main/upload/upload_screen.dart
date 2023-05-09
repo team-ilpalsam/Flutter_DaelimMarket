@@ -17,6 +17,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../main.dart';
+
 class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
 
@@ -448,11 +450,6 @@ class _UploadScreenState extends State<UploadScreen> {
       _isLoading = true;
     });
     try {
-      // FlutterSecureStorage에서 id값을 불러온 후 변수에 대입
-      String id = await const FlutterSecureStorage().read(key: "id") ?? 'null';
-      // FlutterSecureStorage에서 uid값을 불러온 후 변수에 대입
-      String uid =
-          await const FlutterSecureStorage().read(key: "uid") ?? 'null';
       // productId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
       String productId = '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
 

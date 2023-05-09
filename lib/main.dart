@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+String? id;
 String? uid;
 String? email;
 String? password;
@@ -16,6 +17,7 @@ void main() async {
   // 비동기 메소드 사용시 필수
   WidgetsFlutterBinding.ensureInitialized();
 
+  id = await const FlutterSecureStorage().read(key: 'id');
   uid = await const FlutterSecureStorage().read(key: 'uid');
   email = await const FlutterSecureStorage().read(key: 'email');
   password = await const FlutterSecureStorage().read(key: 'password');
