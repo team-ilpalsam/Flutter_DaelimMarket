@@ -241,6 +241,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'posts': [], // 포스트 내역
             'watchlist': [],
           });
+          // Firebase chat 컬렉션에 추가
+          FirebaseFirestore.instance
+              // user 컬렉션 내
+              .collection('user')
+              // 사용자의 UID 문서 생성
+              .doc(value.user!.uid)
+              .set({
+            'DaelimMarket': [
+              {
+                'send_time': DateTime.now(),
+                'sender': 'daelimmarket',
+                'type': 'text',
+                'text': '추가해줘서 감사해요\n다른 판매자들과 채팅을 시작해보아요!',
+              }
+            ]
+          });
           // 회원가입 후 이메일 인증 안내 페이지로 이동
           context.goNamed(
             'registerAuthLink',

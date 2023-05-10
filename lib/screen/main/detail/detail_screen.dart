@@ -332,68 +332,71 @@ class _DetailScreenState extends State<DetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              // 판매글의 likes 리스트에 사용자의 UID가 포함되어 있다면
-                              snapshot.data!['likes'].contains(uid)
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        onTapCancelLike(snapshot);
-                                      },
-                                      child: Image.asset(
-                                        'assets/images/icons/icon_heart_fill.png',
-                                        height: 27.h,
-                                      ),
-                                    )
-                                  :
-                                  // 판매글의 likes 리스트에 사용자의 UID가 포함되어있지 않다면
-                                  GestureDetector(
-                                      onTap: () {
-                                        onTapLike(snapshot);
-                                      },
-                                      child: Image.asset(
-                                        'assets/images/icons/icon_heart.png',
-                                        height: 27.h,
-                                      ),
-                                    ),
-                              SizedBox(
-                                width: 21.83.w,
-                              ),
-                              Container(
-                                width: 1.w,
-                                height: 36.h,
-                                color: dmDarkGrey,
-                              ),
-                              SizedBox(
-                                width: 20.5.w,
-                              ),
-                              Text(
-                                // #,###원 형식으로 price 데이터를 표시
-                                '${NumberFormat('#,###').format(int.parse(snapshot.data!['price']))}원',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 21.sp,
-                                  fontWeight: bold,
-                                  color: dmBlue,
+                          snapshot.data!['likes'].contains(uid)
+                              ? GestureDetector(
+                                  onTap: () {
+                                    onTapCancelLike(snapshot);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/icons/icon_heart_fill.png',
+                                    height: 27.h,
+                                  ),
+                                )
+                              :
+                              // 판매글의 likes 리스트에 사용자의 UID가 포함되어있지 않다면
+                              GestureDetector(
+                                  onTap: () {
+                                    onTapLike(snapshot);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/icons/icon_heart.png',
+                                    height: 27.h,
+                                  ),
                                 ),
-                              ),
-                            ],
+                          SizedBox(
+                            width: 21.83.w,
                           ),
                           Container(
-                            width: 115.w,
-                            height: 34.h,
-                            decoration: BoxDecoration(
-                              color: dmLightGrey,
-                              borderRadius: BorderRadius.circular(5.r),
+                            width: 1.w,
+                            height: 36.h,
+                            color: dmDarkGrey,
+                          ),
+                          SizedBox(
+                            width: 20.5.w,
+                          ),
+                          Text(
+                            // #,###원 형식으로 price 데이터를 표시
+                            '${NumberFormat('#,###').format(int.parse(snapshot.data!['price']))}원',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 21.sp,
+                              fontWeight: bold,
+                              color: dmBlue,
                             ),
-                            child: Center(
-                              child: Text(
-                                '채팅하기',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16.sp,
-                                  fontWeight: bold,
-                                  color: dmWhite,
+                          ),
+                          const Expanded(child: SizedBox()),
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed('chat', queryParams: {
+                                'userUID': snapshot.data!['uid']
+                              });
+                            },
+                            child: Container(
+                              width: 115.w,
+                              height: 34.h,
+                              decoration: BoxDecoration(
+                                color: dmBlue,
+                                borderRadius: BorderRadius.circular(5.r),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '채팅하기',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16.sp,
+                                    fontWeight: bold,
+                                    color: dmWhite,
+                                  ),
                                 ),
                               ),
                             ),
