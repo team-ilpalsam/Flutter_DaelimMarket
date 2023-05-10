@@ -341,7 +341,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       {
                                         'type': 'text',
                                         'send_time': DateTime.now(),
-                                        'sender': '$uid',
+                                        'sender': uid,
                                         'text': chatController.text
                                       }
                                     ])
@@ -354,7 +354,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       {
                                         'type': 'text',
                                         'send_time': DateTime.now(),
-                                        'sender': widget.userUID,
+                                        'sender': uid,
                                         'text': chatController.text
                                       }
                                     ])
