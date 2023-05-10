@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -14,9 +17,11 @@ import '../../widgets/alert_dialog.dart';
 
 class MypageSettingScreen extends StatefulWidget {
   final VoidCallback? onTap;
+  final String? userEmail;
 
   const MypageSettingScreen({
     this.onTap,
+    this.userEmail,
     super.key,
   });
 
@@ -66,7 +71,30 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                     height: 18.h,
                   ),
                 ),
-                action: const SizedBox(),
+                action: GestureDetector(
+                  onTap: () async {
+                    String nickName = nickNameController.text;
+                    await FirebaseUtils.updateUserData(nickName);
+
+                    context.go('/main');
+                    DoneSnackBar.show(
+                      context: context,
+                      text: '성공적으로 등록했어요!',
+                      paddingBottom: 0,
+                    );
+
+                    nickNameController.clear();
+                  },
+                  child: Text(
+                    '저장',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18.sp,
+                      fontWeight: bold,
+                      color: dmBlue,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 height: 56.h,
@@ -223,9 +251,12 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                           vertical: 10.h,
                           horizontal: 10.w,
                         ),
-                        child: Text(
-                          'null',
-                          style: mainInputTextDeco,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            email!,
+                            style: mainInputTextDeco,
+                          ),
                         ),
                       ),
                     ),
@@ -272,5 +303,19 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         ),
       ),
     );
+  }
+}
+
+class FirebaseUtils {
+  static final _firestore = FirebaseFirestore.instance;
+  static final _auth = FirebaseAuth.instance;
+
+  // Firebase Firestore의 데이터 업데이트하기
+  static Future<void> updateUserData(String nickName) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userRef = _firestore.collection('user').doc(uid);
+      await userRef.update({'nickName': nickName});
+    }
   }
 }
