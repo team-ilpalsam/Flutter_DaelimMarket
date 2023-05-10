@@ -50,7 +50,6 @@ class ChatListScreen extends StatelessWidget {
                       .doc(uid) // uid 문서의
                       .snapshots(), // 데이터를 불러온다,
                   builder: (context, snapshot) {
-                    debugPrint(snapshot.data?.data().toString());
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CupertinoActivityIndicator(),
@@ -61,10 +60,10 @@ class ChatListScreen extends StatelessWidget {
                       final data = snapshot.data!.data()!;
                       final chatList = data.entries
                           .toList(); // Map<String, dynamic>을 List<MapEntry<String, dynamic>> 형태로 변환
-                      chatList.sort((a, b) => (b.value['last_send_time']
+                      chatList.sort((a, b) => (b.value.last['send_time']
                               as Timestamp)
-                          .compareTo(a.value['last_send_time']
-                              as Timestamp)); // last_send_time을 기준으로 내림차순으로 정렬
+                          .compareTo(a.value.last['send_time']
+                              as Timestamp)); // 배열 내 마지막 요소의 send_time을 기준으로 내림차순으로 정렬
 
                       return ScrollConfiguration(
                         behavior: MyBehavior(),
@@ -151,7 +150,7 @@ class ChatListScreen extends StatelessWidget {
                                                 SizedBox(height: 3.h),
                                                 Text(
                                                   chatList[index]
-                                                      .value['messages']
+                                                      .value
                                                       .last['text'],
                                                   overflow: TextOverflow
                                                       .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
@@ -168,7 +167,7 @@ class ChatListScreen extends StatelessWidget {
                                                   DateFormat('MMM d일 a h시 mm분',
                                                           'ko_KR')
                                                       .format(chatList[index]
-                                                          .value['messages']
+                                                          .value
                                                           .last['send_time']
                                                           .toDate()),
                                                   overflow: TextOverflow
