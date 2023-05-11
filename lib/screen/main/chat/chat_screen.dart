@@ -248,20 +248,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                                         dmDarkGrey,
                                                                   ),
                                                                 )
-                                                              : Text(
-                                                                  '안읽음',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    fontWeight:
-                                                                        medium,
-                                                                    color:
-                                                                        dmDarkGrey,
-                                                                  ),
-                                                                ),
+                                                              : const SizedBox(),
                                                           Text(
                                                             DateFormat('a h:mm',
                                                                     'ko_KR')
@@ -487,19 +474,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ),
                                         );
                                       } else {
-                                        data[index]['read'] = true;
-                                        FirebaseFirestore.instance
-                                            .collection('chat') // chat 컬렉션에서
-                                            .doc(widget.userUID) // 상대 UID의 문서 내
-                                            .set({uid!: data[widget.userUID]},
-                                                SetOptions(merge: true));
-                                        FirebaseFirestore.instance
-                                            .collection('chat') // chat 컬렉션에서
-                                            .doc(uid) // 상대 UID의 문서 내
-                                            .set({
-                                          widget.userUID: data[widget.userUID]
-                                        }, SetOptions(merge: true));
-
                                         if (index == 0 ||
                                             snapshot.data!
                                                     .data()![widget.userUID]
