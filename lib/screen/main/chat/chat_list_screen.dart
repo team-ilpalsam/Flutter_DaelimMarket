@@ -184,25 +184,7 @@ class ChatListScreen extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                          chatList[index]
-                                                          .value
-                                                          .last['sender'] !=
-                                                      uid &&
-                                                  chatList[index]
-                                                          .value
-                                                          .last['read'] ==
-                                                      false
-                                              ? Container(
-                                                  width: 17.w,
-                                                  height: 17.h,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          color: dmRed,
-                                                          shape:
-                                                              BoxShape.circle),
-                                                )
-                                              : const SizedBox()
+                                          )
                                         ],
                                       ),
                                     ),
