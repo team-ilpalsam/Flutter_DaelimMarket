@@ -56,7 +56,9 @@ class ChatListScreen extends StatelessWidget {
                       );
                     }
 
-                    if (snapshot.hasData && snapshot.data!.exists) {
+                    if (snapshot.hasData &&
+                        snapshot.data!.exists &&
+                        snapshot.data!.data()!.isNotEmpty) {
                       final data = snapshot.data!.data()!;
                       final chatList = data.entries
                           .toList(); // Map<String, dynamic>을 List<MapEntry<String, dynamic>> 형태로 변환
@@ -182,7 +184,25 @@ class ChatListScreen extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                          )
+                                          ),
+                                          chatList[index]
+                                                          .value
+                                                          .last['sender'] !=
+                                                      uid &&
+                                                  chatList[index]
+                                                          .value
+                                                          .last['read'] ==
+                                                      false
+                                              ? Container(
+                                                  width: 17.w,
+                                                  height: 17.h,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                          color: dmRed,
+                                                          shape:
+                                                              BoxShape.circle),
+                                                )
+                                              : const SizedBox()
                                         ],
                                       ),
                                     ),
