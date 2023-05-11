@@ -137,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               if (snapshot.hasData &&
                                   snapshot.data!.data()![widget.userUID] !=
                                       null) {
+                                debugPrint(snapshot.data!.data().toString());
                                 return ScrollConfiguration(
                                   behavior: MyBehavior(),
                                   child: ListView.builder(
@@ -488,7 +489,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                             .collection('chat') // chat 컬렉션에서
                                             .doc(widget.userUID) // 상대 UID의 문서 내
                                             .update({
-                                          uid![index]: FieldValue.arrayUnion([
+                                          uid!: FieldValue.arrayUnion([
                                             {'read': true}
                                           ])
                                         });
@@ -496,7 +497,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                             .collection('chat') // chat 컬렉션에서
                                             .doc(uid) // 상대 UID의 문서 내
                                             .update({
-                                          widget.userUID[index]:
+                                          widget.userUID:
                                               FieldValue.arrayUnion([
                                             {'read': true}
                                           ])
