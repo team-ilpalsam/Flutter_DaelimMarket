@@ -381,16 +381,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                             color: dmDarkGrey,
                                                           ),
                                                         )
-                                                      : Text(
-                                                          '안읽음',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 12.sp,
-                                                            fontWeight: medium,
-                                                            color: dmDarkGrey,
-                                                          ),
-                                                        ),
+                                                      : const SizedBox(),
                                                   Text(
                                                     DateFormat(
                                                             'a h:mm', 'ko_KR')
@@ -509,15 +500,27 @@ class _ChatScreenState extends State<ChatScreen> {
                                                                 .circular(
                                                                     3.40e+38),
                                                       ),
-                                                      child: Text(DateFormat(
-                                                              'yyyy년 M월 d일 EEEE',
-                                                              'ko_KR')
-                                                          .format(snapshot.data!
-                                                              .data()![widget
-                                                                      .userUID]
-                                                                  [index]
-                                                                  ['send_time']
-                                                              .toDate())),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        DateFormat(
+                                                                'yyyy년 M월 d일 EEEE',
+                                                                'ko_KR')
+                                                            .format(snapshot
+                                                                .data!
+                                                                .data()![widget
+                                                                        .userUID]
+                                                                    [index][
+                                                                    'send_time']
+                                                                .toDate()),
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Pretendard',
+                                                          fontSize: 14.sp,
+                                                          fontWeight: medium,
+                                                          color: dmWhite,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
