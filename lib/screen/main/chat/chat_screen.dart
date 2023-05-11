@@ -138,6 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                   snapshot.data!.data()![widget.userUID] !=
                                       null) {
                                 debugPrint(snapshot.data!.data().toString());
+                                Map data = snapshot.data!.data()!;
+                                debugPrint(data.toString());
                                 return ScrollConfiguration(
                                   behavior: MyBehavior(),
                                   child: ListView.builder(
@@ -485,23 +487,18 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ),
                                         );
                                       } else {
+                                        data[index]['read'] = true;
                                         FirebaseFirestore.instance
                                             .collection('chat') // chat 컬렉션에서
                                             .doc(widget.userUID) // 상대 UID의 문서 내
-                                            .update({
-                                          uid!: FieldValue.arrayUnion([
-                                            {'read': true}
-                                          ])
-                                        });
+                                            .set({uid!: data[widget.userUID]},
+                                                SetOptions(merge: true));
                                         FirebaseFirestore.instance
                                             .collection('chat') // chat 컬렉션에서
                                             .doc(uid) // 상대 UID의 문서 내
-                                            .update({
-                                          widget.userUID:
-                                              FieldValue.arrayUnion([
-                                            {'read': true}
-                                          ])
-                                        });
+                                            .set({
+                                          widget.userUID: data[widget.userUID]
+                                        }, SetOptions(merge: true));
 
                                         if (index == 0 ||
                                             snapshot.data!
