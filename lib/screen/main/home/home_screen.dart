@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -218,28 +219,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
+                                        CachedNetworkImage(
+                                          fadeInDuration: Duration.zero,
+                                          fadeOutDuration: Duration.zero,
+                                          imageUrl: snapshot.data!.docs[index]
+                                              ['images'][0],
+                                          fit: BoxFit.cover,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.312,
-                                          // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.312,
-                                          decoration: BoxDecoration(
-                                            // 이미지는 요소의 0번째 이미지를 썸네일로 보여줌
-                                            image: DecorationImage(
-                                              image: NetworkImage(snapshot.data!
-                                                  .docs[index]['images'][0]),
-                                              fit: BoxFit.cover,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.r),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              color: dmGrey,
                                             ),
-                                            borderRadius:
-                                                BorderRadius.circular(5.r),
-                                            color: dmGrey,
                                           ),
+                                          placeholder: (context, url) =>
+                                              const CupertinoActivityIndicator(),
                                         ),
                                         SizedBox(
                                           width: 17.w,
