@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:emoji_regex/emoji_regex.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../main.dart';
@@ -14,6 +17,7 @@ import '../../../styles/colors.dart';
 import '../../../styles/fonts.dart';
 import '../../widgets/alert_dialog.dart';
 import '../../widgets/scroll_behavior.dart';
+import '../../widgets/snackbar.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userUID;
@@ -26,14 +30,147 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Timer(const Duration(milliseconds: 50), () {
+      Timer(const Duration(milliseconds: 500), () {
         if (scrollController.hasClients) {
           scrollController.jumpTo(
-            scrollController.position.maxScrollExtent,
+            scrollController.position.maxScrollExtent * 1.5,
           );
         }
       });
     });
+
+    onTapAddPhotoFromAlbum() async {
+      Navigator.pop(context);
+      try {
+        // 앨범에 여러 장 선택할 수 있는 ImagePicker 불러옴
+        await ImagePicker()
+            .pickImage(source: ImageSource.gallery)
+            .then((xfile) async {
+          // 아무것도 고르지 않았다면
+          if (xfile == null) {
+            return;
+          }
+          // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
+          String chatImageId =
+              'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
+
+          // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
+          Reference ref = FirebaseStorage.instance
+              .ref()
+              .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
+          final UploadTask uploadTask =
+              ref.putData(File(xfile.path).readAsBytesSync());
+          // 만약 사진 업로드 성공 시
+          final TaskSnapshot taskSnapshot =
+              await uploadTask.whenComplete(() {});
+
+          // 사진의 다운로드 가능한 url을 불러온 후
+          final url = await taskSnapshot.ref.getDownloadURL();
+
+          // product 컬렉션 내 productId 문서에 데이터 저장
+          await FirebaseFirestore.instance
+              .collection('chat') // chat 컬렉션에서
+              .doc(uid) // 자신의 UID 문서 내
+              .update({
+            userUID: FieldValue.arrayUnion([
+              {
+                'type': 'image',
+                'send_time': DateTime.now(),
+                'sender': uid,
+                'image': url,
+              }
+            ])
+          });
+          await FirebaseFirestore.instance
+              .collection('chat') // chat 컬렉션에서
+              .doc(userUID) // 상대 UID의 문서 내
+              .update({
+            uid!: FieldValue.arrayUnion([
+              {
+                'type': 'image',
+                'send_time': DateTime.now(),
+                'sender': uid,
+                'image': url,
+              }
+            ])
+          });
+        });
+      } catch (e) {
+        WarningSnackBar.show(
+          context: context,
+          text: '사진을 불러오는 중 실패했어요.',
+          paddingBottom: 0,
+        );
+        debugPrint(e.toString());
+      }
+    }
+
+    onTapAddPhotoFromCamera() async {
+      Navigator.pop(context);
+      try {
+        // 카메라를 불러옴
+        await ImagePicker()
+            .pickImage(source: ImageSource.camera)
+            .then((xfile) async {
+          // 아무것도 고르지 않았다면
+          if (xfile == null) {
+            return;
+          }
+          // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
+          String chatImageId =
+              'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
+
+          // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
+          Reference ref = FirebaseStorage.instance
+              .ref()
+              .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
+          final UploadTask uploadTask =
+              ref.putData(File(xfile.path).readAsBytesSync());
+          // 만약 사진 업로드 성공 시
+          final TaskSnapshot taskSnapshot =
+              await uploadTask.whenComplete(() {});
+
+          // 사진의 다운로드 가능한 url을 불러온 후
+          final url = await taskSnapshot.ref.getDownloadURL();
+
+          // product 컬렉션 내 productId 문서에 데이터 저장
+          await FirebaseFirestore.instance
+              .collection('chat') // chat 컬렉션에서
+              .doc(uid) // 자신의 UID 문서 내
+              .update({
+            userUID: FieldValue.arrayUnion([
+              {
+                'type': 'image',
+                'send_time': DateTime.now(),
+                'sender': uid,
+                'image': url,
+              }
+            ])
+          });
+          await FirebaseFirestore.instance
+              .collection('chat') // chat 컬렉션에서
+              .doc(userUID) // 상대 UID의 문서 내
+              .update({
+            uid!: FieldValue.arrayUnion([
+              {
+                'type': 'image',
+                'send_time': DateTime.now(),
+                'sender': uid,
+                'image': url,
+              }
+            ])
+          });
+        });
+      } catch (e) {
+        WarningSnackBar.show(
+          context: context,
+          text: '사진을 불러오는 중 실패했어요.',
+          paddingBottom: 0,
+        );
+        debugPrint(e.toString());
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -130,11 +267,13 @@ class ChatScreen extends StatelessWidget {
                                               .position.maxScrollExtent -
                                           (MediaQuery.of(context).size.height *
                                               0.05865))) {
-                                    Timer(const Duration(milliseconds: 50), () {
+                                    Timer(const Duration(milliseconds: 350),
+                                        () {
                                       if (scrollController.hasClients) {
                                         scrollController.jumpTo(
                                           scrollController
-                                              .position.maxScrollExtent,
+                                                  .position.maxScrollExtent *
+                                              1.5,
                                         );
                                       }
                                     });
@@ -148,145 +287,314 @@ class ChatScreen extends StatelessWidget {
                                     itemCount:
                                         snapshot.data!.data()![userUID].length,
                                     itemBuilder: ((context, index) {
+                                      // Text Type
                                       if (snapshot.data!.data()![userUID][index]
-                                              ['sender'] ==
-                                          uid) {
-                                        return Column(
-                                          children: [
-                                            index == 0 ||
-                                                    snapshot.data!
-                                                            .data()![userUID]
-                                                                [index - 1]
-                                                                ['send_time']
-                                                            .toDate()
-                                                            .day !=
-                                                        snapshot.data!
-                                                            .data()![userUID]
-                                                                [index]
-                                                                ['send_time']
-                                                            .toDate()
-                                                            .day
-                                                ? Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: index == 0
-                                                            ? 27.5.h
-                                                            : 22.5.h,
-                                                        bottom: 22.5.h),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.52162,
-                                                          height: 30.h,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: dmGrey,
-                                                            borderRadius:
-                                                                // 타원형
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        3.40e+38),
-                                                          ),
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                            DateFormat(
-                                                                    'yyyy년 M월 d일 EEEE',
-                                                                    'ko_KR')
-                                                                .format(
-                                                              snapshot.data!
+                                              ['type'] ==
+                                          'text') {
+                                        if (snapshot.data!.data()![userUID]
+                                                [index]['sender'] ==
+                                            uid) {
+                                          return Column(
+                                            children: [
+                                              index == 0 ||
+                                                      snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index - 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
+                                                          snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index == 0
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.52162,
+                                                            height: 30.h,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: dmGrey,
+                                                              borderRadius:
+                                                                  // 타원형
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3.40e+38),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              DateFormat(
+                                                                      'yyyy년 M월 d일 EEEE',
+                                                                      'ko_KR')
+                                                                  .format(
+                                                                snapshot.data!
+                                                                    .data()![
+                                                                        userUID]
+                                                                        [index][
+                                                                        'send_time']
+                                                                    .toDate(),
+                                                              ),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmWhite,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          index == snapshot.data!.data()![userUID].length - 1 ||
+                                                                  snapshot.data!.data()![userUID][index][
+                                                                          'sender'] !=
+                                                                      snapshot.data!.data()![userUID][index + 1][
+                                                                          'sender'] ||
+                                                                  snapshot.data!
+                                                                          .data()![userUID]
+                                                                              [index][
+                                                                              'send_time']
+                                                                          .toDate()
+                                                                          .minute !=
+                                                                      snapshot
+                                                                          .data!
+                                                                          .data()![userUID]
+                                                                              [index + 1]
+                                                                              ['send_time']
+                                                                          .toDate()
+                                                                          .minute
+                                                              ? Text(
+                                                                  DateFormat(
+                                                                          'a h:mm',
+                                                                          'ko_KR')
+                                                                      .format(
+                                                                    snapshot
+                                                                        .data!
+                                                                        .data()![
+                                                                            userUID]
+                                                                            [
+                                                                            index]
+                                                                            [
+                                                                            'send_time']
+                                                                        .toDate(),
+                                                                  ),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Pretendard',
+                                                                    fontSize:
+                                                                        14.sp,
+                                                                    fontWeight:
+                                                                        medium,
+                                                                    color:
+                                                                        dmDarkGrey,
+                                                                  ),
+                                                                )
+                                                              : const SizedBox(),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10.w,
+                                                      ),
+                                                      snapshot.data!
+                                                                      .data()![
+                                                                          userUID]
+                                                                          [
+                                                                          index]
+                                                                          [
+                                                                          'text']
+                                                                      .length >=
+                                                                  2 &&
+                                                              snapshot
+                                                                      .data!
+                                                                      .data()![
+                                                                          userUID]
+                                                                          [
+                                                                          index]
+                                                                          [
+                                                                          'text']
+                                                                      .length <=
+                                                                  6 &&
+                                                              snapshot
+                                                                  .data!
                                                                   .data()![
                                                                       userUID]
-                                                                      [index][
-                                                                      'send_time']
-                                                                  .toDate(),
-                                                            ),
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  medium,
-                                                              color: dmWhite,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  )
-                                                : const SizedBox(),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 5.h),
-                                              child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        index == snapshot.data!.data()![userUID].length - 1 ||
-                                                                snapshot.data!.data()![userUID][index][
-                                                                        'sender'] !=
-                                                                    snapshot.data!.data()![userUID]
-                                                                            [index + 1][
-                                                                        'sender'] ||
-                                                                snapshot.data!
-                                                                        .data()![userUID]
-                                                                            [index][
-                                                                            'send_time']
-                                                                        .toDate()
-                                                                        .minute !=
-                                                                    snapshot.data!
-                                                                        .data()![userUID]
-                                                                            [index + 1]
-                                                                            ['send_time']
-                                                                        .toDate()
-                                                                        .minute
-                                                            ? Text(
-                                                                DateFormat(
-                                                                        'a h:mm',
-                                                                        'ko_KR')
-                                                                    .format(
+                                                                      [index]
+                                                                      ['text']
+                                                                  .contains(
+                                                                      emojiRegex())
+                                                          ? Text(
+                                                              snapshot.data!
+                                                                          .data()![
+                                                                      userUID][
+                                                                  index]['text'],
+                                                              style: TextStyle(
+                                                                fontSize: 60.sp,
+                                                              ),
+                                                            )
+                                                          : Container(
+                                                              constraints: BoxConstraints(
+                                                                  maxWidth: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.6234),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: dmBlue,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.r),
+                                                              ),
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 10
+                                                                            .w,
+                                                                        vertical:
+                                                                            10.h),
+                                                                child: Text(
                                                                   snapshot.data!
+                                                                              .data()![
+                                                                          userUID]
+                                                                      [
+                                                                      index]['text'],
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Pretendard',
+                                                                    fontSize:
+                                                                        18.sp,
+                                                                    fontWeight:
+                                                                        medium,
+                                                                    color:
+                                                                        dmWhite,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )
+                                                    ]),
+                                              )
+                                            ],
+                                          );
+                                        } else {
+                                          return Column(
+                                            children: [
+                                              index == 0 ||
+                                                      snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index - 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
+                                                          snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index == 0
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.52162,
+                                                            height: 30.h,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: dmGrey,
+                                                              borderRadius:
+                                                                  // 타원형
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3.40e+38),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              DateFormat(
+                                                                      'yyyy년 M월 d일 EEEE',
+                                                                      'ko_KR')
+                                                                  .format(snapshot
+                                                                      .data!
                                                                       .data()![
                                                                           userUID]
                                                                           [
                                                                           index]
                                                                           [
                                                                           'send_time']
-                                                                      .toDate(),
-                                                                ),
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'Pretendard',
-                                                                  fontSize:
-                                                                      14.sp,
-                                                                  fontWeight:
-                                                                      medium,
-                                                                  color:
-                                                                      dmDarkGrey,
-                                                                ),
-                                                              )
-                                                            : const SizedBox(),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10.w,
-                                                    ),
+                                                                      .toDate()),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmWhite,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
                                                     snapshot.data!
                                                                     .data()![
                                                                         userUID]
@@ -319,7 +627,8 @@ class ChatScreen extends StatelessWidget {
                                                                     0.6234),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: dmBlue,
+                                                              color:
+                                                                  dmLightGrey,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -347,202 +656,424 @@ class ChatScreen extends StatelessWidget {
                                                                   fontWeight:
                                                                       medium,
                                                                   color:
-                                                                      dmWhite,
+                                                                      dmBlack,
                                                                 ),
                                                               ),
                                                             ),
-                                                          )
-                                                  ]),
-                                            )
-                                          ],
-                                        );
-                                      } else {
-                                        return Column(
-                                          children: [
-                                            index == 0 ||
-                                                    snapshot.data!
-                                                            .data()![userUID]
-                                                                [index - 1]
-                                                                ['send_time']
-                                                            .toDate()
-                                                            .day !=
-                                                        snapshot.data!
-                                                            .data()![userUID]
-                                                                [index]
-                                                                ['send_time']
-                                                            .toDate()
-                                                            .day
-                                                ? Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: index == 0
-                                                            ? 27.5.h
-                                                            : 22.5.h,
-                                                        bottom: 22.5.h),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.52162,
-                                                          height: 30.h,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: dmGrey,
-                                                            borderRadius:
-                                                                // 타원형
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        3.40e+38),
                                                           ),
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                            DateFormat(
-                                                                    'yyyy년 M월 d일 EEEE',
-                                                                    'ko_KR')
-                                                                .format(snapshot
-                                                                    .data!
-                                                                    .data()![
-                                                                        userUID]
+                                                    SizedBox(
+                                                      width: 10.w,
+                                                    ),
+                                                    index == snapshot.data!.data()![userUID].length - 1 ||
+                                                            snapshot.data!.data()![userUID][index][
+                                                                    'sender'] !=
+                                                                snapshot.data!.data()![userUID][index + 1][
+                                                                    'sender'] ||
+                                                            snapshot.data!
+                                                                    .data()![userUID]
                                                                         [index][
                                                                         'send_time']
-                                                                    .toDate()),
+                                                                    .toDate()
+                                                                    .minute !=
+                                                                snapshot.data!
+                                                                    .data()![userUID]
+                                                                        [index + 1]
+                                                                        ['send_time']
+                                                                    .toDate()
+                                                                    .minute
+                                                        ? Text(
+                                                            DateFormat('a h:mm',
+                                                                    'ko_KR')
+                                                                .format(
+                                                              snapshot.data!
+                                                                  .data()![
+                                                                      userUID]
+                                                                      [index][
+                                                                      'send_time']
+                                                                  .toDate(),
+                                                            ),
                                                             style: TextStyle(
                                                               fontFamily:
                                                                   'Pretendard',
                                                               fontSize: 14.sp,
                                                               fontWeight:
                                                                   medium,
-                                                              color: dmWhite,
+                                                              color: dmDarkGrey,
                                                             ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : const SizedBox(),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 5.h),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  snapshot.data!
-                                                                  .data()![
-                                                                      userUID]
-                                                                      [index]
-                                                                      ['text']
-                                                                  .length ==
-                                                              2 &&
+                                                          )
+                                                        : const SizedBox()
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        }
+                                      }
+                                      // Image Type
+                                      else if (snapshot.data!.data()![userUID]
+                                              [index]['type'] ==
+                                          'image') {
+                                        if (snapshot.data!.data()![userUID]
+                                                [index]['sender'] ==
+                                            uid) {
+                                          return Column(
+                                            children: [
+                                              index == 0 ||
+                                                      snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index - 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
                                                           snapshot.data!
                                                               .data()![userUID]
                                                                   [index]
-                                                                  ['text']
-                                                              .contains(
-                                                                  emojiRegex())
-                                                      ? Text(
-                                                          snapshot.data!
-                                                                      .data()![
-                                                                  userUID]
-                                                              [index]['text'],
-                                                          style: TextStyle(
-                                                            fontSize: 60.sp,
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index == 0
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.52162,
+                                                            height: 30.h,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: dmGrey,
+                                                              borderRadius:
+                                                                  // 타원형
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3.40e+38),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              DateFormat(
+                                                                      'yyyy년 M월 d일 EEEE',
+                                                                      'ko_KR')
+                                                                  .format(
+                                                                snapshot.data!
+                                                                    .data()![
+                                                                        userUID]
+                                                                        [index][
+                                                                        'send_time']
+                                                                    .toDate(),
+                                                              ),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmWhite,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          index == snapshot.data!.data()![userUID].length - 1 ||
+                                                                  snapshot.data!.data()![userUID][index][
+                                                                          'sender'] !=
+                                                                      snapshot.data!.data()![userUID][index + 1][
+                                                                          'sender'] ||
+                                                                  snapshot.data!
+                                                                          .data()![userUID]
+                                                                              [index][
+                                                                              'send_time']
+                                                                          .toDate()
+                                                                          .minute !=
+                                                                      snapshot
+                                                                          .data!
+                                                                          .data()![userUID]
+                                                                              [index + 1]
+                                                                              ['send_time']
+                                                                          .toDate()
+                                                                          .minute
+                                                              ? Text(
+                                                                  DateFormat(
+                                                                          'a h:mm',
+                                                                          'ko_KR')
+                                                                      .format(
+                                                                    snapshot
+                                                                        .data!
+                                                                        .data()![
+                                                                            userUID]
+                                                                            [
+                                                                            index]
+                                                                            [
+                                                                            'send_time']
+                                                                        .toDate(),
+                                                                  ),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Pretendard',
+                                                                    fontSize:
+                                                                        14.sp,
+                                                                    fontWeight:
+                                                                        medium,
+                                                                    color:
+                                                                        dmDarkGrey,
+                                                                  ),
+                                                                )
+                                                              : const SizedBox(),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10.w,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          context.pushNamed(
+                                                            'imageviewer',
+                                                            queryParams: {
+                                                              'src': snapshot
+                                                                          .data!
+                                                                          .data()![
+                                                                      userUID][
+                                                                  index]['image']
+                                                            },
+                                                          );
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.r),
+                                                          child: Container(
+                                                            constraints: BoxConstraints(
+                                                                maxWidth: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.6234,
+                                                                maxHeight: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height *
+                                                                    0.44601),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color: dmBlue,
+                                                            ),
+                                                            child:
+                                                                Image.network(
+                                                              snapshot.data!
+                                                                          .data()![
+                                                                      userUID][
+                                                                  index]['image'],
+                                                            ),
                                                           ),
-                                                        )
-                                                      : Container(
+                                                        ),
+                                                      ),
+                                                    ]),
+                                              )
+                                            ],
+                                          );
+                                        } else {
+                                          return Column(
+                                            children: [
+                                              index == 0 ||
+                                                      snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index - 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
+                                                          snapshot.data!
+                                                              .data()![userUID]
+                                                                  [index]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index == 0
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.52162,
+                                                            height: 30.h,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: dmGrey,
+                                                              borderRadius:
+                                                                  // 타원형
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3.40e+38),
+                                                            ),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              DateFormat(
+                                                                      'yyyy년 M월 d일 EEEE',
+                                                                      'ko_KR')
+                                                                  .format(snapshot
+                                                                      .data!
+                                                                      .data()![
+                                                                          userUID]
+                                                                          [
+                                                                          index]
+                                                                          [
+                                                                          'send_time']
+                                                                      .toDate()),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmWhite,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        context.pushNamed(
+                                                          'imageviewer',
+                                                          queryParams: {
+                                                            'src': snapshot
+                                                                        .data!
+                                                                        .data()![
+                                                                    userUID]
+                                                                [index]['image']
+                                                          },
+                                                        );
+                                                      },
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.r),
+                                                        child: Container(
                                                           constraints: BoxConstraints(
                                                               maxWidth: MediaQuery.of(
                                                                           context)
                                                                       .size
                                                                       .width *
-                                                                  0.6234),
+                                                                  0.6234,
+                                                              maxHeight: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.44601),
                                                           decoration:
-                                                              BoxDecoration(
-                                                            color: dmLightGrey,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.r),
+                                                              const BoxDecoration(
+                                                            color: dmBlue,
                                                           ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10.w,
-                                                                    vertical:
-                                                                        10.h),
-                                                            child: Text(
-                                                              snapshot.data!
-                                                                          .data()![
-                                                                      userUID][
-                                                                  index]['text'],
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Pretendard',
-                                                                fontSize: 18.sp,
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: dmBlack,
-                                                              ),
-                                                            ),
+                                                          child: Image.network(
+                                                            snapshot.data!
+                                                                        .data()![
+                                                                    userUID][
+                                                                index]['image'],
                                                           ),
                                                         ),
-                                                  SizedBox(
-                                                    width: 10.w,
-                                                  ),
-                                                  index == snapshot.data!.data()![userUID].length - 1 ||
-                                                          snapshot.data!.data()![userUID]
-                                                                      [index]
-                                                                  ['sender'] !=
-                                                              snapshot.data!.data()![userUID]
-                                                                      [index + 1]
-                                                                  ['sender'] ||
-                                                          snapshot.data!
-                                                                  .data()![userUID]
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10.w,
+                                                    ),
+                                                    index == snapshot.data!.data()![userUID].length - 1 ||
+                                                            snapshot.data!.data()![userUID][index][
+                                                                    'sender'] !=
+                                                                snapshot.data!.data()![userUID][index + 1][
+                                                                    'sender'] ||
+                                                            snapshot.data!
+                                                                    .data()![userUID]
+                                                                        [index][
+                                                                        'send_time']
+                                                                    .toDate()
+                                                                    .minute !=
+                                                                snapshot.data!
+                                                                    .data()![userUID]
+                                                                        [index + 1]
+                                                                        ['send_time']
+                                                                    .toDate()
+                                                                    .minute
+                                                        ? Text(
+                                                            DateFormat('a h:mm',
+                                                                    'ko_KR')
+                                                                .format(
+                                                              snapshot.data!
+                                                                  .data()![
+                                                                      userUID]
                                                                       [index][
                                                                       'send_time']
-                                                                  .toDate()
-                                                                  .minute !=
-                                                              snapshot.data!
-                                                                  .data()![userUID]
-                                                                      [index + 1]
-                                                                      ['send_time']
-                                                                  .toDate()
-                                                                  .minute
-                                                      ? Text(
-                                                          DateFormat('a h:mm',
-                                                                  'ko_KR')
-                                                              .format(
-                                                            snapshot.data!
-                                                                .data()![
-                                                                    userUID]
-                                                                    [index][
-                                                                    'send_time']
-                                                                .toDate(),
-                                                          ),
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 14.sp,
-                                                            fontWeight: medium,
-                                                            color: dmDarkGrey,
-                                                          ),
-                                                        )
-                                                      : const SizedBox()
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        );
+                                                                  .toDate(),
+                                                            ),
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Pretendard',
+                                                              fontSize: 14.sp,
+                                                              fontWeight:
+                                                                  medium,
+                                                              color: dmDarkGrey,
+                                                            ),
+                                                          )
+                                                        : const SizedBox()
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        }
                                       }
+                                      return null;
                                     }),
                                   ),
                                 );
@@ -592,9 +1123,20 @@ class ChatScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    AlertDialogWidget.twoButtons(
+                                      context: context,
+                                      content: "사진을 선택해주세요!",
+                                      button: ["앨범에서 선택", "카메라로 촬영"],
+                                      color: [dmBlue, dmBlue],
+                                      action: [
+                                        onTapAddPhotoFromAlbum,
+                                        onTapAddPhotoFromCamera,
+                                      ],
+                                    );
+                                  },
                                   child: Image.asset(
-                                    'assets/images/icons/icon_chat_plus.png',
+                                    'assets/images/icons/icon_camera_grey.png',
                                     width: 25.w,
                                     height: 25.h,
                                   ),
@@ -687,12 +1229,13 @@ class ChatScreen extends StatelessWidget {
                                       chatController.text = '';
                                       WidgetsBinding.instance
                                           .addPostFrameCallback((_) {
-                                        Timer(const Duration(milliseconds: 50),
+                                        Timer(const Duration(milliseconds: 350),
                                             () {
                                           if (scrollController.hasClients) {
                                             scrollController.jumpTo(
-                                              scrollController
-                                                  .position.maxScrollExtent,
+                                              scrollController.position
+                                                      .maxScrollExtent *
+                                                  1.5,
                                             );
                                           }
                                         });

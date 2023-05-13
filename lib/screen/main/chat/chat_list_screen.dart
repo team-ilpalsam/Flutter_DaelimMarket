@@ -152,8 +152,13 @@ class ChatListScreen extends StatelessWidget {
                                                 SizedBox(height: 3.h),
                                                 Text(
                                                   chatList[index]
-                                                      .value
-                                                      .last['text'],
+                                                              .value
+                                                              .last['type'] ==
+                                                          'text'
+                                                      ? chatList[index]
+                                                          .value
+                                                          .last['text']
+                                                      : '이미지를 보냈습니다.',
                                                   overflow: TextOverflow
                                                       .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
                                                   maxLines: 1,
