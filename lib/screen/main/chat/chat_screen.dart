@@ -261,11 +261,12 @@ class ChatScreen extends StatelessWidget {
                                     itemBuilder: ((context, index) {
                                       // Text Type
                                       if (data[index]['type'] == 'text') {
+                                        // 자신이 보냈을 경우
                                         if (data[index]['sender'] == uid) {
                                           return Column(
                                             children: [
-                                              index == 0 ||
-                                                      data[index - 1]
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day !=
@@ -275,7 +276,9 @@ class ChatScreen extends StatelessWidget {
                                                               .day
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: index == 0
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
@@ -342,19 +345,17 @@ class ChatScreen extends StatelessWidget {
                                                             CrossAxisAlignment
                                                                 .end,
                                                         children: [
-                                                          index ==
-                                                                      data.length -
-                                                                          1 ||
+                                                          index == 0 ||
                                                                   data[index][
                                                                           'sender'] !=
-                                                                      data[index +
+                                                                      data[index -
                                                                               1]
                                                                           [
                                                                           'sender'] ||
                                                                   data[index]['send_time']
                                                                           .toDate()
                                                                           .minute !=
-                                                                      data[index + 1]
+                                                                      data[index - 1]
                                                                               [
                                                                               'send_time']
                                                                           .toDate()
@@ -446,7 +447,9 @@ class ChatScreen extends StatelessWidget {
                                               )
                                             ],
                                           );
-                                        } else {
+                                        }
+                                        // 타인이 보냈을 경우
+                                        else {
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
@@ -522,16 +525,16 @@ class ChatScreen extends StatelessWidget {
                                                       CrossAxisAlignment.end,
                                                   children: [
                                                     data[index]['text']
-                                                                    .length ==
+                                                                    .length >=
                                                                 2 &&
+                                                            data[index]['text']
+                                                                    .length <=
+                                                                6 &&
                                                             data[index]['text']
                                                                 .contains(
                                                                     emojiRegex())
                                                         ? Text(
-                                                            snapshot.data!
-                                                                        .data()![
-                                                                    userUID]
-                                                                [index]['text'],
+                                                            data[index]['text'],
                                                             style: TextStyle(
                                                               fontSize: 60.sp,
                                                             ),
@@ -579,15 +582,15 @@ class ChatScreen extends StatelessWidget {
                                                     SizedBox(
                                                       width: 10.w,
                                                     ),
-                                                    index == data.length - 1 ||
+                                                    index == 0 ||
                                                             data[index][
                                                                     'sender'] !=
-                                                                data[index + 1][
+                                                                data[index - 1][
                                                                     'sender'] ||
                                                             data[index]['send_time']
                                                                     .toDate()
                                                                     .minute !=
-                                                                data[index + 1][
+                                                                data[index - 1][
                                                                         'send_time']
                                                                     .toDate()
                                                                     .minute
@@ -618,6 +621,7 @@ class ChatScreen extends StatelessWidget {
                                       }
                                       // Image Type
                                       else if (data[index]['type'] == 'image') {
+                                        // 자신이 보냈을 경우
                                         if (data[index]['sender'] == uid) {
                                           return Column(
                                             children: [
@@ -701,19 +705,17 @@ class ChatScreen extends StatelessWidget {
                                                             CrossAxisAlignment
                                                                 .end,
                                                         children: [
-                                                          index ==
-                                                                      data.length -
-                                                                          1 ||
+                                                          index == 0 ||
                                                                   data[index][
                                                                           'sender'] !=
-                                                                      data[index +
+                                                                      data[index -
                                                                               1]
                                                                           [
                                                                           'sender'] ||
                                                                   data[index]['send_time']
                                                                           .toDate()
                                                                           .minute !=
-                                                                      data[index + 1]
+                                                                      data[index - 1]
                                                                               [
                                                                               'send_time']
                                                                           .toDate()
@@ -796,7 +798,9 @@ class ChatScreen extends StatelessWidget {
                                               )
                                             ],
                                           );
-                                        } else {
+                                        }
+                                        // 타인이 보냈을 경우
+                                        else {
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
