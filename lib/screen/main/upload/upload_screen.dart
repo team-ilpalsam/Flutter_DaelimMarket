@@ -12,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -272,7 +271,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                           onTap: () {
                                             AlertDialogWidget.twoButtons(
                                               context: context,
-                                              content: "프로필 사진을 선택해주세요!",
+                                              content: "사진을 선택해주세요!",
                                               button: ["앨범에서 선택", "카메라로 촬영"],
                                               color: [dmBlue, dmBlue],
                                               action: [
