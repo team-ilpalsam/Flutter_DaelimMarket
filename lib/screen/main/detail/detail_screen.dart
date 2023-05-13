@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
@@ -177,8 +178,13 @@ class _DetailScreenState extends State<DetailScreen> {
                                                         .size
                                                         .width *
                                                     0.881,
-                                                child: Image.network(
-                                                  value,
+                                                child: CachedNetworkImage(
+                                                  fadeInDuration: Duration.zero,
+                                                  fadeOutDuration:
+                                                      Duration.zero,
+                                                  imageUrl: value,
+                                                  placeholder: (context, url) =>
+                                                      const CupertinoActivityIndicator(),
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
