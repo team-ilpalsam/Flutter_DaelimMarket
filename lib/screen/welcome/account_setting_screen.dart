@@ -162,7 +162,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                           LengthLimitingTextInputFormatter(12),
                         ],
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
 

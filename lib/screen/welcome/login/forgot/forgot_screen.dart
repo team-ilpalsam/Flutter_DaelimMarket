@@ -94,7 +94,7 @@ class _ForgotScreen extends State<ForgotScreen> {
                         onChanged: (value) => debugPrint('이메일: $value'),
                         cursorHeight: 24.h,
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(

@@ -102,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextField(
                         controller: emailController,
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -136,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: passwordController,
                         obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -159,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         cursorHeight: 24.h,
                         obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
