@@ -1,11 +1,12 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:emoji_regex/emoji_regex.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -25,20 +26,9 @@ class ChatScreen extends StatelessWidget {
   ChatScreen({super.key, required this.userUID});
 
   TextEditingController chatController = TextEditingController();
-  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Timer(const Duration(milliseconds: 500), () {
-        if (scrollController.hasClients) {
-          scrollController.jumpTo(
-            scrollController.position.maxScrollExtent * 1.5,
-          );
-        }
-      });
-    });
-
     onTapAddPhotoFromAlbum() async {
       Navigator.pop(context);
       try {
@@ -258,54 +248,28 @@ class ChatScreen extends StatelessWidget {
                                 .doc(uid)
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  snapshot.data!.data()![userUID] != null) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  if (scrollController.position.pixels >=
-                                      (scrollController
-                                              .position.maxScrollExtent -
-                                          (MediaQuery.of(context).size.height *
-                                              0.05865))) {
-                                    Timer(const Duration(milliseconds: 350),
-                                        () {
-                                      if (scrollController.hasClients) {
-                                        scrollController.jumpTo(
-                                          scrollController
-                                                  .position.maxScrollExtent *
-                                              1.5,
-                                        );
-                                      }
-                                    });
-                                  }
-                                });
+                              final originData = snapshot.data?.data()?[userUID]
+                                  as List<dynamic>?;
+                              final data = originData?.reversed.toList();
+                              if (snapshot.hasData && data != null) {
                                 return ScrollConfiguration(
                                   behavior: MyBehavior(),
                                   child: ListView.builder(
-                                    controller: scrollController,
+                                    reverse: true,
                                     scrollDirection: Axis.vertical,
-                                    itemCount:
-                                        snapshot.data!.data()![userUID].length,
+                                    itemCount: data.length,
                                     itemBuilder: ((context, index) {
                                       // Text Type
-                                      if (snapshot.data!.data()![userUID][index]
-                                              ['type'] ==
-                                          'text') {
-                                        if (snapshot.data!.data()![userUID]
-                                                [index]['sender'] ==
-                                            uid) {
+                                      if (data[index]['type'] == 'text') {
+                                        if (data[index]['sender'] == uid) {
                                           return Column(
                                             children: [
                                               index == 0 ||
-                                                      snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index - 1]
+                                                      data[index - 1]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day !=
-                                                          snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index]
+                                                          data[index]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day
@@ -343,10 +307,7 @@ class ChatScreen extends StatelessWidget {
                                                                       'yyyy년 M월 d일 EEEE',
                                                                       'ko_KR')
                                                                   .format(
-                                                                snapshot.data!
-                                                                    .data()![
-                                                                        userUID]
-                                                                        [index][
+                                                                data[index][
                                                                         'send_time']
                                                                     .toDate(),
                                                               ),
@@ -381,22 +342,21 @@ class ChatScreen extends StatelessWidget {
                                                             CrossAxisAlignment
                                                                 .end,
                                                         children: [
-                                                          index == snapshot.data!.data()![userUID].length - 1 ||
-                                                                  snapshot.data!.data()![userUID][index][
+                                                          index ==
+                                                                      data.length -
+                                                                          1 ||
+                                                                  data[index][
                                                                           'sender'] !=
-                                                                      snapshot.data!.data()![userUID][index + 1][
+                                                                      data[index +
+                                                                              1]
+                                                                          [
                                                                           'sender'] ||
-                                                                  snapshot.data!
-                                                                          .data()![userUID]
-                                                                              [index][
-                                                                              'send_time']
+                                                                  data[index]['send_time']
                                                                           .toDate()
                                                                           .minute !=
-                                                                      snapshot
-                                                                          .data!
-                                                                          .data()![userUID]
-                                                                              [index + 1]
-                                                                              ['send_time']
+                                                                      data[index + 1]
+                                                                              [
+                                                                              'send_time']
                                                                           .toDate()
                                                                           .minute
                                                               ? Text(
@@ -404,13 +364,7 @@ class ChatScreen extends StatelessWidget {
                                                                           'a h:mm',
                                                                           'ko_KR')
                                                                       .format(
-                                                                    snapshot
-                                                                        .data!
-                                                                        .data()![
-                                                                            userUID]
-                                                                            [
-                                                                            index]
-                                                                            [
+                                                                    data[index][
                                                                             'send_time']
                                                                         .toDate(),
                                                                   ),
@@ -432,38 +386,19 @@ class ChatScreen extends StatelessWidget {
                                                       SizedBox(
                                                         width: 10.w,
                                                       ),
-                                                      snapshot.data!
-                                                                      .data()![
-                                                                          userUID]
-                                                                          [
-                                                                          index]
-                                                                          [
-                                                                          'text']
+                                                      data[index]['text']
                                                                       .length >=
                                                                   2 &&
-                                                              snapshot
-                                                                      .data!
-                                                                      .data()![
-                                                                          userUID]
-                                                                          [
-                                                                          index]
-                                                                          [
-                                                                          'text']
+                                                              data[index]['text']
                                                                       .length <=
                                                                   6 &&
-                                                              snapshot
-                                                                  .data!
-                                                                  .data()![
-                                                                      userUID]
-                                                                      [index]
+                                                              data[index]
                                                                       ['text']
                                                                   .contains(
                                                                       emojiRegex())
                                                           ? Text(
-                                                              snapshot.data!
-                                                                          .data()![
-                                                                      userUID][
-                                                                  index]['text'],
+                                                              data[index]
+                                                                  ['text'],
                                                               style: TextStyle(
                                                                 fontSize: 60.sp,
                                                               ),
@@ -491,11 +426,8 @@ class ChatScreen extends StatelessWidget {
                                                                         vertical:
                                                                             10.h),
                                                                 child: Text(
-                                                                  snapshot.data!
-                                                                              .data()![
-                                                                          userUID]
-                                                                      [
-                                                                      index]['text'],
+                                                                  data[index]
+                                                                      ['text'],
                                                                   style:
                                                                       TextStyle(
                                                                     fontFamily:
@@ -517,22 +449,20 @@ class ChatScreen extends StatelessWidget {
                                         } else {
                                           return Column(
                                             children: [
-                                              index == 0 ||
-                                                      snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index - 1]
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day !=
-                                                          snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index]
+                                                          data[index]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: index == 0
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
@@ -563,12 +493,8 @@ class ChatScreen extends StatelessWidget {
                                                               DateFormat(
                                                                       'yyyy년 M월 d일 EEEE',
                                                                       'ko_KR')
-                                                                  .format(snapshot
-                                                                      .data!
-                                                                      .data()![
-                                                                          userUID]
-                                                                          [
-                                                                          index]
+                                                                  .format(data[
+                                                                              index]
                                                                           [
                                                                           'send_time']
                                                                       .toDate()),
@@ -595,18 +521,10 @@ class ChatScreen extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
-                                                    snapshot.data!
-                                                                    .data()![
-                                                                        userUID]
-                                                                        [index]
-                                                                        ['text']
+                                                    data[index]['text']
                                                                     .length ==
                                                                 2 &&
-                                                            snapshot.data!
-                                                                .data()![
-                                                                    userUID]
-                                                                    [index]
-                                                                    ['text']
+                                                            data[index]['text']
                                                                 .contains(
                                                                     emojiRegex())
                                                         ? Text(
@@ -642,11 +560,8 @@ class ChatScreen extends StatelessWidget {
                                                                       vertical:
                                                                           10.h),
                                                               child: Text(
-                                                                snapshot.data!
-                                                                            .data()![
-                                                                        userUID]
-                                                                    [
-                                                                    index]['text'],
+                                                                data[index]
+                                                                    ['text'],
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -664,31 +579,23 @@ class ChatScreen extends StatelessWidget {
                                                     SizedBox(
                                                       width: 10.w,
                                                     ),
-                                                    index == snapshot.data!.data()![userUID].length - 1 ||
-                                                            snapshot.data!.data()![userUID][index][
+                                                    index == data.length - 1 ||
+                                                            data[index][
                                                                     'sender'] !=
-                                                                snapshot.data!.data()![userUID][index + 1][
+                                                                data[index + 1][
                                                                     'sender'] ||
-                                                            snapshot.data!
-                                                                    .data()![userUID]
-                                                                        [index][
-                                                                        'send_time']
+                                                            data[index]['send_time']
                                                                     .toDate()
                                                                     .minute !=
-                                                                snapshot.data!
-                                                                    .data()![userUID]
-                                                                        [index + 1]
-                                                                        ['send_time']
+                                                                data[index + 1][
+                                                                        'send_time']
                                                                     .toDate()
                                                                     .minute
                                                         ? Text(
                                                             DateFormat('a h:mm',
                                                                     'ko_KR')
                                                                 .format(
-                                                              snapshot.data!
-                                                                  .data()![
-                                                                      userUID]
-                                                                      [index][
+                                                              data[index][
                                                                       'send_time']
                                                                   .toDate(),
                                                             ),
@@ -710,30 +617,24 @@ class ChatScreen extends StatelessWidget {
                                         }
                                       }
                                       // Image Type
-                                      else if (snapshot.data!.data()![userUID]
-                                              [index]['type'] ==
-                                          'image') {
-                                        if (snapshot.data!.data()![userUID]
-                                                [index]['sender'] ==
-                                            uid) {
+                                      else if (data[index]['type'] == 'image') {
+                                        if (data[index]['sender'] == uid) {
                                           return Column(
                                             children: [
-                                              index == 0 ||
-                                                      snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index - 1]
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day !=
-                                                          snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index]
+                                                          data[index]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: index == 0
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
@@ -765,10 +666,7 @@ class ChatScreen extends StatelessWidget {
                                                                       'yyyy년 M월 d일 EEEE',
                                                                       'ko_KR')
                                                                   .format(
-                                                                snapshot.data!
-                                                                    .data()![
-                                                                        userUID]
-                                                                        [index][
+                                                                data[index][
                                                                         'send_time']
                                                                     .toDate(),
                                                               ),
@@ -803,22 +701,21 @@ class ChatScreen extends StatelessWidget {
                                                             CrossAxisAlignment
                                                                 .end,
                                                         children: [
-                                                          index == snapshot.data!.data()![userUID].length - 1 ||
-                                                                  snapshot.data!.data()![userUID][index][
+                                                          index ==
+                                                                      data.length -
+                                                                          1 ||
+                                                                  data[index][
                                                                           'sender'] !=
-                                                                      snapshot.data!.data()![userUID][index + 1][
+                                                                      data[index +
+                                                                              1]
+                                                                          [
                                                                           'sender'] ||
-                                                                  snapshot.data!
-                                                                          .data()![userUID]
-                                                                              [index][
-                                                                              'send_time']
+                                                                  data[index]['send_time']
                                                                           .toDate()
                                                                           .minute !=
-                                                                      snapshot
-                                                                          .data!
-                                                                          .data()![userUID]
-                                                                              [index + 1]
-                                                                              ['send_time']
+                                                                      data[index + 1]
+                                                                              [
+                                                                              'send_time']
                                                                           .toDate()
                                                                           .minute
                                                               ? Text(
@@ -826,13 +723,7 @@ class ChatScreen extends StatelessWidget {
                                                                           'a h:mm',
                                                                           'ko_KR')
                                                                       .format(
-                                                                    snapshot
-                                                                        .data!
-                                                                        .data()![
-                                                                            userUID]
-                                                                            [
-                                                                            index]
-                                                                            [
+                                                                    data[index][
                                                                             'send_time']
                                                                         .toDate(),
                                                                   ),
@@ -859,11 +750,8 @@ class ChatScreen extends StatelessWidget {
                                                           context.pushNamed(
                                                             'imageviewer',
                                                             queryParams: {
-                                                              'src': snapshot
-                                                                          .data!
-                                                                          .data()![
-                                                                      userUID][
-                                                                  index]['image']
+                                                              'src': data[index]
+                                                                  ['image']
                                                             },
                                                           );
                                                         },
@@ -886,14 +774,20 @@ class ChatScreen extends StatelessWidget {
                                                                     0.44601),
                                                             decoration:
                                                                 const BoxDecoration(
-                                                              color: dmBlue,
+                                                              color: dmWhite,
                                                             ),
                                                             child:
-                                                                Image.network(
-                                                              snapshot.data!
-                                                                          .data()![
-                                                                      userUID][
-                                                                  index]['image'],
+                                                                CachedNetworkImage(
+                                                              imageUrl:
+                                                                  data[index]
+                                                                      ['image'],
+                                                              placeholder: (context,
+                                                                      url) =>
+                                                                  const CupertinoActivityIndicator(),
+                                                              fadeInDuration:
+                                                                  Duration.zero,
+                                                              fadeOutDuration:
+                                                                  Duration.zero,
                                                             ),
                                                           ),
                                                         ),
@@ -905,22 +799,20 @@ class ChatScreen extends StatelessWidget {
                                         } else {
                                           return Column(
                                             children: [
-                                              index == 0 ||
-                                                      snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index - 1]
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day !=
-                                                          snapshot.data!
-                                                              .data()![userUID]
-                                                                  [index]
+                                                          data[index]
                                                                   ['send_time']
                                                               .toDate()
                                                               .day
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: index == 0
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
@@ -951,12 +843,8 @@ class ChatScreen extends StatelessWidget {
                                                               DateFormat(
                                                                       'yyyy년 M월 d일 EEEE',
                                                                       'ko_KR')
-                                                                  .format(snapshot
-                                                                      .data!
-                                                                      .data()![
-                                                                          userUID]
-                                                                          [
-                                                                          index]
+                                                                  .format(data[
+                                                                              index]
                                                                           [
                                                                           'send_time']
                                                                       .toDate()),
@@ -988,11 +876,8 @@ class ChatScreen extends StatelessWidget {
                                                         context.pushNamed(
                                                           'imageviewer',
                                                           queryParams: {
-                                                            'src': snapshot
-                                                                        .data!
-                                                                        .data()![
-                                                                    userUID]
-                                                                [index]['image']
+                                                            'src': data[index]
+                                                                ['image']
                                                           },
                                                         );
                                                       },
@@ -1014,13 +899,20 @@ class ChatScreen extends StatelessWidget {
                                                                   0.44601),
                                                           decoration:
                                                               const BoxDecoration(
-                                                            color: dmBlue,
+                                                            color: dmWhite,
                                                           ),
-                                                          child: Image.network(
-                                                            snapshot.data!
-                                                                        .data()![
-                                                                    userUID][
-                                                                index]['image'],
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl:
+                                                                data[index]
+                                                                    ['image'],
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                const CupertinoActivityIndicator(),
+                                                            fadeInDuration:
+                                                                Duration.zero,
+                                                            fadeOutDuration:
+                                                                Duration.zero,
                                                           ),
                                                         ),
                                                       ),
@@ -1028,31 +920,23 @@ class ChatScreen extends StatelessWidget {
                                                     SizedBox(
                                                       width: 10.w,
                                                     ),
-                                                    index == snapshot.data!.data()![userUID].length - 1 ||
-                                                            snapshot.data!.data()![userUID][index][
+                                                    index == 0 ||
+                                                            data[index][
                                                                     'sender'] !=
-                                                                snapshot.data!.data()![userUID][index + 1][
+                                                                data[index - 1][
                                                                     'sender'] ||
-                                                            snapshot.data!
-                                                                    .data()![userUID]
-                                                                        [index][
-                                                                        'send_time']
+                                                            data[index]['send_time']
                                                                     .toDate()
                                                                     .minute !=
-                                                                snapshot.data!
-                                                                    .data()![userUID]
-                                                                        [index + 1]
-                                                                        ['send_time']
+                                                                data[index - 1][
+                                                                        'send_time']
                                                                     .toDate()
                                                                     .minute
                                                         ? Text(
                                                             DateFormat('a h:mm',
                                                                     'ko_KR')
                                                                 .format(
-                                                              snapshot.data!
-                                                                  .data()![
-                                                                      userUID]
-                                                                      [index][
+                                                              data[index][
                                                                       'send_time']
                                                                   .toDate(),
                                                             ),
@@ -1227,19 +1111,6 @@ class ChatScreen extends StatelessWidget {
                                         ])
                                       });
                                       chatController.text = '';
-                                      WidgetsBinding.instance
-                                          .addPostFrameCallback((_) {
-                                        Timer(const Duration(milliseconds: 350),
-                                            () {
-                                          if (scrollController.hasClients) {
-                                            scrollController.jumpTo(
-                                              scrollController.position
-                                                      .maxScrollExtent *
-                                                  1.5,
-                                            );
-                                          }
-                                        });
-                                      });
                                     }
                                   },
                                   child: Container(
