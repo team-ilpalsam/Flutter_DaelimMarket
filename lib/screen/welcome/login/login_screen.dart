@@ -99,7 +99,7 @@ class _LoginScreen extends State<LoginScreen> {
                         controller: emailController,
                         cursorHeight: 24.h,
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
@@ -134,7 +134,7 @@ class _LoginScreen extends State<LoginScreen> {
                         cursorHeight: 24.h,
                         obscureText: true, // 비밀번호 가리기
                         style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco,
+                        decoration: welcomeInputDeco(),
                         cursorColor: dmBlack,
                       ),
                       SizedBox(
