@@ -374,7 +374,7 @@ class ChatScreen extends StatelessWidget {
                                                                     fontFamily:
                                                                         'Pretendard',
                                                                     fontSize:
-                                                                        14.sp,
+                                                                        12.sp,
                                                                     fontWeight:
                                                                         medium,
                                                                     color:
@@ -605,7 +605,7 @@ class ChatScreen extends StatelessWidget {
                                                             style: TextStyle(
                                                               fontFamily:
                                                                   'Pretendard',
-                                                              fontSize: 14.sp,
+                                                              fontSize: 12.sp,
                                                               fontWeight:
                                                                   medium,
                                                               color: dmDarkGrey,
@@ -734,7 +734,7 @@ class ChatScreen extends StatelessWidget {
                                                                     fontFamily:
                                                                         'Pretendard',
                                                                     fontSize:
-                                                                        14.sp,
+                                                                        12.sp,
                                                                     fontWeight:
                                                                         medium,
                                                                     color:
@@ -947,7 +947,7 @@ class ChatScreen extends StatelessWidget {
                                                             style: TextStyle(
                                                               fontFamily:
                                                                   'Pretendard',
-                                                              fontSize: 14.sp,
+                                                              fontSize: 12.sp,
                                                               fontWeight:
                                                                   medium,
                                                               color: dmDarkGrey,
