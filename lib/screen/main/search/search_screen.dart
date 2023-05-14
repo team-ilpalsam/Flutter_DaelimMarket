@@ -35,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               topPadding,
               SizedBox(
-                height: 15.h,
+                height: 16.25.h,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0), //양쪽 간격
@@ -47,7 +47,24 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: TextField(
                         controller: searchController,
                         style: mainInputTextDeco,
-                        decoration: searchInputDeco(hintText: '검색할 내용을 입력하세요.'),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: '검색한 내용을 입력하세요.',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18.sp,
+                            fontWeight: medium,
+                            color: dmBlack,
+                          ),
+                          contentPadding: EdgeInsets.only(
+                            bottom: 4.h,
+                            left: 3.w,
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                        ),
                         cursorHeight: 18.h,
                         cursorColor: dmBlack,
                         onChanged: (value) {
@@ -60,13 +77,20 @@ class _SearchScreenState extends State<SearchScreen> {
                     SizedBox(
                       width: 10.w,
                     ),
+                    Image.asset(
+                      'assets/images/icons/icon_search_black.png',
+                      width: 26.5.w,
+                      height: 26.5.h,
+                    ),
                   ],
                 ),
               ),
               SizedBox(
-                height: 20.5.h,
+                height: 17.75.h,
               ),
               divider,
+
+              // Content
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(

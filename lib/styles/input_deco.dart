@@ -76,30 +76,3 @@ var mainInputTextDeco = TextStyle(
   fontWeight: medium,
   color: dmBlack,
 );
-
-searchInputDeco({String? hintText = ''}) => InputDecoration(
-      isDense: true,
-      hintText: hintText,
-      hintStyle: TextStyle(
-        fontFamily: 'Pretendard',
-        fontSize: 18.sp,
-        fontWeight: medium,
-        color: dmBlack,
-      ),
-      contentPadding: EdgeInsets.only(
-        bottom: 4.h,
-        left: 3.w,
-      ),
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: dmDarkGrey,
-          width: 2.w,
-        ),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: dmDarkGrey,
-          width: 2.w,
-        ),
-      ),
-    );
