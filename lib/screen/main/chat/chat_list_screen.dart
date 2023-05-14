@@ -94,107 +94,112 @@ class ChatListScreen extends StatelessWidget {
                                       userData.data?['profile_image'] ?? '';
                                 }
 
-                                return Padding(
-                                  padding: index == 0
-                                      ? EdgeInsets.only(
-                                          top: 34.5.h, bottom: 30.h)
-                                      : EdgeInsets.symmetric(vertical: 30.h),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      context.pushNamed('chat',
-                                          queryParams: {'userUID': chatUID});
-                                    },
-                                    child: Container(
-                                      color: dmWhite,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.21119,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.17557,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.17557,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: dmGrey,
+                                if (chatUID == 'read_time') {
+                                  return const SizedBox();
+                                } else {
+                                  return Padding(
+                                    padding: index == 0
+                                        ? EdgeInsets.only(
+                                            top: 34.5.h, bottom: 30.h)
+                                        : EdgeInsets.symmetric(vertical: 30.h),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        context.pushNamed('chat',
+                                            queryParams: {'userUID': chatUID});
+                                      },
+                                      child: Container(
+                                        color: dmWhite,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.21119,
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.17557,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.17557,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: dmGrey,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 22.w,
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  userNickname,
-                                                  overflow: TextOverflow
-                                                      .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontSize: 21.sp,
-                                                    fontWeight: medium,
-                                                    color: dmBlack,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 3.h),
-                                                Text(
-                                                  chatList[index]
-                                                              .value
-                                                              .last['type'] ==
-                                                          'text'
-                                                      ? chatList[index]
-                                                          .value
-                                                          .last['text']
-                                                      : '이미지를 보냈습니다.',
-                                                  overflow: TextOverflow
-                                                      .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontSize: 18.sp,
-                                                    fontWeight: medium,
-                                                    color: dmDarkGrey,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8.h),
-                                                Text(
-                                                  DateFormat('MMM d일 a h시 mm분',
-                                                          'ko_KR')
-                                                      .format(chatList[index]
-                                                          .value
-                                                          .last['send_time']
-                                                          .toDate()),
-                                                  overflow: TextOverflow
-                                                      .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontSize: 14.sp,
-                                                    fontWeight: medium,
-                                                    color: dmGrey,
-                                                  ),
-                                                ),
-                                              ],
+                                            SizedBox(
+                                              width: 22.w,
                                             ),
-                                          )
-                                        ],
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    userNickname,
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 21.sp,
+                                                      fontWeight: medium,
+                                                      color: dmBlack,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 3.h),
+                                                  Text(
+                                                    chatList[index]
+                                                                .value
+                                                                .last['type'] ==
+                                                            'text'
+                                                        ? chatList[index]
+                                                            .value
+                                                            .last['text']
+                                                        : '이미지를 보냈습니다.',
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 18.sp,
+                                                      fontWeight: medium,
+                                                      color: dmDarkGrey,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 8.h),
+                                                  Text(
+                                                    DateFormat(
+                                                            'MMM d일 a h시 mm분',
+                                                            'ko_KR')
+                                                        .format(chatList[index]
+                                                            .value
+                                                            .last['send_time']
+                                                            .toDate()),
+                                                    overflow: TextOverflow
+                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 14.sp,
+                                                      fontWeight: medium,
+                                                      color: dmGrey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                             );
                           },

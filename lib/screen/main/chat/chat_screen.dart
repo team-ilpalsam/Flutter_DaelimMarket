@@ -259,6 +259,100 @@ class ChatScreen extends StatelessWidget {
                                     scrollDirection: Axis.vertical,
                                     itemCount: data.length,
                                     itemBuilder: ((context, index) {
+                                      Widget sendDayWidget(
+                                              List<dynamic> data) =>
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.52162,
+                                                height: 30.h,
+                                                decoration: BoxDecoration(
+                                                  color: dmGrey,
+                                                  borderRadius:
+                                                      // 타원형
+                                                      BorderRadius.circular(
+                                                          3.40e+38),
+                                                ),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  DateFormat('yyyy년 M월 d일 EEEE',
+                                                          'ko_KR')
+                                                      .format(
+                                                    data[index]['send_time']
+                                                        .toDate(),
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontFamily: 'Pretendard',
+                                                    fontSize: 14.sp,
+                                                    fontWeight: medium,
+                                                    color: dmWhite,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          );
+
+                                      Widget sendTimeWidget(
+                                              List<dynamic> data) =>
+                                          Text(
+                                            DateFormat('a h:mm', 'ko_KR')
+                                                .format(
+                                              data[index]['send_time'].toDate(),
+                                            ),
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              fontSize: 12.sp,
+                                              fontWeight: medium,
+                                              color: dmDarkGrey,
+                                            ),
+                                          );
+
+                                      Widget cachedImage(List<dynamic> data) =>
+                                          GestureDetector(
+                                            onTap: () {
+                                              context.pushNamed(
+                                                'imageviewer',
+                                                queryParams: {
+                                                  'src': data[index]['image']
+                                                },
+                                              );
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.6234,
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.44601),
+                                                decoration: const BoxDecoration(
+                                                  color: dmWhite,
+                                                ),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: data[index]
+                                                      ['image'],
+                                                  placeholder: (context, url) =>
+                                                      const CupertinoActivityIndicator(),
+                                                  fadeInDuration: Duration.zero,
+                                                  fadeOutDuration:
+                                                      Duration.zero,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+
                                       // Text Type
                                       if (data[index]['type'] == 'text') {
                                         // 자신이 보냈을 경우
@@ -282,50 +376,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.52162,
-                                                            height: 30.h,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: dmGrey,
-                                                              borderRadius:
-                                                                  // 타원형
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3.40e+38),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              DateFormat(
-                                                                      'yyyy년 M월 d일 EEEE',
-                                                                      'ko_KR')
-                                                                  .format(
-                                                                data[index][
-                                                                        'send_time']
-                                                                    .toDate(),
-                                                              ),
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Pretendard',
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
+                                                      child:
+                                                          sendDayWidget(data),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -360,27 +412,8 @@ class ChatScreen extends StatelessWidget {
                                                                               'send_time']
                                                                           .toDate()
                                                                           .minute
-                                                              ? Text(
-                                                                  DateFormat(
-                                                                          'a h:mm',
-                                                                          'ko_KR')
-                                                                      .format(
-                                                                    data[index][
-                                                                            'send_time']
-                                                                        .toDate(),
-                                                                  ),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    fontWeight:
-                                                                        medium,
-                                                                    color:
-                                                                        dmDarkGrey,
-                                                                  ),
-                                                                )
+                                                              ? sendTimeWidget(
+                                                                  data)
                                                               : const SizedBox(),
                                                         ],
                                                       ),
@@ -469,50 +502,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.52162,
-                                                            height: 30.h,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: dmGrey,
-                                                              borderRadius:
-                                                                  // 타원형
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3.40e+38),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              DateFormat(
-                                                                      'yyyy년 M월 d일 EEEE',
-                                                                      'ko_KR')
-                                                                  .format(data[
-                                                                              index]
-                                                                          [
-                                                                          'send_time']
-                                                                      .toDate()),
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Pretendard',
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      child:
+                                                          sendDayWidget(data),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -594,23 +585,7 @@ class ChatScreen extends StatelessWidget {
                                                                         'send_time']
                                                                     .toDate()
                                                                     .minute
-                                                        ? Text(
-                                                            DateFormat('a h:mm',
-                                                                    'ko_KR')
-                                                                .format(
-                                                              data[index][
-                                                                      'send_time']
-                                                                  .toDate(),
-                                                            ),
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 12.sp,
-                                                              fontWeight:
-                                                                  medium,
-                                                              color: dmDarkGrey,
-                                                            ),
-                                                          )
+                                                        ? sendTimeWidget(data)
                                                         : const SizedBox()
                                                   ],
                                                 ),
@@ -642,50 +617,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.52162,
-                                                            height: 30.h,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: dmGrey,
-                                                              borderRadius:
-                                                                  // 타원형
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3.40e+38),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              DateFormat(
-                                                                      'yyyy년 M월 d일 EEEE',
-                                                                      'ko_KR')
-                                                                  .format(
-                                                                data[index][
-                                                                        'send_time']
-                                                                    .toDate(),
-                                                              ),
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Pretendard',
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
+                                                      child:
+                                                          sendDayWidget(data),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -720,80 +653,15 @@ class ChatScreen extends StatelessWidget {
                                                                               'send_time']
                                                                           .toDate()
                                                                           .minute
-                                                              ? Text(
-                                                                  DateFormat(
-                                                                          'a h:mm',
-                                                                          'ko_KR')
-                                                                      .format(
-                                                                    data[index][
-                                                                            'send_time']
-                                                                        .toDate(),
-                                                                  ),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    fontWeight:
-                                                                        medium,
-                                                                    color:
-                                                                        dmDarkGrey,
-                                                                  ),
-                                                                )
+                                                              ? sendTimeWidget(
+                                                                  data)
                                                               : const SizedBox(),
                                                         ],
                                                       ),
                                                       SizedBox(
                                                         width: 10.w,
                                                       ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          context.pushNamed(
-                                                            'imageviewer',
-                                                            queryParams: {
-                                                              'src': data[index]
-                                                                  ['image']
-                                                            },
-                                                          );
-                                                        },
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.r),
-                                                          child: Container(
-                                                            constraints: BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.6234,
-                                                                maxHeight: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height *
-                                                                    0.44601),
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color: dmWhite,
-                                                            ),
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              imageUrl:
-                                                                  data[index]
-                                                                      ['image'],
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  const CupertinoActivityIndicator(),
-                                                              fadeInDuration:
-                                                                  Duration.zero,
-                                                              fadeOutDuration:
-                                                                  Duration.zero,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
+                                                      cachedImage(data),
                                                     ]),
                                               )
                                             ],
@@ -820,50 +688,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.52162,
-                                                            height: 30.h,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: dmGrey,
-                                                              borderRadius:
-                                                                  // 타원형
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3.40e+38),
-                                                            ),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              DateFormat(
-                                                                      'yyyy년 M월 d일 EEEE',
-                                                                      'ko_KR')
-                                                                  .format(data[
-                                                                              index]
-                                                                          [
-                                                                          'send_time']
-                                                                      .toDate()),
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Pretendard',
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      child:
+                                                          sendDayWidget(data),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -875,52 +701,7 @@ class ChatScreen extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        context.pushNamed(
-                                                          'imageviewer',
-                                                          queryParams: {
-                                                            'src': data[index]
-                                                                ['image']
-                                                          },
-                                                        );
-                                                      },
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10.r),
-                                                        child: Container(
-                                                          constraints: BoxConstraints(
-                                                              maxWidth: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.6234,
-                                                              maxHeight: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  0.44601),
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: dmWhite,
-                                                          ),
-                                                          child:
-                                                              CachedNetworkImage(
-                                                            imageUrl:
-                                                                data[index]
-                                                                    ['image'],
-                                                            placeholder: (context,
-                                                                    url) =>
-                                                                const CupertinoActivityIndicator(),
-                                                            fadeInDuration:
-                                                                Duration.zero,
-                                                            fadeOutDuration:
-                                                                Duration.zero,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
+                                                    cachedImage(data),
                                                     SizedBox(
                                                       width: 10.w,
                                                     ),
@@ -936,23 +717,7 @@ class ChatScreen extends StatelessWidget {
                                                                         'send_time']
                                                                     .toDate()
                                                                     .minute
-                                                        ? Text(
-                                                            DateFormat('a h:mm',
-                                                                    'ko_KR')
-                                                                .format(
-                                                              data[index][
-                                                                      'send_time']
-                                                                  .toDate(),
-                                                            ),
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 12.sp,
-                                                              fontWeight:
-                                                                  medium,
-                                                              color: dmDarkGrey,
-                                                            ),
-                                                          )
+                                                        ? sendTimeWidget(data)
                                                         : const SizedBox()
                                                   ],
                                                 ),
@@ -986,152 +751,140 @@ class ChatScreen extends StatelessWidget {
                       // Bottom
                       Padding(
                         padding: EdgeInsets.only(top: 5.h),
-                        child: Container(
-                          width: double.infinity,
-                          // Android 대응
-                          height:
-                              window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: dmGrey,
-                                width: 1.w,
+                        child: Expanded(
+                          child: Container(
+                            // Android 대응
+                            height:
+                                window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: dmGrey,
+                                  width: 1.w,
+                                ),
                               ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              // Android 대응
-                              top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
-                              left: 20.w,
-                              right: 20.w,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    AlertDialogWidget.twoButtons(
-                                      context: context,
-                                      content: "사진을 선택해주세요!",
-                                      button: ["앨범에서 선택", "카메라로 촬영"],
-                                      color: [dmBlue, dmBlue],
-                                      action: [
-                                        onTapAddPhotoFromAlbum,
-                                        onTapAddPhotoFromCamera,
-                                      ],
-                                    );
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/icons/icon_camera_grey.png',
-                                    width: 25.w,
-                                    height: 25.h,
-                                  ),
-                                ),
-                                SizedBox(width: 18.w),
-                                Container(
-                                  width: 2.w,
-                                  height: 29.h,
-                                  color: dmDarkGrey,
-                                ),
-                                SizedBox(width: 18.w),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      0.60914,
-                                  height: 33.h,
-                                  child: TextField(
-                                    controller: chatController,
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16.sp,
-                                      fontWeight: medium,
-                                      color: dmBlack,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                // Android 대응
+                                top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
+                                left: 20.w,
+                                right: 20.w,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      AlertDialogWidget.twoButtons(
+                                        context: context,
+                                        content: "사진을 선택해주세요!",
+                                        button: ["앨범에서 선택", "카메라로 촬영"],
+                                        color: [dmBlue, dmBlue],
+                                        action: [
+                                          onTapAddPhotoFromAlbum,
+                                          onTapAddPhotoFromCamera,
+                                        ],
+                                      );
+                                    },
+                                    child: Image.asset(
+                                      'assets/images/icons/icon_camera_grey.png',
+                                      width: 27.w,
+                                      height: 27.h,
                                     ),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 7.h,
-                                        horizontal: 12.w,
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
+                                  ),
+                                  SizedBox(width: 18.w),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 1.w, color: dmDarkGrey),
                                         borderRadius:
                                             BorderRadius.circular(10.r),
-                                        borderSide: BorderSide(
-                                          width: 1.w,
-                                          color: dmDarkGrey,
-                                        ),
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                        borderSide: BorderSide(
-                                          width: 1.w,
-                                          color: dmDarkGrey,
-                                        ),
-                                      ),
-                                      disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.zero,
-                                        borderSide: BorderSide(
-                                          width: 1.w,
+                                      height: 33.h,
+                                      child: TextField(
+                                        controller: chatController,
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 16.sp,
+                                          fontWeight: medium,
                                           color: dmBlack,
                                         ),
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.symmetric(
+                                            vertical: 7.h,
+                                            horizontal: 12.w,
+                                          ),
+                                          enabledBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide.none),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide.none),
+                                          disabledBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide.none),
+                                        ),
+                                        cursorColor: dmBlack,
                                       ),
                                     ),
-                                    cursorColor: dmBlack,
                                   ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (chatController.text != '' &&
-                                        !RegExp(r'^\s*$')
-                                            .hasMatch(chatController.text)) {
-                                      FirebaseFirestore.instance
-                                          .collection('chat') // chat 컬렉션에서
-                                          .doc(uid) // 자신의 UID 문서 내
-                                          .update({
-                                        userUID: FieldValue.arrayUnion([
-                                          {
-                                            'type': 'text',
-                                            'send_time': DateTime.now(),
-                                            'sender': uid,
-                                            'text': chatController.text,
-                                          }
-                                        ])
-                                      });
-                                      FirebaseFirestore.instance
-                                          .collection('chat') // chat 컬렉션에서
-                                          .doc(userUID) // 상대 UID의 문서 내
-                                          .update({
-                                        uid!: FieldValue.arrayUnion([
-                                          {
-                                            'type': 'text',
-                                            'send_time': DateTime.now(),
-                                            'sender': uid,
-                                            'text': chatController.text,
-                                          }
-                                        ])
-                                      });
-                                      chatController.text = '';
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 35.w,
-                                    height: 35.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.r),
-                                      color: dmBlue,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Image.asset(
-                                      'assets/images/icons/icon_chat_arrow_up.png',
-                                      height: 18.h,
+                                  SizedBox(
+                                    width: 10.w,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (chatController.text != '' &&
+                                          !RegExp(r'^\s*$')
+                                              .hasMatch(chatController.text)) {
+                                        FirebaseFirestore.instance
+                                            .collection('chat') // chat 컬렉션에서
+                                            .doc(uid) // 자신의 UID 문서 내
+                                            .update({
+                                          userUID: FieldValue.arrayUnion([
+                                            {
+                                              'type': 'text',
+                                              'send_time': DateTime.now(),
+                                              'sender': uid,
+                                              'text': chatController.text,
+                                            }
+                                          ])
+                                        });
+                                        FirebaseFirestore.instance
+                                            .collection('chat') // chat 컬렉션에서
+                                            .doc(userUID) // 상대 UID의 문서 내
+                                            .update({
+                                          uid!: FieldValue.arrayUnion([
+                                            {
+                                              'type': 'text',
+                                              'send_time': DateTime.now(),
+                                              'sender': uid,
+                                              'text': chatController.text,
+                                            }
+                                          ])
+                                        });
+                                        chatController.text = '';
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 35.w,
+                                      height: 35.h,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
+                                        color: dmBlue,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                        'assets/images/icons/icon_chat_arrow_up.png',
+                                        height: 18.h,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
