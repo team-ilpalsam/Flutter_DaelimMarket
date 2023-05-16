@@ -228,7 +228,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                 await FirebaseUtils.updateUserData(nickName);
                                 deleteProfileImage();
                                 updateProfileImage(_pickedImage!);
-                                context.goNamed('accountSettingDone');
+                                context.pop();
                               },
                               child: const BlueButton(text: '입력 완료'))
                           : const BlueButton(text: '입력 완료', color: dmLightGrey),

@@ -3,6 +3,7 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../widgets/named_widget.dart';
 
@@ -99,9 +100,14 @@ class MypageScreen extends StatelessWidget {
                       SizedBox(
                         height: 25.h,
                       ),
-                      const BlueButton(
-                        text: '프로필 수정',
-                        color: dmGrey,
+                      GestureDetector(
+                        onTap: () {
+                          context.pushNamed('mypagesetting');
+                        },
+                        child: const BlueButton(
+                          text: '프로필 수정',
+                          color: dmGrey,
+                        ),
                       ),
                       SizedBox(
                         height: 20.h,
