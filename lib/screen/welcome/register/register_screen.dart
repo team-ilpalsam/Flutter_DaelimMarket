@@ -243,12 +243,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           });
           // Firebase chat 컬렉션에 추가
           FirebaseFirestore.instance
-              // user 컬렉션 내
-              .collection('user')
+              // chat 컬렉션 내
+              .collection('chat')
               // 사용자의 UID 문서 생성
               .doc(value.user!.uid)
               .set({
-            'DaelimMarket': [
+            'daelimmarket': [
               {
                 'send_time': DateTime.now(),
                 'sender': 'daelimmarket',
@@ -257,6 +257,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
             ]
           });
+          FirebaseFirestore.instance
+              // chat 컬렉션 내
+              .collection('chat')
+              // 사용자의 UID 문서 생성
+              .doc('read_time')
+              .set({});
           // 회원가입 후 이메일 인증 안내 페이지로 이동
           context.goNamed(
             'registerAuthLink',

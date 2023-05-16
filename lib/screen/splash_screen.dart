@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Center(
       child: Image.asset(
         textLessLogo,
-        height: 214.w,
+        height: 183.w,
       ),
     ));
   }
