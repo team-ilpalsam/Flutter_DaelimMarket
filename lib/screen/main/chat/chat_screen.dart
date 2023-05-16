@@ -353,10 +353,10 @@ class ChatScreen extends StatelessWidget {
                                             ),
                                           );
 
-                                      // Text Type
-                                      if (data[index]['type'] == 'text') {
-                                        // 자신이 보냈을 경우
-                                        if (data[index]['sender'] == uid) {
+                                      // 자신이 보냈을 경우
+                                      if (data[index]['sender'] == uid) {
+                                        // Text Type
+                                        if (data[index]['type'] == 'text') {
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
@@ -481,8 +481,84 @@ class ChatScreen extends StatelessWidget {
                                             ],
                                           );
                                         }
-                                        // 타인이 보냈을 경우
-                                        else {
+                                        // Image Type
+                                        else if (data[index]['type'] ==
+                                            'image') {
+                                          return Column(
+                                            children: [
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
+                                                          data[index]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child:
+                                                          sendDayWidget(data),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          index == 0 ||
+                                                                  data[index][
+                                                                          'sender'] !=
+                                                                      data[index -
+                                                                              1]
+                                                                          [
+                                                                          'sender'] ||
+                                                                  data[index]['send_time']
+                                                                          .toDate()
+                                                                          .minute !=
+                                                                      data[index - 1]
+                                                                              [
+                                                                              'send_time']
+                                                                          .toDate()
+                                                                          .minute
+                                                              ? sendTimeWidget(
+                                                                  data)
+                                                              : const SizedBox(),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10.w,
+                                                      ),
+                                                      cachedImage(data),
+                                                    ]),
+                                              )
+                                            ],
+                                          );
+                                        }
+                                      }
+
+                                      // 타인이 보냈을 경우
+                                      else {
+                                        // Text Type
+                                        if (data[index]['type'] == 'text') {
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
@@ -593,82 +669,9 @@ class ChatScreen extends StatelessWidget {
                                             ],
                                           );
                                         }
-                                      }
-                                      // Image Type
-                                      else if (data[index]['type'] == 'image') {
-                                        // 자신이 보냈을 경우
-                                        if (data[index]['sender'] == uid) {
-                                          return Column(
-                                            children: [
-                                              index == data.length - 1 ||
-                                                      data[index + 1]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day !=
-                                                          data[index]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: index ==
-                                                                  data.length -
-                                                                      1
-                                                              ? 27.5.h
-                                                              : 22.5.h,
-                                                          bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
-                                                    )
-                                                  : const SizedBox(),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.h),
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          index == 0 ||
-                                                                  data[index][
-                                                                          'sender'] !=
-                                                                      data[index -
-                                                                              1]
-                                                                          [
-                                                                          'sender'] ||
-                                                                  data[index]['send_time']
-                                                                          .toDate()
-                                                                          .minute !=
-                                                                      data[index - 1]
-                                                                              [
-                                                                              'send_time']
-                                                                          .toDate()
-                                                                          .minute
-                                                              ? sendTimeWidget(
-                                                                  data)
-                                                              : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.w,
-                                                      ),
-                                                      cachedImage(data),
-                                                    ]),
-                                              )
-                                            ],
-                                          );
-                                        }
-                                        // 타인이 보냈을 경우
-                                        else {
+                                        // Image Type
+                                        else if (data[index]['type'] ==
+                                            'image') {
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
@@ -751,140 +754,134 @@ class ChatScreen extends StatelessWidget {
                       // Bottom
                       Padding(
                         padding: EdgeInsets.only(top: 5.h),
-                        child: Expanded(
-                          child: Container(
-                            // Android 대응
-                            height:
-                                window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: dmGrey,
-                                  width: 1.w,
-                                ),
+                        child: Container(
+                          // Android 대응
+                          height:
+                              window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: dmGrey,
+                                width: 1.w,
                               ),
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                // Android 대응
-                                top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
-                                left: 20.w,
-                                right: 20.w,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      AlertDialogWidget.twoButtons(
-                                        context: context,
-                                        content: "사진을 선택해주세요!",
-                                        button: ["앨범에서 선택", "카메라로 촬영"],
-                                        color: [dmBlue, dmBlue],
-                                        action: [
-                                          onTapAddPhotoFromAlbum,
-                                          onTapAddPhotoFromCamera,
-                                        ],
-                                      );
-                                    },
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              // Android 대응
+                              top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
+                              left: 20.w,
+                              right: 20.w,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    AlertDialogWidget.twoButtons(
+                                      context: context,
+                                      content: "사진을 선택해주세요!",
+                                      button: ["앨범에서 선택", "카메라로 촬영"],
+                                      color: [dmBlue, dmBlue],
+                                      action: [
+                                        onTapAddPhotoFromAlbum,
+                                        onTapAddPhotoFromCamera,
+                                      ],
+                                    );
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/icons/icon_camera_grey.png',
+                                    width: 27.w,
+                                    height: 27.h,
+                                  ),
+                                ),
+                                SizedBox(width: 18.w),
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1.w, color: dmDarkGrey),
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    height: 33.h,
+                                    child: TextField(
+                                      controller: chatController,
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 16.sp,
+                                        fontWeight: medium,
+                                        color: dmBlack,
+                                      ),
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 7.h,
+                                          horizontal: 12.w,
+                                        ),
+                                        enabledBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        disabledBorder:
+                                            const OutlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                      ),
+                                      cursorColor: dmBlack,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10.w,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (chatController.text != '' &&
+                                        !RegExp(r'^\s*$')
+                                            .hasMatch(chatController.text)) {
+                                      FirebaseFirestore.instance
+                                          .collection('chat') // chat 컬렉션에서
+                                          .doc(uid) // 자신의 UID 문서 내
+                                          .update({
+                                        userUID: FieldValue.arrayUnion([
+                                          {
+                                            'type': 'text',
+                                            'send_time': DateTime.now(),
+                                            'sender': uid,
+                                            'text': chatController.text,
+                                          }
+                                        ])
+                                      });
+                                      FirebaseFirestore.instance
+                                          .collection('chat') // chat 컬렉션에서
+                                          .doc(userUID) // 상대 UID의 문서 내
+                                          .update({
+                                        uid!: FieldValue.arrayUnion([
+                                          {
+                                            'type': 'text',
+                                            'send_time': DateTime.now(),
+                                            'sender': uid,
+                                            'text': chatController.text,
+                                          }
+                                        ])
+                                      });
+                                      chatController.text = '';
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 35.w,
+                                    height: 35.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                      color: dmBlue,
+                                    ),
+                                    alignment: Alignment.center,
                                     child: Image.asset(
-                                      'assets/images/icons/icon_camera_grey.png',
-                                      width: 27.w,
-                                      height: 27.h,
+                                      'assets/images/icons/icon_chat_arrow_up.png',
+                                      height: 18.h,
                                     ),
                                   ),
-                                  SizedBox(width: 18.w),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 1.w, color: dmDarkGrey),
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                      ),
-                                      height: 33.h,
-                                      child: TextField(
-                                        controller: chatController,
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 16.sp,
-                                          fontWeight: medium,
-                                          color: dmBlack,
-                                        ),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            vertical: 7.h,
-                                            horizontal: 12.w,
-                                          ),
-                                          enabledBorder:
-                                              const OutlineInputBorder(
-                                                  borderSide: BorderSide.none),
-                                          focusedBorder:
-                                              const OutlineInputBorder(
-                                                  borderSide: BorderSide.none),
-                                          disabledBorder:
-                                              const OutlineInputBorder(
-                                                  borderSide: BorderSide.none),
-                                        ),
-                                        cursorColor: dmBlack,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10.w,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (chatController.text != '' &&
-                                          !RegExp(r'^\s*$')
-                                              .hasMatch(chatController.text)) {
-                                        FirebaseFirestore.instance
-                                            .collection('chat') // chat 컬렉션에서
-                                            .doc(uid) // 자신의 UID 문서 내
-                                            .update({
-                                          userUID: FieldValue.arrayUnion([
-                                            {
-                                              'type': 'text',
-                                              'send_time': DateTime.now(),
-                                              'sender': uid,
-                                              'text': chatController.text,
-                                            }
-                                          ])
-                                        });
-                                        FirebaseFirestore.instance
-                                            .collection('chat') // chat 컬렉션에서
-                                            .doc(userUID) // 상대 UID의 문서 내
-                                            .update({
-                                          uid!: FieldValue.arrayUnion([
-                                            {
-                                              'type': 'text',
-                                              'send_time': DateTime.now(),
-                                              'sender': uid,
-                                              'text': chatController.text,
-                                            }
-                                          ])
-                                        });
-                                        chatController.text = '';
-                                      }
-                                    },
-                                    child: Container(
-                                      width: 35.w,
-                                      height: 35.h,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                        color: dmBlue,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Image.asset(
-                                        'assets/images/icons/icon_chat_arrow_up.png',
-                                        height: 18.h,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -97,17 +97,22 @@ class _SearchScreenState extends State<SearchScreen> {
                     horizontal: 20.w,
                   ),
                   child: FutureBuilder<QuerySnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('product') // product 컬렉션으로부터
-                        .where('title',
-                            isGreaterThanOrEqualTo: searchController.text)
-                        .where('title',
-                            isLessThanOrEqualTo:
-                                '${searchController.text}\uf8ff')
-                        .orderBy('title')
-                        .orderBy("uploadTime",
-                            descending: true) // uploadTime 정렬은 내림차순으로
-                        .get(), // 데이터를 불러온다
+                    future: searchController.text != ''
+                        ? FirebaseFirestore.instance
+                            .collection('product') // product 컬렉션으로부터
+                            .where('title',
+                                isGreaterThanOrEqualTo: searchController.text)
+                            .where('title',
+                                isLessThanOrEqualTo:
+                                    '${searchController.text}\uf8ff')
+                            .orderBy('title')
+                            .orderBy("uploadTime",
+                                descending: true) // uploadTime 정렬은 내림차순으로
+                            .get()
+                        : FirebaseFirestore.instance
+                            .collection('product') // product 컬렉션으로부터
+                            .where('title', isEqualTo: searchController.text)
+                            .get(), // 데이터를 불러온다
                     builder: (context, snapshot) {
                       // 만약 불러오는 상태라면 로딩 인디케이터를 중앙에 배치
                       if (snapshot.connectionState == ConnectionState.waiting) {
