@@ -62,10 +62,11 @@ class ChatListScreen extends StatelessWidget {
                       final data = snapshot.data!.data()!;
                       final chatList = data.entries
                           .toList(); // Map<String, dynamic>을 List<MapEntry<String, dynamic>> 형태로 변환
+                      chatList.removeWhere((entry) => entry.key == "read_time");
+
                       chatList.sort((a, b) => (b.value.last['send_time']
                               as Timestamp)
-                          .compareTo(a.value.last['send_time']
-                              as Timestamp)); // 배열 내 마지막 요소의 send_time을 기준으로 내림차순으로 정렬
+                          .compareTo(a.value.last['send_time'] as Timestamp));
 
                       return ScrollConfiguration(
                         behavior: MyBehavior(),
