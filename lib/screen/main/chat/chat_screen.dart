@@ -250,6 +250,8 @@ class ChatScreen extends StatelessWidget {
                             builder: (context, snapshot) {
                               final originData = snapshot.data?.data()?[userUID]
                                   as List<dynamic>?;
+                              final readTimeData =
+                                  snapshot.data?.data()?['read_time'];
                               final data = originData?.reversed.toList();
                               if (snapshot.hasData && data != null) {
                                 return ScrollConfiguration(
@@ -557,6 +559,30 @@ class ChatScreen extends StatelessWidget {
 
                                       // 타인이 보냈을 경우
                                       else {
+                                        if (index == 0) {
+                                          if (readTimeData['$uid-$userUID'] ==
+                                                  null ||
+                                              data[index]['send_time']
+                                                  .toDate()
+                                                  .isAfter(readTimeData[
+                                                          '$uid-$userUID']
+                                                      .toDate())) {
+                                            readTimeData['$uid-$userUID'] =
+                                                DateTime.now();
+                                            FirebaseFirestore.instance
+                                                .collection('chat')
+                                                .doc(uid)
+                                                .update({
+                                              'read_time': readTimeData
+                                            });
+                                            FirebaseFirestore.instance
+                                                .collection('chat')
+                                                .doc(userUID)
+                                                .update({
+                                              'read_time': readTimeData
+                                            });
+                                          }
+                                        }
                                         // Text Type
                                         if (data[index]['type'] == 'text') {
                                           return Column(
@@ -728,6 +754,7 @@ class ChatScreen extends StatelessWidget {
                                             ],
                                           );
                                         }
+                                        return null;
                                       }
                                       return null;
                                     }),
