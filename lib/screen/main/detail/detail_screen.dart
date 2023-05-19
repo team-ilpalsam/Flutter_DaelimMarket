@@ -263,7 +263,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   SizedBox(
                                     // 닉네임과 거래 희망 장소
                                     child: Text(
-                                      '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}', //전산관이랑 따로 해야하겠지? 잠시 보류
+                                      '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}',
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         color: dmDarkGrey,
@@ -383,15 +383,19 @@ class _DetailScreenState extends State<DetailScreen> {
                           const Expanded(child: SizedBox()),
                           GestureDetector(
                             onTap: () {
-                              context.pushNamed('chat', queryParams: {
-                                'userUID': snapshot.data!['uid']
-                              });
+                              snapshot.data!['uid'] == uid
+                                  ? null
+                                  : context.pushNamed('chat', queryParams: {
+                                      'userUID': snapshot.data!['uid']
+                                    });
                             },
                             child: Container(
                               width: 115.w,
                               height: 34.h,
                               decoration: BoxDecoration(
-                                color: dmBlue,
+                                color: snapshot.data!['uid'] == uid
+                                    ? dmLightGrey
+                                    : dmBlue,
                                 borderRadius: BorderRadius.circular(5.r),
                               ),
                               child: Center(

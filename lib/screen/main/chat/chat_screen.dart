@@ -8,6 +8,7 @@ import 'package:emoji_regex/emoji_regex.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -161,10 +162,7 @@ class ChatScreen extends StatelessWidget {
       }
     }
 
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+    return KeyboardDismissOnTap(
       child: Scaffold(
         // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
@@ -180,7 +178,12 @@ class ChatScreen extends StatelessWidget {
               if (userData.data?.exists == false) {
                 userNickname = '알 수 없음';
               } else {
-                userNickname = userData.data?['id'] ?? '';
+                if (userData.data?.exists == true &&
+                    userData.data!.data()!.containsKey('deleted')) {
+                  userNickname = '탈퇴한 사용자';
+                } else {
+                  userNickname = userData.data?['id'] ?? '';
+                }
               }
 
               return StreamBuilder(
@@ -257,447 +260,296 @@ class ChatScreen extends StatelessWidget {
                                 return ScrollConfiguration(
                                   behavior: MyBehavior(),
                                   child: ListView.builder(
-                                    reverse: true,
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: data.length,
-                                    itemBuilder: ((context, index) {
-                                      Widget sendDayWidget(
-                                              List<dynamic> data) =>
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.52162,
-                                                height: 30.h,
-                                                decoration: BoxDecoration(
-                                                  color: dmGrey,
-                                                  borderRadius:
-                                                      // 타원형
-                                                      BorderRadius.circular(
-                                                          3.40e+38),
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  DateFormat('yyyy년 M월 d일 EEEE',
-                                                          'ko_KR')
-                                                      .format(
-                                                    data[index]['send_time']
-                                                        .toDate(),
+                                      reverse: true,
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: data.length,
+                                      itemBuilder: ((context, index) {
+                                        /// 보낸 날짜 위젯
+                                        Widget sendDayWidget(
+                                                List<dynamic> data) =>
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.52162,
+                                                  height: 30.h,
+                                                  decoration: BoxDecoration(
+                                                    color: dmGrey,
+                                                    borderRadius:
+                                                        // 타원형
+                                                        BorderRadius.circular(
+                                                            3.40e+38),
                                                   ),
-                                                  style: TextStyle(
-                                                    fontFamily: 'Pretendard',
-                                                    fontSize: 14.sp,
-                                                    fontWeight: medium,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    DateFormat(
+                                                            'yyyy년 M월 d일 EEEE',
+                                                            'ko_KR')
+                                                        .format(
+                                                      data[index]['send_time']
+                                                          .toDate(),
+                                                    ),
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 14.sp,
+                                                      fontWeight: medium,
+                                                      color: dmWhite,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            );
+
+                                        /// 보낸 시간 위젯
+                                        Widget sendTimeWidget(
+                                                List<dynamic> data) =>
+                                            Text(
+                                              DateFormat('a h:mm', 'ko_KR')
+                                                  .format(
+                                                data[index]['send_time']
+                                                    .toDate(),
+                                              ),
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 12.sp,
+                                                fontWeight: medium,
+                                                color: dmDarkGrey,
+                                              ),
+                                            );
+
+                                        /// Image 위젯
+                                        Widget cachedImage(
+                                                List<dynamic> data) =>
+                                            GestureDetector(
+                                              onTap: () {
+                                                context.pushNamed(
+                                                  'imageviewer',
+                                                  queryParams: {
+                                                    'src': data[index]['image']
+                                                  },
+                                                );
+                                              },
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.r),
+                                                child: Container(
+                                                  constraints: BoxConstraints(
+                                                      maxWidth:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.6234,
+                                                      maxHeight:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.44601),
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: dmWhite,
                                                   ),
-                                                ),
-                                              )
-                                            ],
-                                          );
-
-                                      Widget sendTimeWidget(
-                                              List<dynamic> data) =>
-                                          Text(
-                                            DateFormat('a h:mm', 'ko_KR')
-                                                .format(
-                                              data[index]['send_time'].toDate(),
-                                            ),
-                                            style: TextStyle(
-                                              fontFamily: 'Pretendard',
-                                              fontSize: 12.sp,
-                                              fontWeight: medium,
-                                              color: dmDarkGrey,
-                                            ),
-                                          );
-
-                                      Widget cachedImage(List<dynamic> data) =>
-                                          GestureDetector(
-                                            onTap: () {
-                                              context.pushNamed(
-                                                'imageviewer',
-                                                queryParams: {
-                                                  'src': data[index]['image']
-                                                },
-                                              );
-                                            },
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.r),
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                    maxWidth:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.6234,
-                                                    maxHeight:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.44601),
-                                                decoration: const BoxDecoration(
-                                                  color: dmWhite,
-                                                ),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: data[index]
-                                                      ['image'],
-                                                  placeholder: (context, url) =>
-                                                      const CupertinoActivityIndicator(),
-                                                  fadeInDuration: Duration.zero,
-                                                  fadeOutDuration:
-                                                      Duration.zero,
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: data[index]
+                                                        ['image'],
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        const CupertinoActivityIndicator(),
+                                                    fadeInDuration:
+                                                        Duration.zero,
+                                                    fadeOutDuration:
+                                                        Duration.zero,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          );
+                                            );
 
-                                      // 자신이 보냈을 경우
-                                      if (data[index]['sender'] == uid) {
-                                        // Text Type
-                                        if (data[index]['type'] == 'text') {
-                                          return Column(
-                                            children: [
-                                              index == data.length - 1 ||
-                                                      data[index + 1]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day !=
-                                                          data[index]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: index ==
-                                                                  data.length -
-                                                                      1
-                                                              ? 27.5.h
-                                                              : 22.5.h,
-                                                          bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
-                                                    )
-                                                  : const SizedBox(),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.h),
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          index == 0 ||
-                                                                  data[index][
-                                                                          'sender'] !=
-                                                                      data[index -
-                                                                              1]
-                                                                          [
-                                                                          'sender'] ||
-                                                                  data[index]['send_time']
-                                                                          .toDate()
-                                                                          .minute !=
-                                                                      data[index - 1]
-                                                                              [
-                                                                              'send_time']
-                                                                          .toDate()
-                                                                          .minute
-                                                              ? sendTimeWidget(
-                                                                  data)
-                                                              : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.w,
-                                                      ),
-                                                      data[index]['text']
-                                                                      .length >=
-                                                                  2 &&
-                                                              data[index]['text']
-                                                                      .length <=
-                                                                  6 &&
-                                                              data[index]
-                                                                      ['text']
-                                                                  .contains(
-                                                                      emojiRegex())
-                                                          ? Text(
-                                                              data[index]
-                                                                  ['text'],
-                                                              style: TextStyle(
-                                                                fontSize: 60.sp,
-                                                              ),
-                                                            )
-                                                          : Container(
-                                                              constraints: BoxConstraints(
-                                                                  maxWidth: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.6234),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: dmBlue,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.r),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal: 10
-                                                                            .w,
-                                                                        vertical:
-                                                                            10.h),
-                                                                child: Text(
-                                                                  data[index]
-                                                                      ['text'],
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        18.sp,
-                                                                    fontWeight:
-                                                                        medium,
-                                                                    color:
-                                                                        dmWhite,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                    ]),
-                                              )
-                                            ],
-                                          );
-                                        }
-                                        // Image Type
-                                        else if (data[index]['type'] ==
-                                            'image') {
-                                          return Column(
-                                            children: [
-                                              index == data.length - 1 ||
-                                                      data[index + 1]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day !=
-                                                          data[index]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: index ==
-                                                                  data.length -
-                                                                      1
-                                                              ? 27.5.h
-                                                              : 22.5.h,
-                                                          bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
-                                                    )
-                                                  : const SizedBox(),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.h),
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          index == 0 ||
-                                                                  data[index][
-                                                                          'sender'] !=
-                                                                      data[index -
-                                                                              1]
-                                                                          [
-                                                                          'sender'] ||
-                                                                  data[index]['send_time']
-                                                                          .toDate()
-                                                                          .minute !=
-                                                                      data[index - 1]
-                                                                              [
-                                                                              'send_time']
-                                                                          .toDate()
-                                                                          .minute
-                                                              ? sendTimeWidget(
-                                                                  data)
-                                                              : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.w,
-                                                      ),
-                                                      cachedImage(data),
-                                                    ]),
-                                              )
-                                            ],
-                                          );
-                                        }
-                                      }
-
-                                      // 타인이 보냈을 경우
-                                      else {
-                                        if (index == 0) {
-                                          if (readTimeData['$uid-$userUID'] ==
-                                                  null ||
-                                              data[index]['send_time']
-                                                  .toDate()
-                                                  .isAfter(readTimeData[
-                                                          '$uid-$userUID']
-                                                      .toDate())) {
-                                            readTimeData['$uid-$userUID'] =
-                                                DateTime.now();
-                                            FirebaseFirestore.instance
-                                                .collection('chat')
-                                                .doc(uid)
-                                                .update({
-                                              'read_time': readTimeData
-                                            });
-                                            FirebaseFirestore.instance
-                                                .collection('chat')
-                                                .doc(userUID)
-                                                .update({
-                                              'read_time': readTimeData
-                                            });
-                                          }
-                                        }
-                                        // Text Type
-                                        if (data[index]['type'] == 'text') {
-                                          return Column(
-                                            children: [
-                                              index == data.length - 1 ||
-                                                      data[index + 1]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day !=
-                                                          data[index]
-                                                                  ['send_time']
-                                                              .toDate()
-                                                              .day
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: index ==
-                                                                  data.length -
-                                                                      1
-                                                              ? 27.5.h
-                                                              : 22.5.h,
-                                                          bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
-                                                    )
-                                                  : const SizedBox(),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.h),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
+                                        /// 메시지 위젯
+                                        Widget messageWidget(
+                                            List<dynamic> data) {
+                                          // Text Type
+                                          if (data[index]['type'] == 'text') {
+                                            return data[index]['text']
+                                                            .length >=
+                                                        2 &&
                                                     data[index]['text']
-                                                                    .length >=
-                                                                2 &&
-                                                            data[index]['text']
-                                                                    .length <=
-                                                                6 &&
-                                                            data[index]['text']
-                                                                .contains(
-                                                                    emojiRegex())
-                                                        ? Text(
-                                                            data[index]['text'],
+                                                            .length <=
+                                                        6 &&
+                                                    data[index]['text']
+                                                        .contains(emojiRegex())
+                                                ? Text(
+                                                    data[index]['text'],
+                                                    style: TextStyle(
+                                                      fontSize: 60.sp,
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    constraints: BoxConstraints(
+                                                        maxWidth: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.6234),
+                                                    decoration: BoxDecoration(
+                                                      color: data[index]
+                                                                  ['sender'] ==
+                                                              uid
+                                                          ? dmBlue
+                                                          : dmLightGrey,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.r),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.w,
+                                                              vertical: 10.h),
+                                                      child: Text(
+                                                        data[index]['text'],
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Pretendard',
+                                                          fontSize: 18.sp,
+                                                          fontWeight: medium,
+                                                          color: data[index][
+                                                                      'sender'] ==
+                                                                  uid
+                                                              ? dmWhite
+                                                              : dmBlack,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                          }
+                                          // Image Type
+                                          else if (data[index]['type'] ==
+                                              'image') {
+                                            return cachedImage(data);
+                                          }
+                                          return const SizedBox();
+                                        }
+
+                                        // 자신이 보냈을 경우
+                                        if (data[index]['sender'] == uid) {
+                                          return Column(
+                                            children: [
+                                              index == data.length - 1 ||
+                                                      data[index + 1]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day !=
+                                                          data[index]
+                                                                  ['send_time']
+                                                              .toDate()
+                                                              .day
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: index ==
+                                                                  data.length -
+                                                                      1
+                                                              ? 27.5.h
+                                                              : 22.5.h,
+                                                          bottom: 22.5.h),
+                                                      child:
+                                                          sendDayWidget(data),
+                                                    )
+                                                  : const SizedBox(),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            readTimeData['$userUID-$uid'] !=
+                                                                        null &&
+                                                                    data[index][
+                                                                            'send_time']
+                                                                        .toDate()
+                                                                        .isBefore(
+                                                                            readTimeData['$userUID-$uid'].toDate())
+                                                                ? '읽음'
+                                                                : '전송됨',
                                                             style: TextStyle(
-                                                              fontSize: 60.sp,
-                                                            ),
-                                                          )
-                                                        : Container(
-                                                            constraints: BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.6234),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  dmLightGrey,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.r),
-                                                            ),
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          10.w,
-                                                                      vertical:
-                                                                          10.h),
-                                                              child: Text(
-                                                                data[index]
-                                                                    ['text'],
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'Pretendard',
-                                                                  fontSize:
-                                                                      18.sp,
-                                                                  fontWeight:
-                                                                      medium,
-                                                                  color:
-                                                                      dmBlack,
-                                                                ),
-                                                              ),
+                                                              fontFamily:
+                                                                  'Pretendard',
+                                                              fontSize: 12.sp,
+                                                              fontWeight:
+                                                                  medium,
+                                                              color: dmDarkGrey,
                                                             ),
                                                           ),
-                                                    SizedBox(
-                                                      width: 10.w,
-                                                    ),
-                                                    index == 0 ||
-                                                            data[index][
-                                                                    'sender'] !=
-                                                                data[index - 1][
-                                                                    'sender'] ||
-                                                            data[index]['send_time']
-                                                                    .toDate()
-                                                                    .minute !=
-                                                                data[index - 1][
-                                                                        'send_time']
-                                                                    .toDate()
-                                                                    .minute
-                                                        ? sendTimeWidget(data)
-                                                        : const SizedBox()
-                                                  ],
-                                                ),
+                                                          index == 0 ||
+                                                                  data[index][
+                                                                          'sender'] !=
+                                                                      data[index -
+                                                                              1]
+                                                                          [
+                                                                          'sender'] ||
+                                                                  data[index]['send_time']
+                                                                          .toDate()
+                                                                          .minute !=
+                                                                      data[index - 1]
+                                                                              [
+                                                                              'send_time']
+                                                                          .toDate()
+                                                                          .minute
+                                                              ? sendTimeWidget(
+                                                                  data)
+                                                              : const SizedBox(),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 7.w,
+                                                      ),
+                                                      messageWidget(data)
+                                                    ]),
                                               )
                                             ],
                                           );
                                         }
-                                        // Image Type
-                                        else if (data[index]['type'] ==
-                                            'image') {
+                                        // 타인이 보냈을 경우
+                                        else {
+                                          if (index == 0) {
+                                            if (readTimeData['$uid-$userUID'] ==
+                                                    null ||
+                                                data[index]['send_time']
+                                                    .toDate()
+                                                    .isAfter(readTimeData[
+                                                            '$uid-$userUID']
+                                                        .toDate())) {
+                                              readTimeData['$uid-$userUID'] =
+                                                  DateTime.now();
+                                              FirebaseFirestore.instance
+                                                  .collection('chat')
+                                                  .doc(uid)
+                                                  .update({
+                                                'read_time': readTimeData
+                                              });
+                                              FirebaseFirestore.instance
+                                                  .collection('chat')
+                                                  .doc(userUID)
+                                                  .update({
+                                                'read_time': readTimeData
+                                              });
+                                            }
+                                          }
+
                                           return Column(
                                             children: [
                                               index == data.length - 1 ||
@@ -730,9 +582,9 @@ class ChatScreen extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
-                                                    cachedImage(data),
+                                                    messageWidget(data),
                                                     SizedBox(
-                                                      width: 10.w,
+                                                      width: 7.w,
                                                     ),
                                                     index == 0 ||
                                                             data[index][
@@ -754,11 +606,7 @@ class ChatScreen extends StatelessWidget {
                                             ],
                                           );
                                         }
-                                        return null;
-                                      }
-                                      return null;
-                                    }),
-                                  ),
+                                      })),
                                 );
                               } else {
                                 return Center(
@@ -806,16 +654,21 @@ class ChatScreen extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    AlertDialogWidget.twoButtons(
-                                      context: context,
-                                      content: "사진을 선택해주세요!",
-                                      button: ["앨범에서 선택", "카메라로 촬영"],
-                                      color: [dmBlue, dmBlue],
-                                      action: [
-                                        onTapAddPhotoFromAlbum,
-                                        onTapAddPhotoFromCamera,
-                                      ],
-                                    );
+                                    userData.data?.exists == true &&
+                                            userData.data!
+                                                .data()!
+                                                .containsKey('deleted')
+                                        ? null
+                                        : AlertDialogWidget.twoButtons(
+                                            context: context,
+                                            content: "사진을 선택해주세요!",
+                                            button: ["앨범에서 선택", "카메라로 촬영"],
+                                            color: [dmBlue, dmBlue],
+                                            action: [
+                                              onTapAddPhotoFromAlbum,
+                                              onTapAddPhotoFromCamera,
+                                            ],
+                                          );
                                   },
                                   child: Image.asset(
                                     'assets/images/icons/icon_camera_grey.png',
@@ -833,6 +686,12 @@ class ChatScreen extends StatelessWidget {
                                     ),
                                     height: 33.h,
                                     child: TextField(
+                                      enabled: userData.data?.exists == true &&
+                                              userData.data!
+                                                  .data()!
+                                                  .containsKey('deleted')
+                                          ? false
+                                          : true,
                                       controller: chatController,
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
@@ -841,6 +700,19 @@ class ChatScreen extends StatelessWidget {
                                         color: dmBlack,
                                       ),
                                       decoration: InputDecoration(
+                                        hintText:
+                                            userData.data?.exists == true &&
+                                                    userData.data!
+                                                        .data()!
+                                                        .containsKey('deleted')
+                                                ? '탈퇴한 사용자와 대화할 수 없습니다.'
+                                                : '',
+                                        hintStyle: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 16.sp,
+                                          fontWeight: medium,
+                                          color: dmLightGrey,
+                                        ),
                                         contentPadding: EdgeInsets.symmetric(
                                           vertical: 7.h,
                                           horizontal: 12.w,
@@ -899,7 +771,12 @@ class ChatScreen extends StatelessWidget {
                                     height: 35.h,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.r),
-                                      color: dmBlue,
+                                      color: userData.data?.exists == true &&
+                                              userData.data!
+                                                  .data()!
+                                                  .containsKey('deleted')
+                                          ? dmLightGrey
+                                          : dmBlue,
                                     ),
                                     alignment: Alignment.center,
                                     child: Image.asset(

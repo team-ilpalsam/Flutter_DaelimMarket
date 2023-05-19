@@ -253,9 +253,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 'send_time': DateTime.now(),
                 'sender': 'daelimmarket',
                 'type': 'text',
-                'text': '추가해줘서 감사해요\n다른 판매자들과 채팅을 시작해보아요!',
+                'text': '추가해줘서 고마워요!\n다른 판매자들과 채팅을 시작해보아요!',
               }
-            ]
+            ],
+            'read_time': {},
           });
           FirebaseFirestore.instance
               // chat 컬렉션 내
