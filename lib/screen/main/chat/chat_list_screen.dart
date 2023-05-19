@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
@@ -58,7 +59,7 @@ class ChatListScreen extends StatelessWidget {
 
                     if (snapshot.hasData &&
                         snapshot.data!.exists &&
-                        snapshot.data!.data()!.isNotEmpty) {
+                        snapshot.data!.data()!.entries.toList().length > 1) {
                       final data = snapshot.data!.data()!;
                       final chatList = data.entries
                           .toList(); // Map<String, dynamic>을 List<MapEntry<String, dynamic>> 형태로 변환
@@ -90,9 +91,17 @@ class ChatListScreen extends StatelessWidget {
                                   userNickname = '알 수 없음';
                                   userProfile = '';
                                 } else {
-                                  userNickname = userData.data?['id'] ?? '';
-                                  userProfile =
-                                      userData.data?['profile_image'] ?? '';
+                                  if (userData.data?.exists == true &&
+                                      userData.data!
+                                          .data()!
+                                          .containsKey('deleted')) {
+                                    userNickname = '탈퇴한 사용자';
+                                    userProfile = '';
+                                  } else {
+                                    userNickname = userData.data?['id'] ?? '';
+                                    userProfile =
+                                        userData.data?['profile_image'] ?? '';
+                                  }
                                 }
 
                                 if (chatUID == 'read_time') {
@@ -117,20 +126,82 @@ class ChatListScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.17557,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.17557,
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: dmGrey,
-                                              ),
-                                            ),
+                                            userProfile != ''
+                                                ? CachedNetworkImage(
+                                                    fadeInDuration:
+                                                        Duration.zero,
+                                                    fadeOutDuration:
+                                                        Duration.zero,
+                                                    imageUrl: userProfile,
+                                                    fit: BoxFit.cover,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.17557,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.17557,
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.17557,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.17557,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: dmGrey,
+                                                      ),
+                                                    ),
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.17557,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.17557,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: dmGrey,
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.17557,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.17557,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: dmGrey,
+                                                    )),
                                             SizedBox(
                                               width: 22.w,
                                             ),
@@ -194,7 +265,30 @@ class ChatListScreen extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                            )
+                                            ),
+                                            chatList[index]
+                                                            .value
+                                                            .last['sender'] !=
+                                                        uid &&
+                                                    chatList[index]
+                                                        .value
+                                                        .last['send_time']
+                                                        .toDate()
+                                                        .isAfter(data[
+                                                                    'read_time']
+                                                                [
+                                                                '$uid-${chatList[index].key}']
+                                                            .toDate())
+                                                ? Container(
+                                                    width: 17.w,
+                                                    height: 17.h,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            color: dmRed,
+                                                            shape: BoxShape
+                                                                .circle),
+                                                  )
+                                                : const SizedBox()
                                           ],
                                         ),
                                       ),

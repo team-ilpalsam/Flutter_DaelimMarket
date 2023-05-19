@@ -53,6 +53,7 @@ class DaelimMarket extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
+      useInheritedMediaQuery: true,
       designSize: const Size(393, 852),
       builder: (context, child) {
         return MaterialApp.router(
