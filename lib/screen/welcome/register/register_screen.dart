@@ -239,7 +239,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'email': '${emailController.text}@email.daelim.ac.kr', // 이메일
             'profile_image': "", // 프로필 사진
             'posts': [], // 포스트 내역
-            'watchlist': [],
+            'watchlist': [], // 관심 내역
+            'token': '', // 토큰
           });
           // Firebase chat 컬렉션에 추가
           FirebaseFirestore.instance

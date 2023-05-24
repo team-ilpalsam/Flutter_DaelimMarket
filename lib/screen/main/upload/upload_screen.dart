@@ -497,6 +497,7 @@ class _UploadScreenState extends State<UploadScreen> {
           'images': downloadUrls,
           'likes': [],
           'uploadTime': now,
+          'status': 0,
         });
       }));
 
