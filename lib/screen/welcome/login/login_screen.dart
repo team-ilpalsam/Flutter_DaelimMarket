@@ -221,7 +221,7 @@ class _LoginScreen extends State<LoginScreen> {
               await const FlutterSecureStorage()
                   .write(key: 'uid', value: value.user!.uid);
               // MainScreen으로 이동
-              context.go('/main');
+              context.go('/');
             }
             // 만약 인증이 안 된 계정이면,
             else {

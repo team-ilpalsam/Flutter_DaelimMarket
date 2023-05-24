@@ -768,9 +768,9 @@ class ChatScreen extends StatelessWidget {
                                       });
 
                                       if (userData.data?['token'] != '') {
-                                        await http.post(
-                                          'https://fcm.googleapis.com/fcm/send'
-                                              as Uri,
+                                        http.post(
+                                          Uri.parse(
+                                              'https://fcm.googleapis.com/fcm/send'),
                                           headers: <String, String>{
                                             'Content-Type': 'application/json',
                                             'Authorization': 'key=$serverKey',
