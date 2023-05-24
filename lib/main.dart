@@ -65,7 +65,7 @@ void main() async {
 
   await messaging.requestPermission(
     alert: true,
-    announcement: true,
+    announcement: false,
     badge: true,
     carPlay: false,
     criticalAlert: false,
