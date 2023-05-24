@@ -50,6 +50,9 @@ app.*.map.json
 # firebase_options.dart
 /lib/firebase_options.dart
 
+# server_key.dart
+server_key.dart
+
 # GoogleService-Info.plist
 /ios/Runner/GoogleService-Info.plist
 

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/service/connection_check_service.dart';
 import 'package:daelim_market/styles/image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -25,6 +27,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _asyncMethod() async {
     await ConnectionCheckService().connectionCheck(context);
+
+    id = await const FlutterSecureStorage().read(key: 'id');
+    uid = await const FlutterSecureStorage().read(key: 'uid');
+    email = await const FlutterSecureStorage().read(key: 'email');
+    password = await const FlutterSecureStorage().read(key: 'password');
+
     // 만약 FlutterSecureStorage에서 받아온 데이터가 있을 경우
     if (email != null && uid != null) {
       try {
@@ -43,6 +51,13 @@ class _SplashScreenState extends State<SplashScreen> {
             );
             context.go('/login');
           }
+        });
+
+        await FirebaseMessaging.instance.getToken().then((value) {
+          FirebaseFirestore.instance
+              .collection('user')
+              .doc(uid)
+              .update({'token': value});
         });
       } on FirebaseAuthException {
         WarningSnackBar.show(

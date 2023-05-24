@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -13,7 +14,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
+import '../../../key/server_key.dart';
 import '../../../main.dart';
 import '../../../styles/colors.dart';
 import '../../../styles/fonts.dart';
@@ -224,7 +227,7 @@ class ChatScreen extends StatelessWidget {
                                       .doc(uid) // 자신의 UID 문서 내
                                       .update({userUID: FieldValue.delete()});
                                   Navigator.pop(context);
-                                  context.pop();
+                                  context.go('/main');
                                 }
                               ],
                             );
@@ -733,7 +736,7 @@ class ChatScreen extends StatelessWidget {
                                   width: 10.w,
                                 ),
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     if (chatController.text != '' &&
                                         !RegExp(r'^\s*$')
                                             .hasMatch(chatController.text)) {
@@ -763,6 +766,33 @@ class ChatScreen extends StatelessWidget {
                                           }
                                         ])
                                       });
+
+                                      if (userData.data?['token'] != '') {
+                                        await http.post(
+                                          'https://fcm.googleapis.com/fcm/send'
+                                              as Uri,
+                                          headers: <String, String>{
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'key=$serverKey',
+                                          },
+                                          body: jsonEncode(
+                                            <String, dynamic>{
+                                              'to': userData.data?['token'],
+                                              'notification': <String, dynamic>{
+                                                'title': 'test',
+                                                'body': chatController.text,
+                                              },
+                                              'priority': 'high',
+                                              'data': <String, dynamic>{
+                                                'click_action':
+                                                    'FLUTTER_NOTIFICATION_CLICK',
+                                                'id': '${uid.hashCode}',
+                                                'status': 'done'
+                                              },
+                                            },
+                                          ),
+                                        );
+                                      }
                                       chatController.text = '';
                                     }
                                   },

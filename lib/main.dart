@@ -1,10 +1,11 @@
 import 'package:daelim_market/router/app_router.dart';
+import 'package:daelim_market/service/notification_service.dart';
 import 'package:daelim_market/styles/colors.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -13,14 +14,18 @@ String? uid;
 String? email;
 String? password;
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
+
 void main() async {
   // 비동기 메소드 사용시 필수
   WidgetsFlutterBinding.ensureInitialized();
-
-  id = await const FlutterSecureStorage().read(key: 'id');
-  uid = await const FlutterSecureStorage().read(key: 'uid');
-  email = await const FlutterSecureStorage().read(key: 'email');
-  password = await const FlutterSecureStorage().read(key: 'password');
 
   // intl 초기화
   await initializeDateFormatting('ko_KR', null);
@@ -44,6 +49,30 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  // Notification 초기화
+  NotificationService().initializeNotification();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
   runApp(const DaelimMarket());
 }
 

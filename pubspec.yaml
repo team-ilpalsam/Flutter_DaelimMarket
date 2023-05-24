@@ -17,6 +17,7 @@ dependencies:
   firebase_auth:
   cloud_firestore: 
   firebase_storage: 
+  firebase_messaging:
   dropdown_button2: ^2.0.0
   flutter_secure_storage: 
   timer_builder: 
@@ -25,11 +26,11 @@ dependencies:
   flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.19
   carousel_slider: ^4.2.1
-  flutter_local_notifications: ^9.1.5
-  permission_handler: ^10.2.0
   emoji_regex: 
   cached_network_image: ^3.2.3
   flutter_keyboard_visibility: ^5.4.1
+  http: ^0.13.4
+  flutter_local_notifications: ^9.1.5
 
 dev_dependencies:
   flutter_test:

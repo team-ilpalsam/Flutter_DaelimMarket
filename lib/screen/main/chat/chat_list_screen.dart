@@ -270,15 +270,18 @@ class ChatListScreen extends StatelessWidget {
                                                             .value
                                                             .last['sender'] !=
                                                         uid &&
-                                                    chatList[index]
-                                                        .value
-                                                        .last['send_time']
-                                                        .toDate()
-                                                        .isAfter(data[
-                                                                    'read_time']
-                                                                [
-                                                                '$uid-${chatList[index].key}']
-                                                            .toDate())
+                                                    (data['read_time'][
+                                                                '$uid-${chatList[index].key}'] ==
+                                                            null ||
+                                                        chatList[index]
+                                                            .value
+                                                            .last['send_time']
+                                                            .toDate()
+                                                            .isAfter(data[
+                                                                        'read_time']
+                                                                    [
+                                                                    '$uid-${chatList[index].key}']
+                                                                .toDate()))
                                                 ? Container(
                                                     width: 17.w,
                                                     height: 17.h,
