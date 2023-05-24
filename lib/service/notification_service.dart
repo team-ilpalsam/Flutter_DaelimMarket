@@ -4,6 +4,11 @@ final notification = FlutterLocalNotificationsPlugin();
 
 class NotificationService {
   initializeNotification() async {
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'daelim_market', // id
+      '대림마켓', // title
+      importance: Importance.max,
+    );
     const initializationSettingAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const initializationSettingIOS = IOSInitializationSettings(
@@ -17,5 +22,9 @@ class NotificationService {
     );
 
     await notification.initialize(initializationSettings);
+    await notification
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 }
