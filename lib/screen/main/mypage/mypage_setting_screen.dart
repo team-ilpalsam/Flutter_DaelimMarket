@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
@@ -8,8 +9,10 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -48,9 +51,12 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
   }
 
   XFile? _pickedImage;
+  String uidNickName = "";
+  String imgURL = "";
 
   @override
   Widget build(BuildContext context) {
+    getData();
     debugPrint(_pickedImage?.path);
     return Scaffold(
       body: SafeArea(
@@ -73,17 +79,23 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                 ),
                 action: GestureDetector(
                   onTap: () async {
-                    String nickName = nickNameController.text;
-                    await FirebaseUtils.updateUserData(nickName);
+                    AlertDialogWidget.oneButton(
+                        context: context,
+                        content: '저장 하시겠습니까?',
+                        button: '확인',
+                        action: () async {
+                          String nickName = nickNameController.text;
+                          await FirebaseUtils.updateUserData(nickName);
+                          await FirebaseUtils.updateProfileImage(_pickedImage!);
 
-                    context.go('/main');
-                    DoneSnackBar.show(
-                      context: context,
-                      text: '성공적으로 등록했어요!',
-                      paddingBottom: 0,
-                    );
-
-                    nickNameController.clear();
+                          context.go('/main');
+                          DoneSnackBar.show(
+                            context: context,
+                            text: '성공적으로 등록했어요!',
+                            paddingBottom: 0,
+                          );
+                          nickNameController.clear();
+                        });
                   },
                   child: Text(
                     '저장',
@@ -152,26 +164,41 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            Container(
-                              width: 105.w,
-                              height: 105.h,
-                              decoration: BoxDecoration(
-                                image: _pickedImage != null
-                                    ? DecorationImage(
-                                        image:
-                                            Image.file(File(_pickedImage!.path))
-                                                .image,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
-                                shape: BoxShape.circle,
-                                color: dmLightGrey,
-                                border: Border.all(
-                                  color: dmDarkGrey,
-                                  width: 1.w,
-                                ),
-                              ),
-                            ),
+                            imgURL == ''
+                                ? Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dmLightGrey,
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    fadeInDuration: Duration.zero,
+                                    fadeOutDuration: Duration.zero,
+                                    imageUrl: imgURL,
+                                    fit: BoxFit.cover,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      width: 105.w,
+                                      height: 105.h,
+                                      decoration: BoxDecoration(
+                                        image: _pickedImage != null
+                                            ? DecorationImage(
+                                                image: Image.file(File(
+                                                        _pickedImage!.path))
+                                                    .image,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : DecorationImage(
+                                                image: imageProvider),
+                                        shape: BoxShape.circle,
+                                        color: dmLightGrey,
+                                        border: Border.all(
+                                          color: dmDarkGrey,
+                                          width: 1.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                             Positioned(
                               top: 73.h,
                               left: 73.h,
@@ -219,7 +246,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       child: TextField(
                         controller: nickNameController,
                         style: mainInputTextDeco,
-                        decoration: mainInputDeco(''),
+                        decoration: mainInputDeco(uidNickName),
                         cursorColor: dmBlack,
                       ),
                     ),
@@ -274,10 +301,23 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       onTap: () {
                         context.go('/');
                       },
-                      child: const Text(
-                        "계정 삭제",
-                        style: TextStyle(
-                          color: dmLightGrey,
+                      child: GestureDetector(
+                        onTap: () {
+                          AlertDialogWidget.oneButton(
+                            context: context,
+                            content: '계정을 삭제하시겠습니까?',
+                            button: '확인',
+                            action: () {
+                              deleteAccount();
+                              addDeleted();
+                            },
+                          );
+                        },
+                        child: const Text(
+                          "계정 삭제",
+                          style: TextStyle(
+                            color: dmLightGrey,
+                          ),
                         ),
                       ),
                     ),
@@ -286,7 +326,8 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        context.go('/');
+                        const FlutterSecureStorage().deleteAll();
+                        context.go('/welcome');
                       },
                       child: const Text(
                         "로그아웃",
@@ -304,6 +345,43 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
       ),
     );
   }
+
+  Future<void> deleteAccount() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      await user!.delete();
+      debugPrint('계정이 성공적으로 삭제되었습니다.');
+    } catch (e) {
+      debugPrint('계정 삭제 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  Future<void> addDeleted() async {
+    try {
+      // 문서의 참조 가져오기
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('user').doc('$uid');
+
+      // 필드 업데이트
+      await docRef.update({'deleted': 'true'});
+      debugPrint('필드가 성공적으로 추가되었습니다.');
+    } catch (e) {
+      debugPrint('필드 추가 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  getData() async {
+    var uidData = await FirebaseFirestore.instance
+        .collection('user') // user 컬렉션으로부터
+        .doc(uid) // 넘겨받은 uid 필드의 데이터를
+        .get();
+
+    var dataMap = uidData.data();
+    uidNickName = dataMap!['nickName'];
+    imgURL = dataMap['profile_image'];
+
+    if (mounted) setState(() {});
+  }
 }
 
 class FirebaseUtils {
@@ -316,6 +394,27 @@ class FirebaseUtils {
     if (user != null) {
       final userRef = _firestore.collection('user').doc(uid);
       await userRef.update({'nickName': nickName});
+    }
+  }
+
+  static Future<void> updateProfileImage(XFile ImagePath) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userRef = FirebaseStorage.instance.ref().child('profile/$uid/');
+      UploadTask uploadTask =
+          userRef.putData(File(ImagePath.path).readAsBytesSync());
+      // 만약 사진 업로드 성공 시
+      final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+
+      // 사진의 다운로드 가능한 url을 불러온 후
+      final url = await taskSnapshot.ref.getDownloadURL();
+
+      debugPrint(url);
+
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc('$uid')
+          .update({'profile_image': url});
     }
   }
 }
