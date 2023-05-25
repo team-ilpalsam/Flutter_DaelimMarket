@@ -11,6 +11,7 @@ import 'package:daelim_market/styles/input_deco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
@@ -79,23 +80,33 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                 ),
                 action: GestureDetector(
                   onTap: () async {
-                    AlertDialogWidget.oneButton(
+                    AlertDialogWidget.twoButtons(
                         context: context,
                         content: '저장 하시겠습니까?',
-                        button: '확인',
-                        action: () async {
-                          String nickName = nickNameController.text;
-                          await FirebaseUtils.updateUserData(nickName);
-                          await FirebaseUtils.updateProfileImage(_pickedImage!);
-
-                          context.go('/main');
-                          DoneSnackBar.show(
-                            context: context,
-                            text: '성공적으로 등록했어요!',
-                            paddingBottom: 0,
-                          );
-                          nickNameController.clear();
-                        });
+                        button: [
+                          '취소',
+                          '확인'
+                        ],
+                        color: [
+                          dmLightGrey,
+                          dmBlue
+                        ],
+                        action: [
+                          () {
+                            Navigator.pop(context);
+                          },
+                          () async {
+                            String nickName = nickNameController.text;
+                            await FirebaseUtils.updateUserData(
+                                context, nickName);
+                            if (_pickedImage != null) {
+                              await FirebaseUtils.updateProfileImage(
+                                  _pickedImage!);
+                            }
+                            context.go('/main');
+                            nickNameController.clear();
+                          }
+                        ]);
                   },
                   child: Text(
                     '저장',
@@ -230,7 +241,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       height: 18.h,
                     ),
                     Text(
-                      "닉네임(12자 이내)",
+                      "닉네임(8자 이내)",
                       style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 18.sp,
@@ -244,6 +255,12 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                     SizedBox(
                       height: 40.h,
                       child: TextField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
+                          LengthLimitingTextInputFormatter(8),
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
                         controller: nickNameController,
                         style: mainInputTextDeco,
                         decoration: mainInputDeco(uidNickName),
@@ -364,6 +381,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
 
       // 필드 업데이트
       await docRef.update({'deleted': 'true'});
+      await docRef.update({'nickName': ' '});
       debugPrint('필드가 성공적으로 추가되었습니다.');
     } catch (e) {
       debugPrint('필드 추가 중 오류가 발생했습니다: $e');
@@ -389,12 +407,37 @@ class FirebaseUtils {
   static final _auth = FirebaseAuth.instance;
 
   // Firebase Firestore의 데이터 업데이트하기
-  static Future<void> updateUserData(String nickName) async {
+  static Future<void> updateUserData(context, String nickName) async {
     final user = _auth.currentUser;
     if (user != null) {
       final userRef = _firestore.collection('user').doc(uid);
-      await userRef.update({'nickName': nickName});
+      final isUnique = await isNickNameUnique(nickName);
+      if (isUnique) {
+        await userRef.update({'nickName': nickName});
+        DoneSnackBar.show(
+          context: context,
+          text: '성공적으로 등록했어요!',
+          paddingBottom: 0,
+        );
+      } else {
+        DoneSnackBar.show(
+          context: context,
+          text: '중복된 닉네임입니다.',
+          paddingBottom: 0,
+        );
+        Navigator.pop(context);
+      }
     }
+  }
+
+  static Future<bool> isNickNameUnique(String nickNameText) async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('user')
+        .where('nickName', isEqualTo: nickNameText)
+        .get();
+
+    return snapshot.docs.isEmpty;
   }
 
   static Future<void> updateProfileImage(XFile ImagePath) async {
