@@ -263,7 +263,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   SizedBox(
                                     // 닉네임과 거래 희망 장소
                                     child: Text(
-                                      '${snapshot.data!['id'].toUpperCase()} · ${snapshot.data!['location']}',
+                                      '${snapshot.data!['nickName'].toUpperCase()} · ${snapshot.data!['location']}',
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         color: dmDarkGrey,

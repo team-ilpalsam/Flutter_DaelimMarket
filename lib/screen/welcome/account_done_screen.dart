@@ -67,7 +67,7 @@ class _AccountDoneScreenState extends State<AccountDoneScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      context.go('/main');
+                      context.go('/');
                     },
                     child: const BlueButton(
                       text: '대림마켓 입장',

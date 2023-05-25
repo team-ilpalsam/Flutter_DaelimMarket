@@ -185,7 +185,7 @@ class ChatScreen extends StatelessWidget {
                     userData.data!.data()!.containsKey('deleted')) {
                   userNickname = '탈퇴한 사용자';
                 } else {
-                  userNickname = userData.data?['id'] ?? '';
+                  userNickname = userData.data?['nickName'] ?? '';
                 }
               }
 

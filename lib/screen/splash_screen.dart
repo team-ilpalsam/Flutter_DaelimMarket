@@ -25,6 +25,13 @@ class _SplashScreenState extends State<SplashScreen> {
     _asyncMethod();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  String userNickname = '';
+
   _asyncMethod() async {
     await ConnectionCheckService().connectionCheck(context);
 
@@ -42,7 +49,20 @@ class _SplashScreenState extends State<SplashScreen> {
             .then((value) async {
           // 계정 인증 여부 확인
           if (value.user!.emailVerified == true) {
-            context.go('/main');
+            var userData = await FirebaseFirestore.instance
+                .collection('user') // user 컬렉션으로부터
+                .doc(uid) // 넘겨받은 uid 필드의 데이터를
+                .get();
+
+            if (userData.data()?['nickName'] == '') {
+              context.go('/register/setting');
+            } else {
+              await const FlutterSecureStorage().write(
+                  key: 'nickname', value: '${userData.data()?['nickName']}');
+              nickName =
+                  await const FlutterSecureStorage().read(key: 'nickname');
+              context.go('/main');
+            }
           } else {
             WarningSnackBar.show(
               context: context,

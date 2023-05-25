@@ -13,6 +13,7 @@ String? id;
 String? uid;
 String? email;
 String? password;
+String? nickName;
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
