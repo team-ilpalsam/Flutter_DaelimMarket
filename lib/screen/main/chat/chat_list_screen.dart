@@ -98,7 +98,8 @@ class ChatListScreen extends StatelessWidget {
                                     userNickname = '탈퇴한 사용자';
                                     userProfile = '';
                                   } else {
-                                    userNickname = userData.data?['id'] ?? '';
+                                    userNickname =
+                                        userData.data?['nickName'] ?? '';
                                     userProfile =
                                         userData.data?['profile_image'] ?? '';
                                   }

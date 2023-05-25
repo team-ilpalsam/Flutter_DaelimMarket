@@ -52,18 +52,20 @@ class AppRouter {
         ),
       ),
 
+      // 계정 설정 페이지
       GoRoute(
         name: 'accountSetting',
         path: '/register/setting',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => const NoTransitionPage(
           child: AccountSettingScreen(),
         ),
       ),
 
+      // 계정 설정 완료 페이지
       GoRoute(
         name: 'accountSettingDone',
         path: '/register/setting/done',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => const NoTransitionPage(
           child: AccountDoneScreen(),
         ),
       ),
@@ -76,6 +78,7 @@ class AppRouter {
         ),
       ),
 
+      // 비밀번호 찾기 페이지
       GoRoute(
         path: '/login/forgot',
         pageBuilder: (context, state) => const CupertinoPage(

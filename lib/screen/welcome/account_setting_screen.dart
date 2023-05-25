@@ -9,7 +9,6 @@ import 'package:daelim_market/screen/widgets/welcome_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/styles/input_deco.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,9 +27,6 @@ class AccountSettingScreen extends StatefulWidget {
 }
 
 class _AccountSettingScreenState extends State<AccountSettingScreen> {
-  late TextEditingController nickNameController = TextEditingController();
-  XFile? _pickedImage;
-
   @override
   void initState() {
     nickNameController = TextEditingController()
@@ -45,6 +41,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
     nickNameController.dispose();
     super.dispose();
   }
+
+  late TextEditingController nickNameController = TextEditingController();
+  XFile? _pickedImage;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +197,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                         height: 50.h,
                       ),
                       Text(
-                        '닉네임(12자 이내)',
+                        '닉네임(8자 이내)',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 21.sp,
@@ -209,10 +209,14 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                         height: 14.h,
                       ),
                       TextField(
+                        enabled: _isLoading ? false : true,
                         controller: nickNameController,
                         cursorHeight: 24.h,
-                        inputFormatters: <TextInputFormatter>[
-                          LengthLimitingTextInputFormatter(12),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
+                          LengthLimitingTextInputFormatter(8),
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
                         ],
                         style: welcomeInputTextDeco,
                         decoration: welcomeInputDeco(),
@@ -221,16 +225,62 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      nickNameController.text.length <= 12
+                      nickNameController.text.length >= 2 ||
+                              _pickedImage != null
                           ? GestureDetector(
                               onTap: () async {
-                                String nickName = nickNameController.text;
-                                await FirebaseUtils.updateUserData(nickName);
-                                deleteProfileImage();
-                                updateProfileImage(_pickedImage!);
-                                context.pop();
+                                _isLoading
+                                    ? null
+                                    : AlertDialogWidget.twoButtons(
+                                        context: context,
+                                        content: '저장 하시겠습니까?',
+                                        button: ['취소', '확인'],
+                                        color: [dmLightGrey, dmBlue],
+                                        action: [
+                                          () {
+                                            Navigator.pop(context);
+                                          },
+                                          () async {
+                                            Navigator.pop(context);
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
+                                            if (nickNameController
+                                                    .text.length >=
+                                                2) {
+                                              // 닉네임에 공백 혹은 특수문자가 포함될 경우
+                                              if (!RegExp(r'^[a-zA-Z가-힣0-9]+$')
+                                                  .hasMatch(nickNameController
+                                                      .text)) {
+                                                WarningSnackBar.show(
+                                                    context: context,
+                                                    text:
+                                                        '닉네임에 사용할 수 없는 문자가 있어요.');
+                                                setState(() {
+                                                  _isLoading = false;
+                                                });
+                                                return;
+                                              }
+                                              // 정상일 경우
+                                              else {
+                                                await updateNickname(
+                                                    nickNameController.text);
+                                              }
+                                            }
+                                            if (_pickedImage != null) {
+                                              await updateProfileImage(
+                                                  _pickedImage!);
+                                            }
+                                            nickNameController.clear();
+                                          }
+                                        ],
+                                      );
                               },
-                              child: const BlueButton(text: '입력 완료'))
+                              child: _isLoading == true // Loading 상태일 경우
+                                  ? const LoadingButton(
+                                      color: dmLightGrey,
+                                    )
+                                  : const BlueButton(text: '입력 완료'))
                           : const BlueButton(text: '입력 완료', color: dmLightGrey),
                       bottomPadding,
                     ],
@@ -244,48 +294,69 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
     );
   }
 
-  void deleteProfileImage() async {
-    FirebaseStorage.instance
-        .ref('profile/$uid')
-        .listAll()
-        .then((value) => Future.wait(value.items.map((e) => e.delete())));
-  }
+  // Firebase Firestore에 user 컬렉션에서 닉네임 업데이트
+  updateNickname(String nickName) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .where('nickName', isEqualTo: nickName)
+          .get();
 
-  // Storage에 이미지 올리기
-  void updateProfileImage(XFile imageUrl) async {
-    User? user = FirebaseAuth.instance.currentUser;
+      if (snapshot.docs.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(uid)
+            .update({'nickName': nickName});
 
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child('profile/$uid/$uid.${imageUrl.path.split('.').last}');
+        setState(() {
+          _isLoading = false;
+        });
 
-    final UploadTask uploadTask =
-        ref.putData(File(imageUrl.path).readAsBytesSync());
-
-    // 만약 사진 업로드 성공 시
-    final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
-
-    // 사진의 다운로드 가능한 url을 불러온 후
-    final url = await taskSnapshot.ref.getDownloadURL();
-
-    if (user != null) {
-      String userId = user.uid;
-      CollectionReference users = FirebaseFirestore.instance.collection('user');
-      users.doc(userId).update({'profile_image': url});
+        context.go('/register/setting/done');
+      } else {
+        WarningSnackBar.show(
+          context: context,
+          text: '중복된 닉네임입니다.',
+          paddingBottom: 0,
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+    } catch (e) {
+      WarningSnackBar.show(context: context, text: '닉네임 변경 중 오류가 발생했어요.');
+      return;
     }
   }
-}
 
-class FirebaseUtils {
-  static final _firestore = FirebaseFirestore.instance;
-  static final _auth = FirebaseAuth.instance;
+  // Firebase Firestore에 user 컬렉션에서 프로필 이미지 업데이트
+  updateProfileImage(XFile imagePath) async {
+    try {
+      // 기존 이미지 업로드
+      final userRef = FirebaseStorage.instance
+          .ref()
+          .child('profile/$uid/$uid.${_pickedImage!.path.split('.').last}');
+      UploadTask uploadTask =
+          userRef.putData(File(imagePath.path).readAsBytesSync());
+      // 만약 사진 업로드 성공 시
+      final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
 
-  // Firebase Firestore의 데이터 업데이트하기
-  static Future<void> updateUserData(String nickName) async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final userRef = _firestore.collection('user').doc(uid);
-      await userRef.update({'nickName': nickName});
+      // 사진의 다운로드 가능한 url을 불러온 후
+      final url = await taskSnapshot.ref.getDownloadURL();
+
+      debugPrint(url);
+
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc('$uid')
+          .update({'profile_image': url});
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      WarningSnackBar.show(context: context, text: '프로필 사진 업로드 중 오류가 발생했어요.');
+      return;
     }
   }
 }

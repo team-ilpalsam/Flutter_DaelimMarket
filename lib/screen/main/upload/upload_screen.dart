@@ -11,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -89,10 +90,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+    return KeyboardDismissOnTap(
       child: Scaffold(
         // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
@@ -134,7 +132,8 @@ class _UploadScreenState extends State<UploadScreen> {
                   action: titleController.text.length >= 3 && // 제목이 3글자 이상이거나
                           priceController.text.isNotEmpty && // 가격을 작성하였거나
                           _selectedLocation != '장소 선택' && // 장소가 '장소 선택'이 아니거나
-                          _pickedImages != null // 이미지를 선택하였거나
+                          _pickedImages != null &&
+                          _pickedImages!.isNotEmpty // 이미지를 선택하였거나
                       ? GestureDetector(
                           onTap: () {
                             _isLoading
@@ -487,7 +486,7 @@ class _UploadScreenState extends State<UploadScreen> {
           'id': id,
           'uid': uid,
           'product_id': productId,
-          'nickName': '',
+          'nickName': nickName,
           'price': priceController.text,
           'title': titleController.text,
           'location': _selectedLocation == '장소 선택'
