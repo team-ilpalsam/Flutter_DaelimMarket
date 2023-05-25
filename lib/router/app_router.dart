@@ -3,6 +3,7 @@ import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/detail/detail_screen.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_setting_screen.dart';
 import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
@@ -131,6 +132,15 @@ class AppRouter {
         path: '/mypage_setting',
         pageBuilder: (context, state) => const CupertinoPage(
           child: MypageSettingScreen(),
+        ),
+      ),
+
+      // 마이페이지 스크린 페이지
+      GoRoute(
+        name: 'mypagescreen',
+        path: '/mypage_screen',
+        pageBuilder: (context, state) => const CupertinoPage(
+          child: MypageScreen(),
         ),
       ),
 
