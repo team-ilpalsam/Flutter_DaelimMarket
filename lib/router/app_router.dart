@@ -5,7 +5,7 @@ import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/detail/detail_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_setting_screen.dart';
-import 'package:daelim_market/screen/main/mypage/post_page_screen.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_history_screen.dart';
 import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
 import 'package:daelim_market/screen/welcome/account_done_screen.dart';
@@ -161,10 +161,12 @@ class AppRouter {
 
       // 포스트 스크린 페이지
       GoRoute(
-        name: 'postpagescreen',
-        path: '/post_page_screen',
+        name: 'historyscreen',
+        path: '/history',
         pageBuilder: (context, state) => CupertinoPage(
-          child: PostPageScreen(),
+          child: MyHistoryScreen(
+            history: state.queryParams['history']!,
+          ),
         ),
       ),
     ],

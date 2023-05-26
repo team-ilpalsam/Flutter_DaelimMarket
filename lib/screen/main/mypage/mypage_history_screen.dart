@@ -1,26 +1,28 @@
-import 'package:daelim_market/screen/widgets/main_appbar.dart';
-import 'package:daelim_market/styles/colors.dart';
-import 'package:daelim_market/styles/fonts.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+
+import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+import 'package:daelim_market/styles/colors.dart';
+import 'package:daelim_market/styles/fonts.dart';
 
 import '../../../main.dart';
 
-class PostPageScreen extends StatefulWidget {
-  const PostPageScreen({super.key});
+class MyHistoryScreen extends StatelessWidget {
+  String history;
 
-  @override
-  State<PostPageScreen> createState() => _PostPageScreenState();
-}
+  MyHistoryScreen({
+    Key? key,
+    required this.history,
+  }) : super(key: key);
 
-class _PostPageScreenState extends State<PostPageScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -35,7 +37,7 @@ class _PostPageScreenState extends State<PostPageScreen> {
             children: [
               // Title
               MainAppbar.show(
-                title: '판매내역',
+                title: history == 'posts' ? '판매내역' : '관심목록',
                 leading: GestureDetector(
                   onTap: () {
                     context.go('/main');
@@ -59,16 +61,16 @@ class _PostPageScreenState extends State<PostPageScreen> {
                           .doc('$uid')
                           .get(),
                       builder: (context, userData) {
-                        debugPrint(userData.data?.data()?['posts'].toString());
+                        debugPrint(userData.data?.data()?[history].toString());
                         Future<List<DocumentSnapshot>>
                             getProductDocuments() async {
-                          List<dynamic>? posts = [];
-                          posts = userData.data
-                              ?.data()?['posts']; // 검색할 product_id 배열
+                          List<dynamic>? historyData = [];
+                          historyData = userData.data
+                              ?.data()?[history]; // 검색할 product_id 배열
                           List<DocumentSnapshot> documents = [];
 
-                          if (posts != null) {
-                            for (String productId in posts.reversed) {
+                          if (historyData != null) {
+                            for (String productId in historyData.reversed) {
                               QuerySnapshot snapshot = await FirebaseFirestore
                                   .instance
                                   .collection('product')
