@@ -163,7 +163,7 @@ class AppRouter {
       GoRoute(
         name: 'postpagescreen',
         path: '/post_page_screen',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => CupertinoPage(
           child: PostPageScreen(),
         ),
       ),
