@@ -426,7 +426,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     title: '',
                     leading: GestureDetector(
                       onTap: () {
-                        context.go('/main');
+                        context.pop();
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',

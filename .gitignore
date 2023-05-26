@@ -53,8 +53,9 @@ app.*.map.json
 # server_key.dart
 server_key.dart
 
-# GoogleService-Info.plist
-/ios/Runner/GoogleService-Info.plist
+# GoogleService
+google-services.json
+GoogleService-Info.plist
 
 # Not Used OSs
 /linux/
