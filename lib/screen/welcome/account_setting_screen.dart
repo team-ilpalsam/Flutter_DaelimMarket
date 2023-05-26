@@ -95,7 +95,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                             onTap: () {
                               AlertDialogWidget.twoButtons(
                                   context: context,
-                                  content: "testtest",
+                                  content: "프로필 사진을 선택해주세요!",
                                   button: [
                                     "앨범에서 선택",
                                     "카메라로 촬영"
@@ -225,8 +225,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      nickNameController.text.length >= 2 ||
-                              _pickedImage != null
+                      nickNameController.text.length >= 2
                           ? GestureDetector(
                               onTap: () async {
                                 _isLoading
@@ -325,8 +324,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         return;
       }
     } catch (e) {
-      WarningSnackBar.show(context: context, text: '닉네임 변경 중 오류가 발생했어요.');
-      return;
+      if (mounted) {
+        WarningSnackBar.show(context: context, text: '닉네임 변경 중 오류가 발생했어요.');
+      }
     }
   }
 
@@ -355,8 +355,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      WarningSnackBar.show(context: context, text: '프로필 사진 업로드 중 오류가 발생했어요.');
-      return;
+      if (mounted) {
+        WarningSnackBar.show(context: context, text: '프로필 사진 업로드 중 오류가 발생했어요.');
+      }
     }
   }
 }

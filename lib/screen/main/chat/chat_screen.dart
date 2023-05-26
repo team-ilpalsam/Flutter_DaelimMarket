@@ -779,7 +779,7 @@ class ChatScreen extends StatelessWidget {
                                             <String, dynamic>{
                                               'to': userData.data?['token'],
                                               'notification': <String, dynamic>{
-                                                'title': '$id',
+                                                'title': '$nickName',
                                                 'body': chatController.text,
                                               },
                                               'priority': 'high',
