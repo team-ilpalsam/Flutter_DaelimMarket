@@ -1,17 +1,35 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:daelim_market/main.dart';
 import '../../widgets/named_widget.dart';
 
-class MypageScreen extends StatelessWidget {
+class MypageScreen extends StatefulWidget {
   const MypageScreen({super.key});
 
   @override
+  State<MypageScreen> createState() => _MypageScreenState();
+}
+
+class _MypageScreenState extends State<MypageScreen> {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  String uidNickName = "";
+  String imgURL = "";
+  List postsIndex = [];
+
+  @override
   Widget build(BuildContext context) {
+    getData();
+    //getData2();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -49,24 +67,41 @@ class MypageScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 9.5.w, top: 34.5.h),
                         child: Row(
                           children: [
-                            Container(
-                              width:
-                                  MediaQuery.of(context).size.width * 0.14758,
-                              height:
-                                  MediaQuery.of(context).size.width * 0.14758,
-                              decoration: const BoxDecoration(
-                                // image: _pickedImage != null
-                                //     ? DecorationImage(
-                                //         image:
-                                //             Image.file(File(_pickedImage!.path))
-                                //                 .image,
-                                //         fit: BoxFit.cover,
-                                //       )
-                                //     : null,
-                                shape: BoxShape.circle,
-                                color: dmLightGrey,
-                              ),
-                            ),
+                            imgURL == ''
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.14758,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.14758,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dmLightGrey,
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    fadeInDuration: Duration.zero,
+                                    fadeOutDuration: Duration.zero,
+                                    imageUrl: imgURL,
+                                    fit: BoxFit.cover,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.14758,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.14758,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.14758,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.14758,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: imageProvider),
+                                        shape: BoxShape.circle,
+                                        color: dmLightGrey,
+                                      ),
+                                    ),
+                                  ),
                             Padding(
                               padding: EdgeInsets.only(left: 23.w),
                               child: Column(
@@ -74,7 +109,7 @@ class MypageScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Sung_Feeeel",
+                                    uidNickName,
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 24.sp,
@@ -83,7 +118,7 @@ class MypageScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    "heopill@naver.com",
+                                    email!,
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 16.sp,
@@ -144,6 +179,7 @@ class MypageScreen extends StatelessWidget {
                         height: 20.h,
                       ),
                       Row(
+                        //관심목록 첫째줄
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -176,6 +212,7 @@ class MypageScreen extends StatelessWidget {
                         height: 18.h,
                       ),
                       Row(
+                        //관심목록 둘째줄
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -194,13 +231,59 @@ class MypageScreen extends StatelessWidget {
                             width: 105.w,
                             height: 105.h,
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: dmRed,
-                              borderRadius: BorderRadius.circular(5.r),
-                            ),
-                            width: 105.w,
-                            height: 105.h,
+                          Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  context.pushNamed('main');
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: dmRed,
+                                    borderRadius: BorderRadius.circular(5.r),
+                                  ),
+                                  width: 105.w,
+                                  height: 105.h,
+                                ),
+                              ),
+                              // 전체보기 점 세개
+                              Positioned(
+                                left: 28.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 48.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 68.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -239,6 +322,7 @@ class MypageScreen extends StatelessWidget {
                         height: 20.h,
                       ),
                       Row(
+                        //판매내역 첫째줄
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -271,6 +355,7 @@ class MypageScreen extends StatelessWidget {
                         height: 18.h,
                       ),
                       Row(
+                        //판매내역 둘째줄
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -289,13 +374,59 @@ class MypageScreen extends StatelessWidget {
                             width: 105.w,
                             height: 105.h,
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: dmBlue,
-                              borderRadius: BorderRadius.circular(5.r),
-                            ),
-                            width: 105.w,
-                            height: 105.h,
+                          Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  context.pushNamed('postpagescreen');
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: dmBlue,
+                                    borderRadius: BorderRadius.circular(5.r),
+                                  ),
+                                  width: 105.w,
+                                  height: 105.h,
+                                ),
+                              ),
+                              // 전체보기 점 세개
+                              Positioned(
+                                left: 28.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 48.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 68.w,
+                                top: 48.h,
+                                child: Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dmWhite,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -311,5 +442,28 @@ class MypageScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  getData() async {
+    var uidData = await FirebaseFirestore.instance
+        .collection('user') // user 컬렉션으로부터
+        .doc(uid) // 넘겨받은 uid 필드의 데이터를
+        .get();
+
+    var dataMap = uidData.data();
+    uidNickName = dataMap!['nickName'];
+    imgURL = dataMap['profile_image'];
+
+    if (mounted) setState(() {});
+  }
+
+  getData2() async {
+    var productData =
+        await FirebaseFirestore.instance.collection('product').doc().get();
+
+    var dataMap2 = productData.data();
+    postsIndex = dataMap2!['posts'][0];
+
+    if (mounted) setState(() {});
   }
 }
