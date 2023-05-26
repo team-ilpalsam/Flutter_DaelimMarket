@@ -25,6 +25,7 @@ class _MypageScreenState extends State<MypageScreen> {
   String uidNickName = "";
   String imgURL = "";
   List postsIndex = [];
+  String productImage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +236,8 @@ class _MypageScreenState extends State<MypageScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  context.pushNamed('main');
+                                  context.pushNamed('historyscreen',
+                                      queryParams: {'history': 'watchlist'});
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -378,7 +380,8 @@ class _MypageScreenState extends State<MypageScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  context.pushNamed('postpagescreen');
+                                  context.pushNamed('historyscreen',
+                                      queryParams: {'history': 'posts'});
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -465,5 +468,16 @@ class _MypageScreenState extends State<MypageScreen> {
     postsIndex = dataMap2!['posts'][0];
 
     if (mounted) setState(() {});
+  }
+
+  getProductData() async {
+    var productData = await FirebaseFirestore.instance
+        .collection('user') // product 컬렉션으로부터
+        .doc('$uid') // 넘겨받은 productid 필드의 데이터를
+        .get('posts'[0] as GetOptions?);
+
+    setState(() {
+      productImage = productData.data()?['profile_image'][0];
+    });
   }
 }
