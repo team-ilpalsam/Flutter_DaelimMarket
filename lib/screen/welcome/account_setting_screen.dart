@@ -270,7 +270,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                               await updateProfileImage(
                                                   _pickedImage!);
                                             }
-                                            nickNameController.clear();
+                                            if (mounted) {
+                                              nickNameController.clear();
+                                            }
                                           }
                                         ],
                                       );
