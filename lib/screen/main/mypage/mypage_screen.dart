@@ -31,9 +31,132 @@ class _MypageScreenState extends State<MypageScreen> {
     super.dispose();
   }
 
-  String uidNickName = "";
-  String imgURL = "";
-  List postsIndex = [];
+  String uidNickName = '';
+  String uidProfile = '';
+  String uidEmail = '';
+
+  Widget imageBlock(data, index) {
+    return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
+      imageUrl: data[index]['images'][0],
+      fit: BoxFit.cover,
+      imageBuilder: (context, imageProvider) => GestureDetector(
+        onTap: () {
+          context.pushNamed('detail',
+              queryParams: {'productId': data[index]['product_id']});
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+            color: dmGrey,
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          width: 105.w,
+          height: 105.w,
+        ),
+      ),
+      placeholder: (context, url) => Container(
+        decoration: BoxDecoration(
+          color: dmGrey,
+          borderRadius: BorderRadius.circular(5.r),
+        ),
+        width: 105.w,
+        height: 105.w,
+        child: const Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      ),
+    );
+  }
+
+  Widget moreImageBlock(data, index) {
+    return CachedNetworkImage(
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
+      imageUrl: data[index]['images'][0],
+      fit: BoxFit.cover,
+      imageBuilder: (context, imageProvider) => GestureDetector(
+        onTap: () {
+          context.pushNamed('historyscreen', queryParams: {'history': 'posts'});
+        },
+        child: Container(
+          width: 105.w,
+          height: 105.w,
+          alignment: Alignment.center,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                  color: dmGrey,
+                  borderRadius: BorderRadius.circular(5.r),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: dmBlack.withOpacity(0.65),
+                  borderRadius: BorderRadius.circular(5.r),
+                ),
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 50.w,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      for (int i = 0; i < 3; i++)
+                        Container(
+                          width: 10.w,
+                          height: 10.w,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: dmWhite,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      placeholder: (context, url) => GestureDetector(
+        onTap: () {
+          context.pushNamed('historyscreen', queryParams: {'history': 'posts'});
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: dmGrey,
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          width: 105.w,
+          height: 105.w,
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 50.w,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (int i = 0; i < 3; i++)
+                  Container(
+                    width: 10.w,
+                    height: 10.w,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: dmWhite,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,50 +188,22 @@ class _MypageScreenState extends State<MypageScreen> {
 
             // Content
             Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 9.5.w, top: 34.5.h),
-                        child: Row(
-                          children: [
-                            imgURL == ''
-                                ? Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.14758,
-                                    height: MediaQuery.of(context).size.width *
-                                        0.14758,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: dmLightGrey,
-                                    ),
-                                  )
-                                : CachedNetworkImage(
-                                    fadeInDuration: Duration.zero,
-                                    fadeOutDuration: Duration.zero,
-                                    imageUrl: imgURL,
-                                    fit: BoxFit.cover,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.14758,
-                                    height: MediaQuery.of(context).size.width *
-                                        0.14758,
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.14758,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.14758,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: imageProvider),
-                                        shape: BoxShape.circle,
-                                        color: dmLightGrey,
-                                      ),
-                                    ),
-                                    placeholder: (context, url) => Container(
+              child: RefreshIndicator(
+                onRefresh: onRefresh,
+                backgroundColor: dmWhite,
+                color: dmDarkGrey,
+                strokeWidth: 2.w,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 9.5.w, top: 34.5.h),
+                          child: Row(
+                            children: [
+                              uidProfile == ''
+                                  ? Container(
                                       width: MediaQuery.of(context).size.width *
                                           0.14758,
                                       height:
@@ -118,563 +213,274 @@ class _MypageScreenState extends State<MypageScreen> {
                                         shape: BoxShape.circle,
                                         color: dmLightGrey,
                                       ),
+                                    )
+                                  : CachedNetworkImage(
+                                      fadeInDuration: Duration.zero,
+                                      fadeOutDuration: Duration.zero,
+                                      imageUrl: uidProfile,
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.14758,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.14758,
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: imageProvider),
+                                          shape: BoxShape.circle,
+                                          color: dmLightGrey,
+                                        ),
+                                      ),
+                                      placeholder: (context, url) => Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: dmLightGrey,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 23.w),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Padding(
+                                padding: EdgeInsets.only(left: 23.w),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      uidNickName == ''
+                                          ? '불러오는 중...'
+                                          : uidNickName,
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 24.sp,
+                                        fontWeight: medium,
+                                        color: dmBlack,
+                                      ),
+                                    ),
+                                    Text(
+                                      uidEmail == '' ? '불러오는 중...' : uidEmail,
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 16.sp,
+                                        fontWeight: medium,
+                                        color: dmDarkGrey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 25.h,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            context.pushNamed('mypagesetting');
+                          },
+                          child: const BlueButton(
+                            text: '프로필 수정',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        FutureBuilder(
+                          future: getWatchlistDocuments(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data != null &&
+                                snapshot.data!.isNotEmpty) {
+                              return Column(
                                 children: [
-                                  Text(
-                                    uidNickName,
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 24.sp,
-                                      fontWeight: medium,
-                                      color: dmBlack,
-                                    ),
+                                  divider,
+                                  SizedBox(
+                                    height: 20.h,
                                   ),
-                                  Text(
-                                    email!,
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16.sp,
-                                      fontWeight: medium,
-                                      color: dmDarkGrey,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Image.asset(
+                                          'assets/images/icons/icon_heart.png',
+                                          height: 22.h,
+                                          width: 24.w,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 11.w),
+                                        child: Text(
+                                          '관심목록',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 20.sp,
+                                            fontWeight: medium,
+                                            color: dmDarkGrey,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  Row(
+                                    // 관심목록 첫째줄
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      for (var i = 0; i < 3; i++)
+                                        i < snapshot.data!.length
+                                            ? imageBlock(snapshot.data!, i)
+                                            : SizedBox(
+                                                width: 105.w,
+                                                height: 105.w,
+                                              )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        snapshot.data!.length > 3 ? 18.h : 0,
+                                  ),
+                                  snapshot.data!.length > 3
+                                      ? Row(
+                                          // 관심목록 둘째줄
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            for (var i = 3; i < 6; i++)
+                                              i < snapshot.data!.length && i < 5
+                                                  ? imageBlock(
+                                                      snapshot.data!, i)
+                                                  : i == 5
+                                                      ? snapshot.data!.length >
+                                                              6
+                                                          ? moreImageBlock(
+                                                              snapshot.data!, i)
+                                                          : imageBlock(
+                                                              snapshot.data!, i)
+                                                      : SizedBox(
+                                                          width: 105.w,
+                                                          height: 105.w,
+                                                        ),
+                                          ],
+                                        )
+                                      : const SizedBox(),
+                                  SizedBox(
+                                    height: 20.h,
                                   ),
                                 ],
-                              ),
-                            ),
-                          ],
+                              );
+                            }
+                            return const SizedBox();
+                          },
                         ),
-                      ),
-                      SizedBox(
-                        height: 25.h,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          context.pushNamed('mypagesetting');
-                        },
-                        child: const BlueButton(
-                          text: '프로필 수정',
-                          color: dmGrey,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      FutureBuilder(
-                        future: getWatchlistDocuments(),
-                        builder: (context, snapshot) {
-                          if (snapshot.data != null &&
-                              snapshot.data!.isNotEmpty) {
-                            return Column(
-                              children: [
-                                divider,
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                Row(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Image.asset(
-                                        'assets/images/icons/icon_heart.png',
-                                        height: 22.h,
-                                        width: 24.w,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 11.w),
-                                      child: Text(
-                                        '관심목록',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 20.sp,
-                                          fontWeight: medium,
-                                          color: dmDarkGrey,
+                        FutureBuilder(
+                          future: getPostsDocuments(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data != null &&
+                                snapshot.data!.isNotEmpty) {
+                              return Column(
+                                children: [
+                                  divider,
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Image.asset(
+                                          'assets/images/icons/icon_paper.png',
+                                          height: 22.h,
+                                          width: 24.w,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                Row(
-                                  //관심목록 첫째줄
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    for (var i = 0; i < 3; i++)
-                                      i < snapshot.data!.length
-                                          ? CachedNetworkImage(
-                                              fadeInDuration: Duration.zero,
-                                              fadeOutDuration: Duration.zero,
-                                              imageUrl: snapshot.data![i]
-                                                  ['images'][0],
-                                              fit: BoxFit.cover,
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      GestureDetector(
-                                                onTap: () {
-                                                  context.pushNamed('detail',
-                                                      queryParams: {
-                                                        'productId':
-                                                            snapshot.data![i]
-                                                                ['product_id']
-                                                      });
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover),
-                                                    color: dmGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.r),
-                                                  ),
-                                                  width: 105.w,
-                                                  height: 105.w,
-                                                ),
-                                              ),
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                decoration: BoxDecoration(
-                                                  color: dmGrey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.r),
-                                                ),
-                                                width: 105.w,
-                                                height: 105.w,
-                                                child: const Center(
-                                                  child:
-                                                      CupertinoActivityIndicator(),
-                                                ),
-                                              ),
-                                            )
-                                          : SizedBox(
-                                              width: 105.w,
-                                              height: 105.w,
-                                            )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 18.h,
-                                ),
-                                snapshot.data!.length > 3
-                                    ? Row(
-                                        //관심목록 둘째줄
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          for (var i = 3; i < 6; i++)
-                                            i < snapshot.data!.length && i < 5
-                                                ? CachedNetworkImage(
-                                                    fadeInDuration:
-                                                        Duration.zero,
-                                                    fadeOutDuration:
-                                                        Duration.zero,
-                                                    imageUrl: snapshot.data![i]
-                                                        ['images'][0],
-                                                    fit: BoxFit.cover,
-                                                    imageBuilder: (context,
-                                                            imageProvider) =>
-                                                        GestureDetector(
-                                                      onTap: () {
-                                                        context.pushNamed(
-                                                            'detail',
-                                                            queryParams: {
-                                                              'productId': snapshot
-                                                                      .data![i]
-                                                                  ['product_id']
-                                                            });
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                          color: dmGrey,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.r),
-                                                        ),
-                                                        width: 105.w,
-                                                        height: 105.w,
-                                                      ),
-                                                    ),
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            Container(
-                                                      decoration: BoxDecoration(
-                                                        color: dmGrey,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.r),
-                                                      ),
-                                                      width: 105.w,
-                                                      height: 105.w,
-                                                      child: const Center(
-                                                        child:
-                                                            CupertinoActivityIndicator(),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : i == 5 &&
-                                                        i <
-                                                            snapshot
-                                                                .data!.length
-                                                    ? Stack(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              context.pushNamed(
-                                                                  'historyscreen',
-                                                                  queryParams: {
-                                                                    'history':
-                                                                        'watchlist'
-                                                                  });
-                                                            },
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: dmGrey,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.r),
-                                                              ),
-                                                              width: 105.w,
-                                                              height: 105.h,
-                                                            ),
-                                                          ),
-                                                          // 전체보기 점 세개
-                                                          Positioned(
-                                                            left: 28.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            left: 48.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            left: 68.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    : SizedBox(
-                                                        width: 105.w,
-                                                        height: 105.w,
-                                                      ),
-                                        ],
-                                      )
-                                    : const SizedBox(),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                      FutureBuilder(
-                        future: getPostsDocuments(),
-                        builder: (context, snapshot) {
-                          if (snapshot.data != null &&
-                              snapshot.data!.isNotEmpty) {
-                            return Column(
-                              children: [
-                                divider,
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                Row(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Image.asset(
-                                        'assets/images/icons/icon_paper.png',
-                                        height: 22.h,
-                                        width: 24.w,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 11.w),
-                                      child: Text(
-                                        '판매내역',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 20.sp,
-                                          fontWeight: medium,
-                                          color: dmDarkGrey,
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 11.w),
+                                        child: Text(
+                                          '판매내역',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 20.sp,
+                                            fontWeight: medium,
+                                            color: dmDarkGrey,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                Row(
-                                  //관심목록 첫째줄
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    for (var i = 0; i < 3; i++)
-                                      i < snapshot.data!.length
-                                          ? CachedNetworkImage(
-                                              fadeInDuration: Duration.zero,
-                                              fadeOutDuration: Duration.zero,
-                                              imageUrl: snapshot.data![i]
-                                                  ['images'][0],
-                                              fit: BoxFit.cover,
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      GestureDetector(
-                                                onTap: () {
-                                                  context.pushNamed('detail',
-                                                      queryParams: {
-                                                        'productId':
-                                                            snapshot.data![i]
-                                                                ['product_id']
-                                                      });
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover),
-                                                    color: dmGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.r),
-                                                  ),
-                                                  width: 105.w,
-                                                  height: 105.w,
-                                                ),
-                                              ),
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                decoration: BoxDecoration(
-                                                  color: dmGrey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.r),
-                                                ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  Row(
+                                    // 판매내역 첫째줄
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      for (var i = 0; i < 3; i++)
+                                        i < snapshot.data!.length
+                                            ? imageBlock(snapshot.data!, i)
+                                            : SizedBox(
                                                 width: 105.w,
                                                 height: 105.w,
-                                                child: const Center(
-                                                  child:
-                                                      CupertinoActivityIndicator(),
-                                                ),
-                                              ),
-                                            )
-                                          : SizedBox(
-                                              width: 105.w,
-                                              height: 105.w,
-                                            )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 18.h,
-                                ),
-                                snapshot.data!.length > 3
-                                    ? Row(
-                                        //관심목록 둘째줄
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          for (var i = 3; i < 6; i++)
-                                            i < snapshot.data!.length && i < 5
-                                                ? CachedNetworkImage(
-                                                    fadeInDuration:
-                                                        Duration.zero,
-                                                    fadeOutDuration:
-                                                        Duration.zero,
-                                                    imageUrl: snapshot.data![i]
-                                                        ['images'][0],
-                                                    fit: BoxFit.cover,
-                                                    imageBuilder: (context,
-                                                            imageProvider) =>
-                                                        GestureDetector(
-                                                      onTap: () {
-                                                        context.pushNamed(
-                                                            'detail',
-                                                            queryParams: {
-                                                              'productId': snapshot
-                                                                      .data![i]
-                                                                  ['product_id']
-                                                            });
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              image:
-                                                                  imageProvider,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                          color: dmGrey,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.r),
+                                              )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        snapshot.data!.length > 3 ? 18.h : 0,
+                                  ),
+                                  snapshot.data!.length > 3
+                                      ? Row(
+                                          // 판매내역 둘째줄
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            for (var i = 3; i < 6; i++)
+                                              i < snapshot.data!.length && i < 5
+                                                  ? imageBlock(
+                                                      snapshot.data!, i)
+                                                  : i == 5
+                                                      ? snapshot.data!.length >
+                                                              6
+                                                          ? moreImageBlock(
+                                                              snapshot.data!, i)
+                                                          : imageBlock(
+                                                              snapshot.data!, i)
+                                                      : SizedBox(
+                                                          width: 105.w,
+                                                          height: 105.w,
                                                         ),
-                                                        width: 105.w,
-                                                        height: 105.w,
-                                                      ),
-                                                    ),
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            Container(
-                                                      decoration: BoxDecoration(
-                                                        color: dmGrey,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.r),
-                                                      ),
-                                                      width: 105.w,
-                                                      height: 105.w,
-                                                      child: const Center(
-                                                        child:
-                                                            CupertinoActivityIndicator(),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : i == 5 &&
-                                                        i <
-                                                            snapshot
-                                                                .data!.length
-                                                    ? Stack(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              context.pushNamed(
-                                                                  'historyscreen',
-                                                                  queryParams: {
-                                                                    'history':
-                                                                        'watchlist'
-                                                                  });
-                                                            },
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: dmGrey,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.r),
-                                                              ),
-                                                              width: 105.w,
-                                                              height: 105.h,
-                                                            ),
-                                                          ),
-                                                          // 전체보기 점 세개
-                                                          Positioned(
-                                                            left: 28.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            left: 48.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            left: 68.w,
-                                                            top: 48.h,
-                                                            child: Container(
-                                                              width: 10.w,
-                                                              height: 10.h,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: dmWhite,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    : SizedBox(
-                                                        width: 105.w,
-                                                        height: 105.w,
-                                                      ),
-                                        ],
-                                      )
-                                    : const SizedBox(),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                      SizedBox(
-                        height: 70.h,
-                      ),
-                    ],
+                                          ],
+                                        )
+                                      : const SizedBox(),
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                ],
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                        SizedBox(
+                          height: 40.h,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -685,6 +491,13 @@ class _MypageScreenState extends State<MypageScreen> {
     );
   }
 
+  Future<void> onRefresh() async {
+    // 1초 뒤에 setState를 이용하여 새로고침
+    return Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {});
+    });
+  }
+
   getData() async {
     uidData = await FirebaseFirestore.instance
         .collection('user') // user 컬렉션으로부터
@@ -693,9 +506,12 @@ class _MypageScreenState extends State<MypageScreen> {
 
     var dataMap = uidData.data();
     uidNickName = dataMap!['nickName'];
-    imgURL = dataMap['profile_image'];
+    uidProfile = dataMap['profile_image'];
+    uidEmail = dataMap['email'];
 
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<List<DocumentSnapshot>> getWatchlistDocuments() async {

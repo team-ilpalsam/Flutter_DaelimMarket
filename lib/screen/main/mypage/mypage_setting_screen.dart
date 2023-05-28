@@ -425,7 +425,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                       ]);
                           },
                           child: const Text(
-                            "계정 삭제",
+                            "계정삭제",
                             style: TextStyle(
                               color: dmLightGrey,
                             ),

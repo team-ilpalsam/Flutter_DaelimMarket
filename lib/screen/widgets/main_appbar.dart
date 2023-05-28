@@ -12,6 +12,7 @@ class MainAppbar {
     required String title,
     required Widget leading,
     required Widget action,
+    VoidCallback? titleOnTap,
   }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -40,7 +41,8 @@ class MainAppbar {
               ),
               Expanded(
                 flex: 70,
-                child: SizedBox(
+                child: GestureDetector(
+                  onTap: titleOnTap,
                   child: Text(
                     title,
                     textAlign: TextAlign.center,
