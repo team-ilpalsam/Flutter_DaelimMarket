@@ -19,6 +19,8 @@ class MypageScreen extends StatefulWidget {
 
 class _MypageScreenState extends State<MypageScreen> {
   var uidData;
+  int watchlistLength = 0;
+  int postsLength = 0;
 
   @override
   void initState() {
@@ -98,7 +100,7 @@ class _MypageScreenState extends State<MypageScreen> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: dmBlack.withOpacity(0.65),
+                  color: dmBlack.withOpacity(0.75),
                   borderRadius: BorderRadius.circular(5.r),
                 ),
                 alignment: Alignment.center,
@@ -298,6 +300,37 @@ class _MypageScreenState extends State<MypageScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
+                        divider,
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(
+                                'assets/images/icons/icon_heart.png',
+                                height: 22.h,
+                                width: 24.w,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 11.w),
+                              child: Text(
+                                '관심목록',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 20.sp,
+                                  fontWeight: medium,
+                                  color: dmDarkGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
                         FutureBuilder(
                           future: getWatchlistDocuments(),
                           builder: (context, snapshot) {
@@ -305,37 +338,6 @@ class _MypageScreenState extends State<MypageScreen> {
                                 snapshot.data!.isNotEmpty) {
                               return Column(
                                 children: [
-                                  divider,
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Image.asset(
-                                          'assets/images/icons/icon_heart.png',
-                                          height: 22.h,
-                                          width: 24.w,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 11.w),
-                                        child: Text(
-                                          '관심목록',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 20.sp,
-                                            fontWeight: medium,
-                                            color: dmDarkGrey,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
                                   Row(
                                     // 관심목록 첫째줄
                                     mainAxisAlignment:
@@ -387,6 +389,37 @@ class _MypageScreenState extends State<MypageScreen> {
                             return const SizedBox();
                           },
                         ),
+                        divider,
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(
+                                'assets/images/icons/icon_paper.png',
+                                height: 22.h,
+                                width: 24.w,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 11.w),
+                              child: Text(
+                                '판매내역',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 20.sp,
+                                  fontWeight: medium,
+                                  color: dmDarkGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
                         FutureBuilder(
                           future: getPostsDocuments(),
                           builder: (context, snapshot) {
@@ -394,37 +427,6 @@ class _MypageScreenState extends State<MypageScreen> {
                                 snapshot.data!.isNotEmpty) {
                               return Column(
                                 children: [
-                                  divider,
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Image.asset(
-                                          'assets/images/icons/icon_paper.png',
-                                          height: 22.h,
-                                          width: 24.w,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 11.w),
-                                        child: Text(
-                                          '판매내역',
-                                          style: TextStyle(
-                                            fontFamily: 'Pretendard',
-                                            fontSize: 20.sp,
-                                            fontWeight: medium,
-                                            color: dmDarkGrey,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
                                   Row(
                                     // 판매내역 첫째줄
                                     mainAxisAlignment:
@@ -530,7 +532,6 @@ class _MypageScreenState extends State<MypageScreen> {
           documents.addAll(snapshot.docs);
         }
       }
-
       return documents;
     }
     return [];
@@ -552,7 +553,6 @@ class _MypageScreenState extends State<MypageScreen> {
           documents.addAll(snapshot.docs);
         }
       }
-
       return documents;
     }
     return [];
