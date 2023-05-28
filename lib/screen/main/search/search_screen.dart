@@ -33,13 +33,13 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               topPadding,
               SizedBox(
-                height: 16.25.h,
+                height: 13.25.h,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0), //양쪽 간격
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: TextField(
@@ -84,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               SizedBox(
-                height: 17.75.h,
+                height: 20.75.h,
               ),
               divider,
 

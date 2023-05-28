@@ -11,12 +11,6 @@ class AlertDialogWidget {
     required VoidCallback action,
     barrierDismissible = true,
   }) {
-    int nextLineCount = 0;
-    for (int i = 0; i < content.length; i++) {
-      if (content[i] == '\n') {
-        nextLineCount++;
-      }
-    }
     showDialog(
       barrierDismissible: barrierDismissible,
       barrierColor: Colors.transparent,
@@ -32,8 +26,6 @@ class AlertDialogWidget {
           ),
           content: Container(
             color: Colors.transparent,
-            width: 319.w,
-            height: (146 + (25 * nextLineCount)).h,
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
@@ -43,65 +35,69 @@ class AlertDialogWidget {
                 borderRadius: BorderRadius.circular(20.r),
                 color: dmWhite,
               ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 33.h,
-                  ),
-                  Text(
-                    content,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18.sp,
-                      fontWeight: bold,
-                      color: dmBlack,
-                      height: 1.3.h,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 15.w,
+                  right: 15.w,
+                  top: 33.h,
+                  bottom: 20.h,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 290.w),
+                      child: Text(
+                        content,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18.sp,
+                          fontWeight: bold,
+                          color: dmBlack,
+                          height: 1.3.h,
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 25.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 15.w,
+                    SizedBox(
+                      height: 25.h,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: action,
-                            child: Container(
-                              height: 38.h,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  5.r,
+                    SizedBox(
+                      width: 290.w,
+                      height: 38.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: action,
+                              child: Container(
+                                height: 38.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    5.r,
+                                  ),
+                                  color: dmBlue,
                                 ),
-                                color: dmBlue,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  button,
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 18.sp,
-                                    fontWeight: medium,
-                                    color: dmWhite,
+                                child: Center(
+                                  child: Text(
+                                    button,
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18.sp,
+                                      fontWeight: medium,
+                                      color: dmWhite,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -118,12 +114,6 @@ class AlertDialogWidget {
     required List<VoidCallback> action,
     barrierDismissible = true,
   }) {
-    int nextLineCount = 0;
-    for (int i = 0; i < content.length; i++) {
-      if (content[i] == '\n') {
-        nextLineCount++;
-      }
-    }
     showDialog(
       barrierDismissible: barrierDismissible,
       barrierColor: Colors.transparent,
@@ -137,46 +127,48 @@ class AlertDialogWidget {
               Radius.circular(20.r),
             ),
           ),
-          content: SizedBox(
-            width: 319.w,
-            height: (146 + (25 * nextLineCount)).h,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: dmBlack,
-                  width: 2.w,
-                ),
-                borderRadius: BorderRadius.circular(20.r),
-                color: dmWhite,
+          content: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: dmBlack,
+                width: 2.w,
+              ),
+              borderRadius: BorderRadius.circular(20.r),
+              color: dmWhite,
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 15.w,
+                right: 15.w,
+                top: 33.h,
+                bottom: 20.h,
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: 33.h,
-                  ),
-                  Text(
-                    content,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 18.sp,
-                      fontWeight: bold,
-                      color: dmBlack,
-                      height: 1.3.h,
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 290.w),
+                    child: Text(
+                      content,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18.sp,
+                        fontWeight: bold,
+                        color: dmBlack,
+                        height: 1.3.h,
+                      ),
                     ),
                   ),
                   SizedBox(
                     height: 25.h,
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 15.w,
-                    ),
+                  SizedBox(
+                    width: 290.w,
+                    height: 38.h,
                     child: Row(
                       children: [
                         Flexible(
-                          fit: FlexFit.loose,
                           child: GestureDetector(
                             onTap: action[0],
                             child: Container(
@@ -187,6 +179,7 @@ class AlertDialogWidget {
                                 ),
                                 color: color[0],
                               ),
+                              alignment: Alignment.center,
                               child: Center(
                                 child: Text(
                                   button[0],
@@ -203,7 +196,6 @@ class AlertDialogWidget {
                         ),
                         SizedBox(width: 15.w),
                         Flexible(
-                          fit: FlexFit.loose,
                           child: GestureDetector(
                             onTap: action[1],
                             child: Container(
@@ -214,6 +206,7 @@ class AlertDialogWidget {
                                 ),
                                 color: color[1],
                               ),
+                              alignment: Alignment.center,
                               child: Center(
                                 child: Text(
                                   button[1],
@@ -230,9 +223,6 @@ class AlertDialogWidget {
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
                   ),
                 ],
               ),
