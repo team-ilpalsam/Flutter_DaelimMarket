@@ -16,7 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../key/server_key.dart';
+import '../../../const/server_key.dart';
 import '../../../main.dart';
 import '../../../styles/colors.dart';
 import '../../../styles/fonts.dart';
