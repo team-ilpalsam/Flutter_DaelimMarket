@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,16 +51,24 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                       constrained: true,
                       child: _height! > MediaQuery.of(context).size.height &&
                               _width! == MediaQuery.of(context).size.width
-                          ? Image.network(
-                              widget.src,
+                          ? CachedNetworkImage(
+                              fadeInDuration: Duration.zero,
+                              fadeOutDuration: Duration.zero,
+                              imageUrl: widget.src,
+                              placeholder: (context, url) =>
+                                  const CupertinoActivityIndicator(),
                               width: MediaQuery.of(context).size.width,
                             )
                           : SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height,
-                              child: Image.network(
+                              child: CachedNetworkImage(
+                                fadeInDuration: Duration.zero,
+                                fadeOutDuration: Duration.zero,
+                                imageUrl: widget.src,
+                                placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
                                 fit: BoxFit.fitWidth,
-                                widget.src,
                               ),
                             ),
                     )
