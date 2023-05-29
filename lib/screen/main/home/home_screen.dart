@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/controller/main_screen_index_controller.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -123,10 +125,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       ).toList(),
                     ),
                   ),
-                  Image.asset(
-                    'assets/images/icons/icon_search_black.png',
-                    width: 26.5.w,
-                    height: 26.5.h,
+                  BlocProvider(
+                    create: (_) => MainScreenIndexController(),
+                    child: GestureDetector(
+                      onTap: () {
+                        context.read<MainScreenIndexController>().setIndex(1);
+                      },
+                      child: BlocBuilder<MainScreenIndexController, int>(
+                        builder: (context, state) => Image.asset(
+                          'assets/images/icons/icon_search_black.png',
+                          width: 26.5.w,
+                          height: 26.5.h,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
