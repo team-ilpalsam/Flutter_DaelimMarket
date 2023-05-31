@@ -147,7 +147,7 @@ class AlertDialogWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    constraints: BoxConstraints(maxWidth: 290.w),
+                    constraints: BoxConstraints(maxWidth: 275.w),
                     child: Text(
                       content,
                       textAlign: TextAlign.center,

@@ -72,7 +72,7 @@ class _MypageScreenState extends State<MypageScreen> {
     );
   }
 
-  Widget moreImageBlock(data, index) {
+  Widget moreImageBlock(data, index, history) {
     return CachedNetworkImage(
       fadeInDuration: Duration.zero,
       fadeOutDuration: Duration.zero,
@@ -80,7 +80,7 @@ class _MypageScreenState extends State<MypageScreen> {
       fit: BoxFit.cover,
       imageBuilder: (context, imageProvider) => GestureDetector(
         onTap: () {
-          context.pushNamed('historyscreen', queryParams: {'history': 'posts'});
+          context.pushNamed('historyscreen', queryParams: {'history': history});
         },
         child: Container(
           width: 105.w,
@@ -370,7 +370,9 @@ class _MypageScreenState extends State<MypageScreen> {
                                                       ? snapshot.data!.length >
                                                               6
                                                           ? moreImageBlock(
-                                                              snapshot.data!, i)
+                                                              snapshot.data!,
+                                                              i,
+                                                              'watchlist')
                                                           : imageBlock(
                                                               snapshot.data!, i)
                                                       : SizedBox(
@@ -459,7 +461,9 @@ class _MypageScreenState extends State<MypageScreen> {
                                                       ? snapshot.data!.length >
                                                               6
                                                           ? moreImageBlock(
-                                                              snapshot.data!, i)
+                                                              snapshot.data!,
+                                                              i,
+                                                              'posts')
                                                           : imageBlock(
                                                               snapshot.data!, i)
                                                       : SizedBox(

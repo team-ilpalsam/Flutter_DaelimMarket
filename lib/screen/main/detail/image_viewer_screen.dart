@@ -26,10 +26,12 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
 
     final decodedImage = await decodeImageFromList(bytes);
 
-    setState(() {
-      _width = decodedImage.width;
-      _height = decodedImage.height;
-    });
+    if (mounted) {
+      setState(() {
+        _width = decodedImage.width;
+        _height = decodedImage.height;
+      });
+    }
   }
 
   @override
@@ -47,6 +49,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
           Center(
               child: _height != null
                   ? InteractiveViewer(
+                      minScale: 0.5,
                       maxScale: 5.0,
                       constrained: true,
                       child: _height! > MediaQuery.of(context).size.height &&
