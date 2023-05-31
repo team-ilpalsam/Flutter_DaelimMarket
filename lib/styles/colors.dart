@@ -9,3 +9,5 @@ const Color dmLightGrey = Color(0xFFCDCDCD);
 const Color dmWhite = Color(0xFFFFFFFF);
 const Color dmBlack = Color(0xFF000000);
 const Color dmRed = Color(0xFFFF6B6B);
+const Color dmGreen = Color(0xFF24C748);
+const Color dmYellow = Color(0xFFDCE01B);

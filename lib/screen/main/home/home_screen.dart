@@ -131,12 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         context.read<MainScreenIndexController>().setIndex(1);
                       },
-                      child: BlocBuilder<MainScreenIndexController, int>(
-                        builder: (context, state) => Image.asset(
-                          'assets/images/icons/icon_search_black.png',
-                          width: 26.5.w,
-                          height: 26.5.h,
-                        ),
+                      child: Image.asset(
+                        'assets/images/icons/icon_search_black.png',
+                        width: 26.5.w,
+                        height: 26.5.h,
                       ),
                     ),
                   ),

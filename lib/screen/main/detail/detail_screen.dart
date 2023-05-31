@@ -23,7 +23,19 @@ import '../../widgets/snackbar.dart';
 class DetailScreen extends StatelessWidget {
   final String productId;
 
-  const DetailScreen({super.key, required this.productId});
+  DetailScreen({super.key, required this.productId});
+
+  final _statusList = [
+    '판매중',
+    '예약중',
+    '판매완료',
+  ];
+
+  final _statusColorList = [
+    dmGreen,
+    dmYellow,
+    dmGrey,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -252,37 +264,44 @@ class DetailScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(
-                                height: 19.h,
+                                height: 20.h,
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      // 판매글 제목
-                                      child: Text(
-                                        snapshot.data!['title'],
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmBlack,
-                                          fontSize: 21.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    Text(
+                                      _statusList[snapshot.data!['status']],
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: _statusColorList[
+                                            snapshot.data!['status']],
+                                        fontSize: 18.sp,
+                                        fontWeight: medium,
                                       ),
                                     ),
                                     SizedBox(
                                       height: 15.h,
                                     ),
+                                    Text(
+                                      snapshot.data!['title'],
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmBlack,
+                                        fontSize: 21.sp,
+                                        fontWeight: bold,
+                                      ),
+                                    ),
                                     SizedBox(
-                                      // 닉네임과 거래 희망 장소
-                                      child: Text(
-                                        '${snapshot.data!['nickName'].toUpperCase()} · ${snapshot.data!['location']}',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmDarkGrey,
-                                          fontSize: 18.sp,
-                                        ),
+                                      height: 15.h,
+                                    ),
+                                    Text(
+                                      '${snapshot.data!['nickName'].toUpperCase()} · ${snapshot.data!['location']}',
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmDarkGrey,
+                                        fontSize: 18.sp,
                                       ),
                                     ),
                                     SizedBox(
@@ -290,14 +309,12 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                     // 설명글의 데이터가 존재할 경우
                                     snapshot.data!['desc'] != ''
-                                        ? SizedBox(
-                                            child: Text(
-                                              snapshot.data!['desc'],
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                color: dmBlack,
-                                                fontSize: 16.sp,
-                                              ),
+                                        ? Text(
+                                            snapshot.data!['desc'],
+                                            style: TextStyle(
+                                              fontFamily: 'Pretendard',
+                                              color: dmBlack,
+                                              fontSize: 16.sp,
                                             ),
                                           )
                                         : const SizedBox(),
@@ -306,18 +323,15 @@ class DetailScreen extends StatelessWidget {
                                             height: 22.h,
                                           )
                                         : const SizedBox(),
-                                    SizedBox(
-                                      // 업로드 시간
-                                      child: Text(
-                                        DateFormat(
-                                                'yyyy년 M월 d일 a h시 mm분', 'ko_KR')
-                                            .format(snapshot.data!['uploadTime']
-                                                .toDate()),
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          color: dmDarkGrey,
-                                          fontSize: 13.sp,
-                                        ),
+                                    Text(
+                                      DateFormat(
+                                              'yyyy년 M월 d일 a h시 mm분', 'ko_KR')
+                                          .format(snapshot.data!['uploadTime']
+                                              .toDate()),
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        color: dmDarkGrey,
+                                        fontSize: 13.sp,
                                       ),
                                     ),
                                   ],
@@ -346,7 +360,7 @@ class DetailScreen extends StatelessWidget {
                         padding: EdgeInsets.only(
                           // Android 대응
                           top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
-                          left: 32.w,
+                          left: 25.w,
                           right: 20.w,
                         ),
                         child: Row(
@@ -379,7 +393,7 @@ class DetailScreen extends StatelessWidget {
                                     ),
                             ),
                             SizedBox(
-                              width: 21.83.w,
+                              width: 15.5.w,
                             ),
                             Container(
                               width: 1.w,
@@ -387,7 +401,7 @@ class DetailScreen extends StatelessWidget {
                               color: dmDarkGrey,
                             ),
                             SizedBox(
-                              width: 20.5.w,
+                              width: 15.w,
                             ),
                             Text(
                               // #,###원 형식으로 price 데이터를 표시
@@ -400,36 +414,128 @@ class DetailScreen extends StatelessWidget {
                               ),
                             ),
                             const Expanded(child: SizedBox()),
-                            GestureDetector(
-                              onTap: () {
-                                snapshot.data!['uid'] == uid
-                                    ? null
-                                    : context.pushNamed('chat', queryParams: {
+                            snapshot.data!['uid'] != uid
+                                ? GestureDetector(
+                                    onTap: () {
+                                      context.pushNamed('chat', queryParams: {
                                         'userUID': snapshot.data!['uid']
                                       });
-                              },
-                              child: Container(
-                                width: 115.w,
-                                height: 34.h,
-                                decoration: BoxDecoration(
-                                  color: snapshot.data!['uid'] == uid
-                                      ? dmLightGrey
-                                      : dmBlue,
-                                  borderRadius: BorderRadius.circular(5.r),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '채팅하기',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16.sp,
-                                      fontWeight: bold,
-                                      color: dmWhite,
+                                    },
+                                    child: Container(
+                                      width: 115.w,
+                                      height: 34.h,
+                                      decoration: BoxDecoration(
+                                        color: dmBlue,
+                                        borderRadius:
+                                            BorderRadius.circular(5.r),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '채팅하기',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontSize: 16.sp,
+                                            fontWeight: bold,
+                                            color: dmWhite,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            )
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoActionSheet(
+                                            title: null,
+                                            message: null,
+                                            actions: <Widget>[
+                                              CupertinoActionSheetAction(
+                                                child: Text(_statusList[0]),
+                                                onPressed: () {
+                                                  FirebaseFirestore.instance
+                                                      .collection(
+                                                          'product') // product 컬렉션에서
+                                                      .doc(snapshot.data![
+                                                          'product_id']) // product_id의 문서 내
+                                                      .update({'status': 0});
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              CupertinoActionSheetAction(
+                                                child: Text(_statusList[1]),
+                                                onPressed: () {
+                                                  FirebaseFirestore.instance
+                                                      .collection(
+                                                          'product') // product 컬렉션에서
+                                                      .doc(snapshot.data![
+                                                          'product_id']) // product_id의 문서 내
+                                                      .update({'status': 1});
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              CupertinoActionSheetAction(
+                                                child: Text(_statusList[2]),
+                                                onPressed: () {
+                                                  FirebaseFirestore.instance
+                                                      .collection(
+                                                          'product') // product 컬렉션에서
+                                                      .doc(snapshot.data![
+                                                          'product_id']) // product_id의 문서 내
+                                                      .update({'status': 2});
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                            cancelButton:
+                                                CupertinoActionSheetAction(
+                                              isDefaultAction: true,
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    context); // 작업 시트 닫기
+                                              },
+                                              child: const Text('취소'),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 115.w,
+                                      height: 34.h,
+                                      decoration: BoxDecoration(
+                                        color: dmBlue,
+                                        borderRadius:
+                                            BorderRadius.circular(5.r),
+                                      ),
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              _statusList[
+                                                  snapshot.data!['status']],
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 16.sp,
+                                                fontWeight: bold,
+                                                color: dmWhite,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 5.w,
+                                            ),
+                                            Image.asset(
+                                              'assets/images/icons/icon_arrow_up.png',
+                                              height: 8.h,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
                           ],
                         ),
                       ),
