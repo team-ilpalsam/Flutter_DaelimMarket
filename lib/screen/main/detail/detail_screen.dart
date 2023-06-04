@@ -191,20 +191,55 @@ class DetailScreen extends StatelessWidget {
                                                         MediaQuery.of(context)
                                                             .size
                                                             .width,
-                                                    child: CachedNetworkImage(
-                                                      fadeInDuration:
-                                                          Duration.zero,
-                                                      fadeOutDuration:
-                                                          Duration.zero,
-                                                      imageUrl: value,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const CupertinoActivityIndicator(),
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                    child: Stack(
+                                                      children: [
+                                                        CachedNetworkImage(
+                                                          fadeInDuration:
+                                                              Duration.zero,
+                                                          fadeOutDuration:
+                                                              Duration.zero,
+                                                          imageUrl: value,
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              const CupertinoActivityIndicator(),
+                                                          width: MediaQuery.of(
+                                                                  context)
                                                               .size
                                                               .width,
-                                                      fit: BoxFit.cover,
+                                                          height: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        snapshot.data![
+                                                                    'status'] ==
+                                                                2
+                                                            ? Container(
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                color: dmBlack
+                                                                    .withOpacity(
+                                                                        0.75),
+                                                                child: Center(
+                                                                  child: Image
+                                                                      .asset(
+                                                                    'assets/images/status/status_2.png',
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.9,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : const SizedBox(),
+                                                      ],
                                                     ),
                                                   ),
                                                 );

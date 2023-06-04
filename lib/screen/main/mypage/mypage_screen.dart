@@ -44,31 +44,56 @@ class _MypageScreenState extends State<MypageScreen> {
         context.pushNamed('detail',
             queryParams: {'productId': data[index]['product_id']});
       },
-      child: CachedNetworkImage(
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        imageUrl: data[index]['images'][0],
-        fit: BoxFit.cover,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-            color: dmGrey,
-            borderRadius: BorderRadius.circular(5.r),
+      child: Stack(
+        children: [
+          CachedNetworkImage(
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
+            imageUrl: data[index]['images'][0],
+            fit: BoxFit.cover,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                color: dmGrey,
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              width: 105.w,
+              height: 105.w,
+            ),
+            placeholder: (context, url) => Container(
+              decoration: BoxDecoration(
+                color: dmGrey,
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              width: 105.w,
+              height: 105.w,
+              child: const Center(
+                child: CupertinoActivityIndicator(),
+              ),
+            ),
           ),
-          width: 105.w,
-          height: 105.w,
-        ),
-        placeholder: (context, url) => Container(
-          decoration: BoxDecoration(
-            color: dmGrey,
-            borderRadius: BorderRadius.circular(5.r),
-          ),
-          width: 105.w,
-          height: 105.w,
-          child: const Center(
-            child: CupertinoActivityIndicator(),
-          ),
-        ),
+          data[index]['status'] == 1 || data[index]['status'] == 2
+              ? Container(
+                  width: 105.w,
+                  height: 105.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.r),
+                    color: dmBlack.withOpacity(0.75),
+                  ),
+                  child: Center(
+                    child: data[index]['status'] == 1
+                        ? Image.asset(
+                            'assets/images/status/status_1.png',
+                            width: 95.h,
+                          )
+                        : Image.asset(
+                            'assets/images/status/status_2.png',
+                            width: 95.h,
+                          ),
+                  ),
+                )
+              : const SizedBox()
+        ],
       ),
     );
   }
