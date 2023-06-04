@@ -229,35 +229,81 @@ class _HomeScreenState extends State<HomeScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        CachedNetworkImage(
-                                          fadeInDuration: Duration.zero,
-                                          fadeOutDuration: Duration.zero,
-                                          imageUrl: snapshot.data!.docs[index]
-                                              ['images'][0],
-                                          fit: BoxFit.cover,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.312,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.312,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.r),
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
+                                        Stack(
+                                          children: [
+                                            CachedNetworkImage(
+                                              fadeInDuration: Duration.zero,
+                                              fadeOutDuration: Duration.zero,
+                                              imageUrl: snapshot.data!
+                                                  .docs[index]['images'][0],
+                                              fit: BoxFit.cover,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.312,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.312,
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.r),
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  color: dmGrey,
+                                                ),
                                               ),
-                                              color: dmGrey,
+                                              placeholder: (context, url) =>
+                                                  const CupertinoActivityIndicator(),
                                             ),
-                                          ),
-                                          placeholder: (context, url) =>
-                                              const CupertinoActivityIndicator(),
+                                            snapshot.data!.docs[index]
+                                                            ['status'] ==
+                                                        1 ||
+                                                    snapshot.data!.docs[index]
+                                                            ['status'] ==
+                                                        2
+                                                ? Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.312,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.312,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.r),
+                                                      color: dmBlack
+                                                          .withOpacity(0.75),
+                                                    ),
+                                                    child: Center(
+                                                      child: snapshot.data!
+                                                                          .docs[
+                                                                      index]
+                                                                  ['status'] ==
+                                                              1
+                                                          ? Image.asset(
+                                                              'assets/images/status/status_1.png',
+                                                              width: 95.h,
+                                                            )
+                                                          : Image.asset(
+                                                              'assets/images/status/status_2.png',
+                                                              width: 95.h,
+                                                            ),
+                                                    ),
+                                                  )
+                                                : const SizedBox(),
+                                          ],
                                         ),
                                         SizedBox(
                                           width: 17.w,

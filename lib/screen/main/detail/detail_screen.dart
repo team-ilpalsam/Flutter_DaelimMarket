@@ -129,6 +129,7 @@ class DetailScreen extends StatelessWidget {
                                     },
                                     () {
                                       onTapDelete(context, snapshot);
+                                      context.pop();
                                     }
                                   ],
                                 );
