@@ -373,7 +373,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            vertical: 10.h,
+                            vertical: 8.h,
                             horizontal: 10.w,
                           ),
                           child: SizedBox(
