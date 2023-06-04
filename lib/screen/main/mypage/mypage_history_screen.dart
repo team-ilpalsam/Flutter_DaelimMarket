@@ -147,36 +147,96 @@ class MyHistoryScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            CachedNetworkImage(
-                                              fadeInDuration: Duration.zero,
-                                              fadeOutDuration: Duration.zero,
-                                              imageUrl: snapshot.data![index]
-                                                  ['images'][0],
-                                              fit: BoxFit.cover,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.312,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.312,
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
+                                            Stack(
+                                              children: [
+                                                CachedNetworkImage(
+                                                  fadeInDuration: Duration.zero,
+                                                  fadeOutDuration:
+                                                      Duration.zero,
+                                                  imageUrl:
+                                                      snapshot.data![index]
+                                                          ['images'][0],
+                                                  fit: BoxFit.cover,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.312,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.312,
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
                                                       Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.r),
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.r),
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      color: dmGrey,
+                                                    ),
                                                   ),
-                                                  color: dmGrey,
+                                                  placeholder: (context, url) =>
+                                                      const CupertinoActivityIndicator(),
                                                 ),
-                                              ),
-                                              placeholder: (context, url) =>
-                                                  const CupertinoActivityIndicator(),
+                                                snapshot.data![index]
+                                                                ['status'] ==
+                                                            1 ||
+                                                        snapshot.data![index]
+                                                                ['status'] ==
+                                                            2
+                                                    ? Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.312,
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.312,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      5.r),
+                                                          color: dmBlack
+                                                              .withOpacity(
+                                                                  0.75),
+                                                        ),
+                                                        child: Center(
+                                                          child: snapshot.data![
+                                                                          index]
+                                                                      [
+                                                                      'status'] ==
+                                                                  1
+                                                              ? Image.asset(
+                                                                  'assets/images/status/status_1.png',
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.312 *
+                                                                      0.9,
+                                                                )
+                                                              : Image.asset(
+                                                                  'assets/images/status/status_2.png',
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.312 *
+                                                                      0.9,
+                                                                ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(),
+                                              ],
                                             ),
                                             SizedBox(
                                               width: 17.w,

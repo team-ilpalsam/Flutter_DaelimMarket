@@ -288,18 +288,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ),
                                                     child: Center(
                                                       child: snapshot.data!
-                                                                          .docs[
-                                                                      index]
+                                                                      .docs[index]
                                                                   ['status'] ==
                                                               1
                                                           ? Image.asset(
                                                               'assets/images/status/status_1.png',
-                                                              width: 95.h,
-                                                            )
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.312 *
+                                                                  0.9)
                                                           : Image.asset(
                                                               'assets/images/status/status_2.png',
-                                                              width: 95.h,
-                                                            ),
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.312 *
+                                                                  0.9),
                                                     ),
                                                   )
                                                 : const SizedBox(),
