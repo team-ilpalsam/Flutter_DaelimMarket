@@ -46,6 +46,7 @@ flutter:
     - assets/images/icons/
     - assets/images/logo/
     - assets/images/splash/
+    - assets/images/status/
 
   fonts:
     - family: Jalnan

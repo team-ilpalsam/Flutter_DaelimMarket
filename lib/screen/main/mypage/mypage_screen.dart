@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,17 +39,17 @@ class _MypageScreenState extends State<MypageScreen> {
   String uidEmail = '';
 
   Widget imageBlock(data, index) {
-    return CachedNetworkImage(
-      fadeInDuration: Duration.zero,
-      fadeOutDuration: Duration.zero,
-      imageUrl: data[index]['images'][0],
-      fit: BoxFit.cover,
-      imageBuilder: (context, imageProvider) => GestureDetector(
-        onTap: () {
-          context.pushNamed('detail',
-              queryParams: {'productId': data[index]['product_id']});
-        },
-        child: Container(
+    return GestureDetector(
+      onTap: () {
+        context.pushNamed('detail',
+            queryParams: {'productId': data[index]['product_id']});
+      },
+      child: CachedNetworkImage(
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        imageUrl: data[index]['images'][0],
+        fit: BoxFit.cover,
+        imageBuilder: (context, imageProvider) => Container(
           decoration: BoxDecoration(
             image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
             color: dmGrey,
@@ -57,32 +58,32 @@ class _MypageScreenState extends State<MypageScreen> {
           width: 105.w,
           height: 105.w,
         ),
-      ),
-      placeholder: (context, url) => Container(
-        decoration: BoxDecoration(
-          color: dmGrey,
-          borderRadius: BorderRadius.circular(5.r),
-        ),
-        width: 105.w,
-        height: 105.w,
-        child: const Center(
-          child: CupertinoActivityIndicator(),
+        placeholder: (context, url) => Container(
+          decoration: BoxDecoration(
+            color: dmGrey,
+            borderRadius: BorderRadius.circular(5.r),
+          ),
+          width: 105.w,
+          height: 105.w,
+          child: const Center(
+            child: CupertinoActivityIndicator(),
+          ),
         ),
       ),
     );
   }
 
   Widget moreImageBlock(data, index, history) {
-    return CachedNetworkImage(
-      fadeInDuration: Duration.zero,
-      fadeOutDuration: Duration.zero,
-      imageUrl: data[index]['images'][0],
-      fit: BoxFit.cover,
-      imageBuilder: (context, imageProvider) => GestureDetector(
-        onTap: () {
-          context.pushNamed('historyscreen', queryParams: {'history': history});
-        },
-        child: Container(
+    return GestureDetector(
+      onTap: () {
+        context.pushNamed('historyscreen', queryParams: {'history': history});
+      },
+      child: CachedNetworkImage(
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        imageUrl: data[index]['images'][0],
+        fit: BoxFit.cover,
+        imageBuilder: (context, imageProvider) => Container(
           width: 105.w,
           height: 105.w,
           alignment: Alignment.center,
@@ -125,12 +126,7 @@ class _MypageScreenState extends State<MypageScreen> {
             ],
           ),
         ),
-      ),
-      placeholder: (context, url) => GestureDetector(
-        onTap: () {
-          context.pushNamed('historyscreen', queryParams: {'history': 'posts'});
-        },
-        child: Container(
+        placeholder: (context, url) => Container(
           decoration: BoxDecoration(
             color: dmGrey,
             borderRadius: BorderRadius.circular(5.r),
@@ -190,58 +186,25 @@ class _MypageScreenState extends State<MypageScreen> {
 
             // Content
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: onRefresh,
-                backgroundColor: dmWhite,
-                color: dmDarkGrey,
-                strokeWidth: 2.w,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 9.5.w, top: 34.5.h),
-                          child: Row(
-                            children: [
-                              uidProfile == ''
-                                  ? Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.14758,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.14758,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: dmLightGrey,
-                                      ),
-                                    )
-                                  : CachedNetworkImage(
-                                      fadeInDuration: Duration.zero,
-                                      fadeOutDuration: Duration.zero,
-                                      imageUrl: uidProfile,
-                                      fit: BoxFit.cover,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.14758,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.14758,
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.14758,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.14758,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: imageProvider),
-                                          shape: BoxShape.circle,
-                                          color: dmLightGrey,
-                                        ),
-                                      ),
-                                      placeholder: (context, url) => Container(
+              child: ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: RefreshIndicator(
+                  onRefresh: onRefresh,
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 9.5.w, top: 34.5.h),
+                            child: Row(
+                              children: [
+                                uidProfile == ''
+                                    ? Container(
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.14758,
@@ -252,240 +215,300 @@ class _MypageScreenState extends State<MypageScreen> {
                                           shape: BoxShape.circle,
                                           color: dmLightGrey,
                                         ),
+                                      )
+                                    : CachedNetworkImage(
+                                        fadeInDuration: Duration.zero,
+                                        fadeOutDuration: Duration.zero,
+                                        imageUrl: uidProfile,
+                                        fit: BoxFit.cover,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.14758,
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.14758,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.14758,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: imageProvider),
+                                            shape: BoxShape.circle,
+                                            color: dmLightGrey,
+                                          ),
+                                        ),
+                                        placeholder: (context, url) =>
+                                            Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.14758,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.14758,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: dmLightGrey,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 23.w),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        uidNickName == ''
+                                            ? '불러오는 중...'
+                                            : uidNickName,
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 24.sp,
+                                          fontWeight: medium,
+                                          color: dmBlack,
+                                        ),
+                                      ),
+                                      Text(
+                                        uidEmail == '' ? '불러오는 중...' : uidEmail,
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 16.sp,
+                                          fontWeight: medium,
+                                          color: dmDarkGrey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 25.h,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed('mypagesetting');
+                            },
+                            child: const BlueButton(
+                              text: '프로필 수정',
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          divider,
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          Row(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Image.asset(
+                                  'assets/images/icons/icon_heart.png',
+                                  height: 22.h,
+                                  width: 24.w,
+                                ),
+                              ),
                               Padding(
-                                padding: EdgeInsets.only(left: 23.w),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      uidNickName == ''
-                                          ? '불러오는 중...'
-                                          : uidNickName,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 24.sp,
-                                        fontWeight: medium,
-                                        color: dmBlack,
-                                      ),
-                                    ),
-                                    Text(
-                                      uidEmail == '' ? '불러오는 중...' : uidEmail,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 16.sp,
-                                        fontWeight: medium,
-                                        color: dmDarkGrey,
-                                      ),
-                                    ),
-                                  ],
+                                padding: EdgeInsets.only(left: 11.w),
+                                child: Text(
+                                  '관심목록',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 20.sp,
+                                    fontWeight: medium,
+                                    color: dmDarkGrey,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(
-                          height: 25.h,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            context.pushNamed('mypagesetting');
-                          },
-                          child: const BlueButton(
-                            text: '프로필 수정',
+                          SizedBox(
+                            height: 20.h,
                           ),
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        divider,
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Row(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Image.asset(
-                                'assets/images/icons/icon_heart.png',
-                                height: 22.h,
-                                width: 24.w,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 11.w),
-                              child: Text(
-                                '관심목록',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 20.sp,
-                                  fontWeight: medium,
-                                  color: dmDarkGrey,
+                          FutureBuilder(
+                            future: getWatchlistDocuments(),
+                            builder: (context, snapshot) {
+                              if (snapshot.data != null &&
+                                  snapshot.data!.isNotEmpty) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      // 관심목록 첫째줄
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        for (var i = 0; i < 3; i++)
+                                          i < snapshot.data!.length
+                                              ? imageBlock(snapshot.data!, i)
+                                              : SizedBox(
+                                                  width: 105.w,
+                                                  height: 105.w,
+                                                )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          snapshot.data!.length > 3 ? 18.h : 0,
+                                    ),
+                                    snapshot.data!.length > 3
+                                        ? Row(
+                                            // 관심목록 둘째줄
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              for (var i = 3; i < 6; i++)
+                                                i < 5
+                                                    ? snapshot.data!.length > i
+                                                        ? imageBlock(
+                                                            snapshot.data!, i)
+                                                        : SizedBox(
+                                                            width: 105.w,
+                                                            height: 105.w,
+                                                          )
+                                                    : snapshot.data!.length > 5
+                                                        ? snapshot.data!
+                                                                    .length >
+                                                                6
+                                                            ? moreImageBlock(
+                                                                snapshot.data!,
+                                                                i,
+                                                                'watchlist')
+                                                            : imageBlock(
+                                                                snapshot.data!,
+                                                                i)
+                                                        : SizedBox(
+                                                            width: 105.w,
+                                                            height: 105.w,
+                                                          ),
+                                            ],
+                                          )
+                                        : const SizedBox(),
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                  ],
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                          divider,
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          Row(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Image.asset(
+                                  'assets/images/icons/icon_paper.png',
+                                  height: 22.h,
+                                  width: 24.w,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        FutureBuilder(
-                          future: getWatchlistDocuments(),
-                          builder: (context, snapshot) {
-                            if (snapshot.data != null &&
-                                snapshot.data!.isNotEmpty) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    // 관심목록 첫째줄
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      for (var i = 0; i < 3; i++)
-                                        i < snapshot.data!.length
-                                            ? imageBlock(snapshot.data!, i)
-                                            : SizedBox(
-                                                width: 105.w,
-                                                height: 105.w,
-                                              )
-                                    ],
+                              Padding(
+                                padding: EdgeInsets.only(left: 11.w),
+                                child: Text(
+                                  '판매내역',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 20.sp,
+                                    fontWeight: medium,
+                                    color: dmDarkGrey,
                                   ),
-                                  SizedBox(
-                                    height:
-                                        snapshot.data!.length > 3 ? 18.h : 0,
-                                  ),
-                                  snapshot.data!.length > 3
-                                      ? Row(
-                                          // 관심목록 둘째줄
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            for (var i = 3; i < 6; i++)
-                                              i < snapshot.data!.length && i < 5
-                                                  ? imageBlock(
-                                                      snapshot.data!, i)
-                                                  : i == 5
-                                                      ? snapshot.data!.length >
-                                                              6
-                                                          ? moreImageBlock(
-                                                              snapshot.data!,
-                                                              i,
-                                                              'watchlist')
-                                                          : imageBlock(
-                                                              snapshot.data!, i)
-                                                      : SizedBox(
-                                                          width: 105.w,
-                                                          height: 105.w,
-                                                        ),
-                                          ],
-                                        )
-                                      : const SizedBox(),
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
-                                ],
-                              );
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                        divider,
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Row(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Image.asset(
-                                'assets/images/icons/icon_paper.png',
-                                height: 22.h,
-                                width: 24.w,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 11.w),
-                              child: Text(
-                                '판매내역',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 20.sp,
-                                  fontWeight: medium,
-                                  color: dmDarkGrey,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        FutureBuilder(
-                          future: getPostsDocuments(),
-                          builder: (context, snapshot) {
-                            if (snapshot.data != null &&
-                                snapshot.data!.isNotEmpty) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    // 판매내역 첫째줄
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      for (var i = 0; i < 3; i++)
-                                        i < snapshot.data!.length
-                                            ? imageBlock(snapshot.data!, i)
-                                            : SizedBox(
-                                                width: 105.w,
-                                                height: 105.w,
-                                              )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height:
-                                        snapshot.data!.length > 3 ? 18.h : 0,
-                                  ),
-                                  snapshot.data!.length > 3
-                                      ? Row(
-                                          // 판매내역 둘째줄
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            for (var i = 3; i < 6; i++)
-                                              i < snapshot.data!.length && i < 5
-                                                  ? imageBlock(
-                                                      snapshot.data!, i)
-                                                  : i == 5
-                                                      ? snapshot.data!.length >
-                                                              6
-                                                          ? moreImageBlock(
-                                                              snapshot.data!,
-                                                              i,
-                                                              'posts')
-                                                          : imageBlock(
-                                                              snapshot.data!, i)
-                                                      : SizedBox(
-                                                          width: 105.w,
-                                                          height: 105.w,
-                                                        ),
-                                          ],
-                                        )
-                                      : const SizedBox(),
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
-                                ],
-                              );
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                        SizedBox(
-                          height: 40.h,
-                        ),
-                      ],
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          FutureBuilder(
+                            future: getPostsDocuments(),
+                            builder: (context, snapshot) {
+                              if (snapshot.data != null &&
+                                  snapshot.data!.isNotEmpty) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      // 판매내역 첫째줄
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        for (var i = 0; i < 3; i++)
+                                          i < snapshot.data!.length
+                                              ? imageBlock(snapshot.data!, i)
+                                              : SizedBox(
+                                                  width: 105.w,
+                                                  height: 105.w,
+                                                )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          snapshot.data!.length > 3 ? 18.h : 0,
+                                    ),
+                                    snapshot.data!.length > 3
+                                        ? Row(
+                                            // 판매내역 둘째줄
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              for (var i = 3; i < 6; i++)
+                                                i < 5
+                                                    ? snapshot.data!.length > i
+                                                        ? imageBlock(
+                                                            snapshot.data!, i)
+                                                        : SizedBox(
+                                                            width: 105.w,
+                                                            height: 105.w,
+                                                          )
+                                                    : snapshot.data!.length > 5
+                                                        ? snapshot.data!
+                                                                    .length >
+                                                                6
+                                                            ? moreImageBlock(
+                                                                snapshot.data!,
+                                                                i,
+                                                                'posts')
+                                                            : imageBlock(
+                                                                snapshot.data!,
+                                                                i)
+                                                        : SizedBox(
+                                                            width: 105.w,
+                                                            height: 105.w,
+                                                          ),
+                                            ],
+                                          )
+                                        : const SizedBox(),
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                  ],
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                          SizedBox(
+                            height: 40.h,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
