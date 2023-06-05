@@ -649,13 +649,6 @@ class DetailScreen extends StatelessWidget {
           ]);
         });
       }
-
-      DoneSnackBar.show(
-        context: context,
-        text: '판매글을 삭제했어요.',
-        paddingHorizontal: 0,
-        paddingBottom: 0,
-      );
     } catch (e) {
       WarningSnackBar.show(
         context: context,
