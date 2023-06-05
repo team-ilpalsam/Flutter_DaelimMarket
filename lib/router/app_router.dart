@@ -37,7 +37,7 @@ class AppRouter {
       // 회원가입
       GoRoute(
         path: '/register',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => const NoTransitionPage(
           child: RegisterScreen(),
         ),
       ),
@@ -73,7 +73,7 @@ class AppRouter {
       // 로그인
       GoRoute(
         path: '/login',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => const NoTransitionPage(
           child: LoginScreen(),
         ),
       ),
@@ -81,7 +81,7 @@ class AppRouter {
       // 비밀번호 찾기 페이지
       GoRoute(
         path: '/login/forgot',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => const NoTransitionPage(
           child: ForgotScreen(),
         ),
       ),
