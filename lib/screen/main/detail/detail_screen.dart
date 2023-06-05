@@ -129,7 +129,7 @@ class DetailScreen extends StatelessWidget {
                                     },
                                     () {
                                       onTapDelete(context, snapshot);
-                                      context.pop();
+                                      context.go('/main');
                                     }
                                   ],
                                 );
@@ -650,7 +650,6 @@ class DetailScreen extends StatelessWidget {
         });
       }
 
-      context.go('/main');
       DoneSnackBar.show(
         context: context,
         text: '판매글을 삭제했어요.',
@@ -658,7 +657,6 @@ class DetailScreen extends StatelessWidget {
         paddingBottom: 0,
       );
     } catch (e) {
-      context.go('/main');
       WarningSnackBar.show(
         context: context,
         text: '판매글 삭제 중 문제가 생겼어요.',
