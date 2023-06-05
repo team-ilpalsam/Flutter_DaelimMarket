@@ -6,6 +6,12 @@
         android:label="대림마켓"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <meta-data
+    android:name="com.google.firebase.messaging.default_notification_icon"
+    android:resource="@mipmap/launcher_icon" />
+    <meta-data
+    android:name="com.google.firebase.messaging.default_notification_color"
+    android:resource="@color/colorAccent" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

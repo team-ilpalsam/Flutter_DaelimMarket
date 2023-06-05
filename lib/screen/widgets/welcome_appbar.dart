@@ -28,14 +28,17 @@ class WelcomeAppbar extends StatelessWidget {
             ? SizedBox(
                 height: 18.h,
               )
-            : GestureDetector(
-                onTap: onTap ??
-                    () {
-                      context.pop();
-                    },
-                child: Image.asset(
-                  image!,
-                  height: 18.h,
+            : Padding(
+                padding: EdgeInsets.only(right: 10.w),
+                child: GestureDetector(
+                  onTap: onTap ??
+                      () {
+                        context.pop();
+                      },
+                  child: Image.asset(
+                    image!,
+                    height: 18.h,
+                  ),
                 ),
               ),
         SizedBox(

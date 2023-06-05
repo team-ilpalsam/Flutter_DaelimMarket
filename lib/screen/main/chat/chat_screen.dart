@@ -781,6 +781,13 @@ class ChatScreen extends StatelessWidget {
                                               'notification': <String, dynamic>{
                                                 'title': '$nickName',
                                                 'body': chatController.text,
+                                                "android_channel_id":
+                                                    '${uid.hashCode}',
+                                              },
+                                              "aps": {
+                                                "title": '$nickName',
+                                                "body": chatController.text,
+                                                "badge": 1
                                               },
                                               'priority': 'high',
                                               'data': <String, dynamic>{

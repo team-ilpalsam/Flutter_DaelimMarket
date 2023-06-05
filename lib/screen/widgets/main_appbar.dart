@@ -35,6 +35,7 @@ class MainAppbar {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
+                    width: 30.w,
                     child: leading,
                   ),
                 ),
