@@ -215,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: GestureDetector(
                                   // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
                                   onTap: () {
-                                    context.pushNamed('detail', queryParams: {
+                                    context.goNamed('detail', queryParams: {
                                       'productId': snapshot.data!.docs[index]
                                           ['product_id']
                                     });
