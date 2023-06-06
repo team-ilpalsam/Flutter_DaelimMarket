@@ -128,8 +128,9 @@ class DetailScreen extends StatelessWidget {
                                       Navigator.pop(context);
                                     },
                                     () {
+                                      // 확인 창 닫기
+                                      Navigator.pop(context);
                                       onTapDelete(context, snapshot);
-                                      context.go('/main');
                                     }
                                   ],
                                 );
@@ -175,16 +176,20 @@ class DetailScreen extends StatelessWidget {
                                                 return GestureDetector(
                                                   onTap: () {
                                                     // 이미지를 누를 시 src 데이터와 함께 ImageViewerScreen으로 이동
-                                                    context.pushNamed(
-                                                      'imageviewer',
-                                                      queryParams: {
-                                                        'src': value
-                                                      },
-                                                    );
-                                                    context
-                                                        .read<
-                                                            DetailImageIndexController>()
-                                                        .setIndex(1);
+                                                    if (snapshot
+                                                            .data!['status'] !=
+                                                        2) {
+                                                      context.pushNamed(
+                                                        'imageviewer',
+                                                        queryParams: {
+                                                          'src': value
+                                                        },
+                                                      );
+                                                      context
+                                                          .read<
+                                                              DetailImageIndexController>()
+                                                          .setIndex(1);
+                                                    }
                                                   },
                                                   child: SizedBox(
                                                     height:
@@ -613,9 +618,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   // 삭제 처리 메소드
-  onTapDelete(context, snapshot) async {
-    // 확인 창 닫기
-    Navigator.pop(context);
+  onTapDelete(BuildContext context, snapshot) async {
     try {
       // Future.wait 내 코드가 다 수행될 때까지 대기
       await Future.wait([
@@ -649,7 +652,15 @@ class DetailScreen extends StatelessWidget {
           ]);
         });
       }
+      context.go('/main');
+      DoneSnackBar.show(
+        context: context,
+        text: '판매글을 삭제했어요.',
+        paddingHorizontal: 0,
+        paddingBottom: 0,
+      );
     } catch (e) {
+      context.go('/main');
       WarningSnackBar.show(
         context: context,
         text: '판매글 삭제 중 문제가 생겼어요.',
@@ -661,7 +672,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   // 좋아요 취소 메소드
-  Future<void> onTapCancelLike(context, snapshot) async {
+  Future<void> onTapCancelLike(BuildContext context, snapshot) async {
     try {
       // Future.wait 내 코드가 다 수행될 때까지 대기
       await Future.wait(
@@ -692,7 +703,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   // 좋아요 메소드
-  Future<void> onTapLike(context, snapshot) async {
+  Future<void> onTapLike(BuildContext context, snapshot) async {
     try {
       // Future.wait 내 코드가 다 수행될 때까지 대기
       await Future.wait(
