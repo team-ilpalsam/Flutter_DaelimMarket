@@ -267,6 +267,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                             decoration: BoxDecoration(
                                               image: DecorationImage(
                                                 image: imageProvider,
+                                                fit: BoxFit.cover,
                                               ),
                                               shape: BoxShape.circle,
                                               color: dmLightGrey,
