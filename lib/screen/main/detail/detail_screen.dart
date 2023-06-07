@@ -485,68 +485,72 @@ class DetailScreen extends StatelessWidget {
                                   )
                                 : GestureDetector(
                                     onTap: () {
-                                      showCupertinoModalPopup(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CupertinoActionSheet(
-                                            title: null,
-                                            message: null,
-                                            actions: <Widget>[
-                                              CupertinoActionSheetAction(
-                                                child: Text(_statusList[0]),
-                                                onPressed: () {
-                                                  FirebaseFirestore.instance
-                                                      .collection(
-                                                          'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
-                                                      .update({'status': 0});
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                              CupertinoActionSheetAction(
-                                                child: Text(_statusList[1]),
-                                                onPressed: () {
-                                                  FirebaseFirestore.instance
-                                                      .collection(
-                                                          'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
-                                                      .update({'status': 1});
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                              CupertinoActionSheetAction(
-                                                child: Text(_statusList[2]),
-                                                onPressed: () {
-                                                  FirebaseFirestore.instance
-                                                      .collection(
-                                                          'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
-                                                      .update({'status': 2});
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ],
-                                            cancelButton:
+                                      if (snapshot.data!['status'] != 2) {
+                                        showCupertinoModalPopup(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CupertinoActionSheet(
+                                              title: null,
+                                              message: null,
+                                              actions: <Widget>[
                                                 CupertinoActionSheetAction(
-                                              isDefaultAction: true,
-                                              onPressed: () {
-                                                Navigator.pop(
-                                                    context); // 작업 시트 닫기
-                                              },
-                                              child: const Text('취소'),
-                                            ),
-                                          );
-                                        },
-                                      );
+                                                  child: Text(_statusList[0]),
+                                                  onPressed: () {
+                                                    FirebaseFirestore.instance
+                                                        .collection(
+                                                            'product') // product 컬렉션에서
+                                                        .doc(snapshot.data![
+                                                            'product_id']) // product_id의 문서 내
+                                                        .update({'status': 0});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                CupertinoActionSheetAction(
+                                                  child: Text(_statusList[1]),
+                                                  onPressed: () {
+                                                    FirebaseFirestore.instance
+                                                        .collection(
+                                                            'product') // product 컬렉션에서
+                                                        .doc(snapshot.data![
+                                                            'product_id']) // product_id의 문서 내
+                                                        .update({'status': 1});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                CupertinoActionSheetAction(
+                                                  child: Text(_statusList[2]),
+                                                  onPressed: () {
+                                                    FirebaseFirestore.instance
+                                                        .collection(
+                                                            'product') // product 컬렉션에서
+                                                        .doc(snapshot.data![
+                                                            'product_id']) // product_id의 문서 내
+                                                        .update({'status': 2});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                              cancelButton:
+                                                  CupertinoActionSheetAction(
+                                                isDefaultAction: true,
+                                                onPressed: () {
+                                                  Navigator.pop(
+                                                      context); // 작업 시트 닫기
+                                                },
+                                                child: const Text('취소'),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
                                     },
                                     child: Container(
                                       width: 115.w,
                                       height: 34.h,
                                       decoration: BoxDecoration(
-                                        color: dmBlue,
+                                        color: snapshot.data!['status'] != 2
+                                            ? dmBlue
+                                            : dmLightGrey,
                                         borderRadius:
                                             BorderRadius.circular(5.r),
                                       ),
