@@ -57,9 +57,7 @@ class ChatListScreen extends StatelessWidget {
                       );
                     }
 
-                    if (snapshot.hasData &&
-                        snapshot.data!.exists &&
-                        snapshot.data!.data()!.entries.toList().length > 1) {
+                    if (snapshot.hasData && snapshot.data!.exists) {
                       final data = snapshot.data!.data()!;
                       final chatList = data.entries
                           .toList(); // Map<String, dynamic>을 List<MapEntry<String, dynamic>> 형태로 변환
