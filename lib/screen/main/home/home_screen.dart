@@ -165,6 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             isEqualTo: _selectedLocation == '전체'
                                 ? null
                                 : _selectedLocation)
+                        .where('status', isLessThan: 2)
+                        .orderBy('status')
                         .orderBy("uploadTime",
                             descending: true) // uploadTime 정렬은 내림차순으로
                         .get(), // 데이터를 불러온다
@@ -215,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: GestureDetector(
                                   // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
                                   onTap: () {
-                                    context.goNamed('detail', queryParams: {
+                                    context.pushNamed('detail', queryParams: {
                                       'productId': snapshot.data!.docs[index]
                                           ['product_id']
                                     });
