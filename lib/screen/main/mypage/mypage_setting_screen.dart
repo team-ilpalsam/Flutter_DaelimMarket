@@ -208,6 +208,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                         }
                                       },
                                       () {
+                                        Navigator.pop(context);
                                         try {
                                           ImagePicker()
                                               .pickImage(
@@ -421,7 +422,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                         },
                                         () async {
                                           Navigator.pop(context);
-                                          await FirebaseAuth.instance.signOut();
                                           deleteAccount();
                                         },
                                       ]);
@@ -490,16 +490,18 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         'deleted': true,
         'nickName': 'del_$userNickname',
       });
-      await FirebaseAuth.instance.currentUser!.delete();
+      await FirebaseAuth.instance.currentUser?.delete();
+      await FirebaseAuth.instance.signOut();
 
       context.go('/welcome');
       DoneSnackBar.show(
         context: context,
-        text: '계정을 삭제했어요. 언젠가 또 뵙기를 바랄게요.',
+        text: '계정을 삭제했어요.',
         paddingBottom: 0,
       );
     } catch (e) {
       WarningSnackBar.show(context: context, text: '계정 삭제 중 문제가 발생했어요.');
+      debugPrint(e.toString());
       setState(() {
         _isLoading = false;
       });
