@@ -419,8 +419,9 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                         () {
                                           Navigator.pop(context);
                                         },
-                                        () {
+                                        () async {
                                           Navigator.pop(context);
+                                          await FirebaseAuth.instance.signOut();
                                           deleteAccount();
                                         },
                                       ]);
@@ -455,10 +456,11 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                       () {
                                         Navigator.pop(context);
                                       },
-                                      () {
+                                      () async {
                                         Navigator.pop(context);
                                         const FlutterSecureStorage()
                                             .deleteAll();
+                                        await FirebaseAuth.instance.signOut();
                                         context.go('/welcome');
                                       }
                                     ]);
@@ -517,6 +519,8 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
             .collection('user')
             .doc(uid)
             .update({'nickName': nickName});
+        await const FlutterSecureStorage()
+            .write(key: 'nickname', value: nickName);
         DoneSnackBar.show(
           context: context,
           text: '성공적으로 등록했어요!',

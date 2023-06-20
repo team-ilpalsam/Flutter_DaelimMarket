@@ -62,3 +62,7 @@ GoogleService-Info.plist
 /macos/
 /web/
 /windows/
+
+# Sound
+*.mp3
+*.wav

@@ -1,16 +1,7 @@
-# daelim_market
+# 대림마켓
 
-A new Flutter project.
+<img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_textless.png" width=128 height=128 />
+우리들만의 작은 장터, 대림마켓<br />
+대림대학교만을 위한 중고거래 플랫폼이며, Android, iOS를 지원하는 프로젝트
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
