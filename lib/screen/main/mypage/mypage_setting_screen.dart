@@ -497,10 +497,13 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
       DoneSnackBar.show(
         context: context,
         text: '계정을 삭제했어요.',
-        paddingBottom: 0,
       );
     } catch (e) {
-      WarningSnackBar.show(context: context, text: '계정 삭제 중 문제가 발생했어요.');
+      WarningSnackBar.show(
+        context: context,
+        text: '계정 삭제 중 문제가 발생했어요.',
+        paddingBottom: 0,
+      );
       debugPrint(e.toString());
       setState(() {
         _isLoading = false;
