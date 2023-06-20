@@ -118,7 +118,9 @@ class _ForgotScreen extends State<ForgotScreen> {
                                   : const BlueButton(text: '인증메일 받기'),
                             )
                           : const BlueButton(
-                              text: '인증메일 받기', color: dmLightGrey),
+                              text: '인증메일 받기',
+                              color: dmLightGrey,
+                            ),
                       bottomPadding,
                     ],
                   ),
@@ -165,13 +167,13 @@ class _ForgotScreen extends State<ForgotScreen> {
       } on FirebaseAuthException catch (e) {
         // 실패(Exception) 시
         switch (e.code) {
-          case "auth/invalid-email":
+          case "invalid-email":
             WarningSnackBar.show(context: context, text: '이메일 주소를 다시 확인해주세요.');
             setState(() {
               _isLoading = false;
             });
             break;
-          case "auth/user-not-found":
+          case "user-not-found":
             WarningSnackBar.show(context: context, text: '일치하는 정보가 없어요.');
             setState(() {
               _isLoading = false;
