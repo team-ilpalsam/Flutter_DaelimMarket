@@ -8,6 +8,7 @@ class NotificationService {
       'daelim_market', // id
       '대림마켓', // title
       importance: Importance.max,
+      sound: RawResourceAndroidNotificationSound('alert'),
     );
     const initializationSettingAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');

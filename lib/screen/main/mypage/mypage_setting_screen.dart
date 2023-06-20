@@ -486,6 +486,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
   // 계정 삭제 메소드
   deleteAccount() async {
     try {
+      const FlutterSecureStorage().deleteAll();
       await FirebaseFirestore.instance.collection('user').doc('$uid').update({
         'deleted': true,
         'nickName': 'del_$userNickname',
