@@ -36,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 height: 13.25.h,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0), //양쪽 간격
+                padding: EdgeInsets.symmetric(horizontal: 20.w), //양쪽 간격
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
