@@ -783,7 +783,7 @@ class ChatScreen extends StatelessWidget {
                                                 'body': chatController.text,
                                                 "android_channel_id":
                                                     '${uid.hashCode}',
-                                                "sound": "alert.wav"
+                                                "sound": "alert.wav",
                                               },
                                               "aps": {
                                                 "title": '$nickName',

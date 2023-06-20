@@ -53,7 +53,10 @@ class _MypageScreenState extends State<MypageScreen> {
             fit: BoxFit.cover,
             imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
-                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
                 color: dmGrey,
                 borderRadius: BorderRadius.circular(5.r),
               ),
@@ -265,7 +268,9 @@ class _MypageScreenState extends State<MypageScreen> {
                                               0.14758,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
-                                                image: imageProvider),
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
                                             shape: BoxShape.circle,
                                             color: dmLightGrey,
                                           ),
