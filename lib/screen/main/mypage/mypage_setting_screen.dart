@@ -486,29 +486,43 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
   // 계정 삭제 메소드
   deleteAccount() async {
     try {
-      const FlutterSecureStorage().deleteAll();
+      await FirebaseAuth.instance.currentUser?.delete();
       await FirebaseFirestore.instance.collection('user').doc('$uid').update({
         'deleted': true,
         'nickName': 'del_$userNickname',
       });
-      await FirebaseAuth.instance.currentUser?.delete();
-      await FirebaseAuth.instance.signOut();
+      const FlutterSecureStorage().deleteAll();
 
       context.go('/welcome');
       DoneSnackBar.show(
         context: context,
         text: '계정을 삭제했어요.',
       );
-    } catch (e) {
-      WarningSnackBar.show(
-        context: context,
-        text: '계정 삭제 중 문제가 발생했어요.',
-        paddingBottom: 0,
-      );
-      debugPrint(e.toString());
-      setState(() {
-        _isLoading = false;
-      });
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "requires-recent-login":
+          WarningSnackBar.show(
+            context: context,
+            text: '계정 삭제하기엔 너무 이릅니다.',
+            paddingBottom: 0,
+          );
+          debugPrint(e.toString());
+          setState(() {
+            _isLoading = false;
+          });
+          break;
+        default:
+          WarningSnackBar.show(
+            context: context,
+            text: '계정 삭제 중 문제가 발생했어요.',
+            paddingBottom: 0,
+          );
+          debugPrint(e.toString());
+          setState(() {
+            _isLoading = false;
+          });
+          break;
+      }
     }
   }
 
