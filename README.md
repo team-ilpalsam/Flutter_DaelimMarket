@@ -44,14 +44,14 @@
   <tr>
     <td align="center">
       <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/flutter_logo.png" width="120px" height="auto">
-      <br>
-      <b>Flutter</b>
     </td>
     <td align="center">
       <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/firebase_logo.png" width="120px" height="auto">
-      <br>
-      <b>Firebase</b>
     </td>
+  </tr>
+  <tr>
+    <td align="center"><b>Flutter</b></td>
+    <td align="center"><b>Firebase</b></td>
   </tr>
 </table>
 
