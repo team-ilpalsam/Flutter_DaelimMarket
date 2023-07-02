@@ -20,7 +20,6 @@ dependencies:
   firebase_messaging:
   dropdown_button2: ^2.0.0
   flutter_secure_storage: 
-  timer_builder: 
   intl: ^0.18.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.13.0
