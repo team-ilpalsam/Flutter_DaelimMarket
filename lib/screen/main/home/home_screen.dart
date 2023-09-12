@@ -1,18 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:daelim_market/controller/main_screen_index_controller.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../const/common.dart';
 import '../../widgets/named_widget.dart';
+import '../main_contoller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,22 +23,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _locationList = [
-    '전체',
-    '다산관',
-    '생활관',
-    '수암관',
-    '율곡관',
-    '임곡관',
-    '자동차관',
-    '전산관',
-    '정보통신관',
-    '퇴계관',
-    '한림관',
-    '홍지관',
-  ];
-
   String _selectedLocation = '전체';
+
+  final MainController _controller = Get.put(MainController());
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       value: _selectedLocation,
                       selectedItemBuilder: (BuildContext context) {
-                        return _locationList.map((value) {
+                        return locationList.map((value) {
                           return Text(
                             _selectedLocation,
                             style: TextStyle(
@@ -104,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }).toList();
                       },
-                      items: _locationList.map(
+                      items: locationList.map(
                         (value) {
                           return DropdownMenuItem(
                             value: value,
@@ -125,17 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ).toList(),
                     ),
                   ),
-                  BlocProvider(
-                    create: (_) => MainScreenIndexController(),
-                    child: GestureDetector(
-                      onTap: () {
-                        context.read<MainScreenIndexController>().setIndex(1);
-                      },
-                      child: Image.asset(
-                        'assets/images/icons/icon_search_black.png',
-                        width: 26.5.w,
-                        height: 26.5.h,
-                      ),
+                  GestureDetector(
+                    onTap: () {
+                      _controller.page.value = 1;
+                    },
+                    child: Image.asset(
+                      'assets/images/icons/icon_search_black.png',
+                      width: 26.5.w,
+                      height: 26.5.h,
                     ),
                   ),
                 ],
