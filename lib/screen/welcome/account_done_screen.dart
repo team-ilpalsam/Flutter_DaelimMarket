@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/styles/colors.dart';
-import 'package:daelim_market/const/image.dart';
+import 'package:daelim_market/const/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

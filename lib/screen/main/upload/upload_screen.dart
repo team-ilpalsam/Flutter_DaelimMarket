@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../const/common.dart';
 import '../../../main.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -34,21 +35,6 @@ class _UploadScreenState extends State<UploadScreen> {
   bool _isLoading = false;
 
   DateTime now = DateTime.now();
-
-  final List<String> _locationList = [
-    '전체',
-    '다산관',
-    '생활관',
-    '수암관',
-    '율곡관',
-    '임곡관',
-    '자동차관',
-    '전산관',
-    '정보통신관',
-    '퇴계관',
-    '한림관',
-    '홍지관',
-  ];
 
   String _selectedLocation = '장소 선택';
 
@@ -361,13 +347,13 @@ class _UploadScreenState extends State<UploadScreen> {
                                                   (index) {
                                                 setState(() {
                                                   _selectedLocation =
-                                                      _locationList[index];
+                                                      locationList[index];
                                                 });
                                               },
                                               itemExtent: 40.h,
                                               children:
                                                   // _locationList 리스트를 picker의 item으로 변환
-                                                  _locationList.map((value) {
+                                                  locationList.map((value) {
                                                 return Center(
                                                     child: Text(value));
                                               }).toList(),
@@ -490,7 +476,7 @@ class _UploadScreenState extends State<UploadScreen> {
           'price': priceController.text,
           'title': titleController.text,
           'location': _selectedLocation == '장소 선택'
-              ? _locationList[0]
+              ? locationList[0]
               : _selectedLocation,
           'desc': descController.text,
           'images': downloadUrls,

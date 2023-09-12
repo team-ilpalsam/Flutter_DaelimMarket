@@ -1,37 +1,37 @@
 name: daelim_market
 description: A new Flutter project.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.5 <3.0.0'
+  sdk: ">=2.19.5 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: 
-  flutter_screenutil: 
+  cupertino_icons:
+  flutter_screenutil:
   go_router: ^6.5.0
   image_picker: ^0.8.7+1
-  firebase_core: 
+  firebase_core:
   firebase_auth:
-  cloud_firestore: 
-  firebase_storage: 
+  cloud_firestore:
+  firebase_storage:
   firebase_messaging:
   dropdown_button2: ^2.0.0
-  flutter_secure_storage: 
+  flutter_secure_storage:
   intl: ^0.18.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.19
   carousel_slider: ^4.2.1
-  emoji_regex: 
+  emoji_regex:
   cached_network_image: ^3.2.3
   flutter_keyboard_visibility: ^5.4.1
   http: ^0.13.4
   flutter_local_notifications: ^9.1.5
   flutter_animate: ^4.1.1+1
-  flutter_bloc: ^8.1.3
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
