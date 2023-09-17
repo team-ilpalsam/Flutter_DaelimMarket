@@ -1,6 +1,6 @@
+const int limit = 6;
 const String textLessLogo = 'assets/images/logo/daelimmarket_textless.png';
-
-final List<String> locationList = [
+const List<String> locationList = [
   '전체',
   '다산관',
   '생활관',
