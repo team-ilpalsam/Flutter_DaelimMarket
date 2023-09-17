@@ -20,7 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final List<Widget?> _widgetOptions = [
-    const HomeScreen(),
+    HomeScreen(),
     const SearchScreen(),
     null,
     const ChatListScreen(),
