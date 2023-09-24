@@ -16,12 +16,11 @@ import '../../widgets/named_widget.dart';
 import '../main_contoller.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final MainController _mainController = Get.put(MainController());
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.put(HomeController(context));
+    final HomeController controller = Get.put(HomeController(context));
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -67,14 +66,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                       onChanged: (value) {
                         // Dropdown의 값을 _selectedLocation에 대입
-                        homeController.selectedLocation.value = value!;
-                        homeController.onRefresh();
+                        controller.selectedLocation.value = value!;
+                        controller.onRefresh();
                       },
-                      value: homeController.selectedLocation.value,
+                      value: controller.selectedLocation.value,
                       selectedItemBuilder: (BuildContext context) {
                         return locationList.map((value) {
                           return Text(
-                            homeController.selectedLocation.value,
+                            controller.selectedLocation.value,
                             style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 28.sp,
@@ -107,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      _mainController.page.value = 1;
+                      context.push('/search');
                     },
                     child: Image.asset(
                       'assets/images/icons/icon_search_black.png',
@@ -128,48 +127,28 @@ class HomeScreen extends StatelessWidget {
                   horizontal: 20.w,
                 ),
                 // ListView를 아래로 스와이프할 경우 Refresh
-                child: Obx(
-                  () => RefreshIndicator(
-                    onRefresh: homeController.onRefresh,
-                    backgroundColor: dmWhite,
-                    color: dmDarkGrey,
-                    strokeWidth: 2.w,
-                    child:
+                child: RefreshIndicator(
+                  onRefresh: controller.onRefresh,
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
+                  child: Obx(
+                    () =>
                         // 안드로이드 스와이프 Glow 애니메이션 제거
                         ScrollConfiguration(
                       behavior: MyBehavior(),
                       child:
                           // 데이터가 존재한다면
-                          homeController.list.isNotEmpty
+                          controller.list.isNotEmpty
                               ? NotificationListener(
                                   child: ListView.separated(
                                     controller:
-                                        homeController.scrollController.value,
+                                        controller.scrollController.value,
                                     scrollDirection: Axis.vertical,
-                                    itemCount: homeController.list.length,
+                                    itemCount: controller.list.length,
                                     separatorBuilder: (context, index) =>
                                         divider,
                                     itemBuilder: (context, index) {
-                                      // 가격 포맷
-                                      String price = '';
-                                      if (int.parse(homeController.list[index]
-                                              ['price']) >=
-                                          10000) {
-                                        if (int.parse(homeController.list[index]
-                                                    ['price']) %
-                                                10000 ==
-                                            0) {
-                                          price =
-                                              '${NumberFormat('#,###').format(int.parse(homeController.list[index]['price']) ~/ 10000)}만원';
-                                        } else {
-                                          price =
-                                              '${NumberFormat('#,###').format(int.parse(homeController.list[index]['price']) ~/ 10000)}만 ${NumberFormat('#,###').format(int.parse(homeController.list[index]['price']) % 10000)}원';
-                                        }
-                                      } else {
-                                        price =
-                                            '${NumberFormat('#,###').format(int.parse(homeController.list[index]['price']))}원';
-                                      }
-
                                       return Padding(
                                         // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
                                         padding: index == 0
@@ -177,233 +156,260 @@ class HomeScreen extends StatelessWidget {
                                                 top: 30.5.h, bottom: 17.5.h)
                                             : EdgeInsets.symmetric(
                                                 vertical: 17.5.h),
-                                        child: GestureDetector(
-                                          // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
-                                          onTap: () {
-                                            context.pushNamed('detail',
-                                                queryParams: {
-                                                  'productId': homeController
-                                                      .list[index]['product_id']
-                                                });
-                                          },
-                                          child: Container(
-                                            color: dmWhite,
-                                            // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.312,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                context.pushNamed('detail',
+                                                    queryParams: {
+                                                      'productId':
+                                                          controller.list[index]
+                                                              ['product_id']
+                                                    });
+                                              },
+                                              child: Container(
+                                                color: dmWhite,
+                                                // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.312,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    CachedNetworkImage(
-                                                      fadeInDuration:
-                                                          Duration.zero,
-                                                      fadeOutDuration:
-                                                          Duration.zero,
-                                                      imageUrl: homeController
-                                                              .list[index]
-                                                          ['images'][0],
-                                                      fit: BoxFit.cover,
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                    Stack(
+                                                      children: [
+                                                        CachedNetworkImage(
+                                                          fadeInDuration:
+                                                              Duration.zero,
+                                                          fadeOutDuration:
+                                                              Duration.zero,
+                                                          imageUrl: controller
+                                                                  .list[index]
+                                                              ['images'][0],
+                                                          fit: BoxFit.cover,
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.312,
-                                                      height:
-                                                          MediaQuery.of(context)
+                                                          height: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.312,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.r),
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                          color: dmGrey,
-                                                        ),
-                                                      ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const CupertinoActivityIndicator(),
-                                                    ),
-                                                    homeController.list[index][
-                                                                    'status'] ==
-                                                                1 ||
-                                                            homeController.list[
-                                                                        index][
-                                                                    'status'] ==
-                                                                2
-                                                        ? Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.312,
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.312,
+                                                          imageBuilder: (context,
+                                                                  imageProvider) =>
+                                                              Container(
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           5.r),
-                                                              color: dmBlack
-                                                                  .withOpacity(
-                                                                      0.75),
-                                                            ),
-                                                            child: Center(
-                                                              child: homeController
-                                                                              .list[index]
-                                                                          [
-                                                                          'status'] ==
-                                                                      1
-                                                                  ? Image.asset(
-                                                                      'assets/images/status/status_1.png',
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.312 *
-                                                                          0.9)
-                                                                  : Image.asset(
-                                                                      'assets/images/status/status_2.png',
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.312 *
-                                                                          0.9),
-                                                            ),
-                                                          )
-                                                        : const SizedBox(),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  width: 17.w,
-                                                ),
-                                                Expanded(
-                                                  child: SizedBox(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SizedBox(
-                                                          child: Text(
-                                                            homeController
-                                                                    .list[index]
-                                                                ['title'],
-                                                            overflow: TextOverflow
-                                                                .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
-                                                            maxLines: 2,
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 17.sp,
-                                                              fontWeight:
-                                                                  medium,
-                                                              color: dmBlack,
+                                                              image:
+                                                                  DecorationImage(
+                                                                image:
+                                                                    imageProvider,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                              color: dmGrey,
                                                             ),
                                                           ),
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              const CupertinoActivityIndicator(),
                                                         ),
-                                                        SizedBox(
-                                                          height: 11.h,
-                                                        ),
-                                                        Text(
-                                                          '${homeController.list[index]['location']} | ${DateFormat('yy.MM.dd').format((homeController.list[index]['uploadTime'].toDate()))}',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 14.sp,
-                                                            fontWeight: medium,
-                                                            color: dmGrey,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 9.h,
-                                                        ),
-                                                        Text(
-                                                          price,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 16.sp,
-                                                            fontWeight: bold,
-                                                            color: dmBlue,
-                                                          ),
-                                                        ),
-                                                        const Expanded(
-                                                            child: SizedBox()),
-                                                        // likes가 1개 이상일 때만 표시
-                                                        Visibility(
-                                                          maintainSize: true,
-                                                          maintainAnimation:
-                                                              true,
-                                                          maintainState: true,
-                                                          visible: homeController
-                                                                      .list[
-                                                                          index]
-                                                                          [
-                                                                          'likes']
-                                                                      .length >
-                                                                  0
-                                                              ? true
-                                                              : false,
-                                                          child: Align(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Image.asset(
-                                                                  'assets/images/icons/icon_heart.png',
-                                                                  width: 13.w,
+                                                        controller.list[index][
+                                                                        'status'] ==
+                                                                    1 ||
+                                                                controller.list[
+                                                                            index]
+                                                                        [
+                                                                        'status'] ==
+                                                                    2
+                                                            ? Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.312,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.312,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5.r),
+                                                                  color: dmBlack
+                                                                      .withOpacity(
+                                                                          0.75),
                                                                 ),
-                                                                SizedBox(
-                                                                  width: 5.5.w,
+                                                                child: Center(
+                                                                  child: controller.list[index]
+                                                                              [
+                                                                              'status'] ==
+                                                                          1
+                                                                      ? Image.asset(
+                                                                          'assets/images/status/status_1.png',
+                                                                          width: MediaQuery.of(context).size.width *
+                                                                              0.312 *
+                                                                              0.9)
+                                                                      : Image.asset(
+                                                                          'assets/images/status/status_2.png',
+                                                                          width: MediaQuery.of(context).size.width *
+                                                                              0.312 *
+                                                                              0.9),
                                                                 ),
-                                                                Text(
-                                                                  '${homeController.list[index]['likes'].length}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    fontWeight:
-                                                                        bold,
-                                                                    color:
-                                                                        dmGrey,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
+                                                              )
+                                                            : const SizedBox(),
                                                       ],
                                                     ),
-                                                  ),
-                                                )
-                                              ],
+                                                    SizedBox(
+                                                      width: 17.w,
+                                                    ),
+                                                    Expanded(
+                                                      child: SizedBox(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              child: Text(
+                                                                controller.list[
+                                                                        index]
+                                                                    ['title'],
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
+                                                                maxLines: 2,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Pretendard',
+                                                                  fontSize:
+                                                                      17.sp,
+                                                                  fontWeight:
+                                                                      medium,
+                                                                  color:
+                                                                      dmBlack,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 11.h,
+                                                            ),
+                                                            Text(
+                                                              '${controller.list[index]['location']} | ${DateFormat('yy.MM.dd').format((controller.list[index]['uploadTime'].toDate()))}',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmGrey,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 9.h,
+                                                            ),
+                                                            Text(
+                                                              formatPrice(
+                                                                  controller.list[
+                                                                          index]
+                                                                      [
+                                                                      'price']),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 16.sp,
+                                                                fontWeight:
+                                                                    bold,
+                                                                color: dmBlue,
+                                                              ),
+                                                            ),
+                                                            const Expanded(
+                                                                child:
+                                                                    SizedBox()),
+                                                            // likes가 1개 이상일 때만 표시
+                                                            Visibility(
+                                                              maintainSize:
+                                                                  true,
+                                                              maintainAnimation:
+                                                                  true,
+                                                              maintainState:
+                                                                  true,
+                                                              visible: controller
+                                                                          .list[
+                                                                              index]
+                                                                              [
+                                                                              'likes']
+                                                                          .length >
+                                                                      0
+                                                                  ? true
+                                                                  : false,
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .end,
+                                                                  children: [
+                                                                    Image.asset(
+                                                                      'assets/images/icons/icon_heart.png',
+                                                                      width:
+                                                                          13.w,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          5.5.w,
+                                                                    ),
+                                                                    Text(
+                                                                      '${controller.list[index]['likes'].length}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontFamily:
+                                                                            'Pretendard',
+                                                                        fontSize:
+                                                                            14.sp,
+                                                                        fontWeight:
+                                                                            bold,
+                                                                        color:
+                                                                            dmGrey,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            if (controller.isMore.value &&
+                                                controller.list.length ==
+                                                    index + 1) ...[
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 40.h,
+                                                ),
+                                                child:
+                                                    const CupertinoActivityIndicator(),
+                                              )
+                                            ]
+                                          ],
                                         ),
                                       );
                                     },

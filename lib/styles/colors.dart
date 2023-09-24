@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 const Color dmBlue = Color(0xFF00A5D9);
-const Color dmDarkBlue = Color(0xFF3B7FED);
 const Color dmDarkGrey = Color(0xFF707070);
 const Color dmGrey = Color(0xFFACACAC);
 const Color dmLightGrey = Color(0xFFCDCDCD);

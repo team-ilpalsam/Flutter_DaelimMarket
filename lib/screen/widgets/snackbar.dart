@@ -153,7 +153,7 @@ class InfoSnackBar {
               horizontal: 21.25.w,
             ),
             decoration: BoxDecoration(
-              color: dmDarkBlue,
+              color: dmBlue,
               borderRadius: BorderRadius.all(
                 Radius.circular(5.r),
               ),
