@@ -16,7 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../widgets/alert_dialog.dart';
@@ -89,7 +89,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                   title: '프로필 수정',
                   leading: GestureDetector(
                     onTap: () {
-                      context.pop();
+                      Get.back();
                     },
                     child: Image.asset(
                       'assets/images/icons/icon_back.png',
@@ -141,7 +141,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                           await updateProfileImage(
                                               _pickedImage!);
                                         }
-                                        context.go('/main');
+                                        Get.toNamed('/main');
                                         nickNameController.clear();
                                       }
                                     ],
@@ -399,7 +399,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context.go('/');
+                          Get.toNamed('/');
                         },
                         child: GestureDetector(
                           onTap: () {
@@ -461,7 +461,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                         const FlutterSecureStorage()
                                             .deleteAll();
                                         await FirebaseAuth.instance.signOut();
-                                        context.go('/welcome');
+                                        Get.toNamed('/welcome');
                                       }
                                     ]);
                         },
@@ -493,7 +493,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
       });
       const FlutterSecureStorage().deleteAll();
 
-      context.go('/welcome');
+      Get.toNamed('/welcome');
       DoneSnackBar.show(
         context: context,
         text: '계정을 삭제했어요.',

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
@@ -15,169 +16,136 @@ import 'package:daelim_market/screen/welcome/login/login_screen.dart';
 import 'package:daelim_market/screen/welcome/register/register_vefiry_screen.dart';
 import 'package:daelim_market/screen/welcome/register/register_screen.dart';
 import 'package:daelim_market/screen/welcome/welcome_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  static var config = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: SplashScreen(),
-        ),
-      ),
+  static List<GetPage> pages = [
+    GetPage(
+      name: '/',
+      page: () => const SplashScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      GoRoute(
-        path: '/welcome',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: WelcomeScreen(),
-        ),
-      ),
+    GetPage(
+      name: '/welcome',
+      page: () => const WelcomeScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 회원가입
-      GoRoute(
-        path: '/register',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: RegisterScreen(),
-        ),
-      ),
+    // 회원가입
+    GetPage(
+      name: '/register',
+      page: () => const RegisterScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      GoRoute(
-        name: 'registerAuthLink',
-        path: '/register/authlink',
-        pageBuilder: (context, state) => CupertinoPage(
-          child: RegisterVefiryScreen(
-            email: state.queryParams['email'] ?? '',
-          ),
-        ),
+    // 회원가입 인증 안내 페이지
+    GetPage(
+      name: '/register/authlink',
+      page: () => RegisterVefiryScreen(
+        email: Get.parameters['email'] ?? '',
       ),
+      transition: Transition.cupertino,
+    ),
 
-      // 계정 설정 페이지
-      GoRoute(
-        name: 'accountSetting',
-        path: '/register/setting',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: AccountSettingScreen(),
-        ),
-      ),
+    // 계정 설정 페이지
+    GetPage(
+      name: '/register/setting',
+      page: () => const AccountSettingScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 계정 설정 완료 페이지
-      GoRoute(
-        name: 'accountSettingDone',
-        path: '/register/setting/done',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: AccountDoneScreen(),
-        ),
-      ),
+    // 계정 설정 완료 페이지
+    GetPage(
+      name: '/register/setting/done',
+      page: () => const AccountDoneScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 로그인
-      GoRoute(
-        path: '/login',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: LoginScreen(),
-        ),
-      ),
+    // 로그인
+    GetPage(
+      name: '/login',
+      page: () => const LoginScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 비밀번호 찾기 페이지
-      GoRoute(
-        path: '/login/forgot',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: ForgotScreen(),
-        ),
-      ),
+    // 비밀번호 찾기 페이지
+    GetPage(
+      name: '/login/forgot',
+      page: () => const ForgotScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 메인 페이지
-      GoRoute(
-        name: 'main',
-        path: '/main',
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const MainScreen(),
-        ),
-      ),
+    // 메인 페이지
+    GetPage(
+      name: '/main',
+      page: () => const MainScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 상세 페이지
-      GoRoute(
-        name: 'detail',
-        path: '/detail',
-        pageBuilder: (context, state) => CupertinoPage(
-          child: DetailScreen(
-            productId: state.queryParams['productId']!,
-          ),
-        ),
+    // 상세 페이지
+    GetPage(
+      name: '/detail',
+      page: () => DetailScreen(
+        productId: Get.parameters['productId']!,
       ),
+      transition: Transition.cupertino,
+    ),
 
-      // 검색 페이지
-      GoRoute(
-        name: 'search',
-        path: '/search',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: SearchScreen(),
-        ),
-      ),
+    // 검색 페이지
+    GetPage(
+      name: '/search',
+      page: () => const SearchScreen(),
+      transition: Transition.noTransition,
+    ),
 
-      // 판매 물건 등록 페이지
-      GoRoute(
-        name: 'upload',
-        path: '/main/upload',
-        pageBuilder: (context, state) => CupertinoPage(
-          fullscreenDialog: true,
-          child: UploadScreen(),
-        ),
-      ),
+    // 판매 물건 등록 페이지
+    GetPage(
+      name: '/main/upload',
+      page: () => UploadScreen(),
+      fullscreenDialog: true,
+      transition: Transition.cupertino,
+    ),
 
-      // 이미지 자세히 보기
-      GoRoute(
-        name: 'imageviewer',
-        path: '/detail/image',
-        pageBuilder: (context, state) => CupertinoPage(
-          fullscreenDialog: true,
-          child: ImageViewerScreen(
-            src: state.queryParams['src']!,
-          ),
-        ),
+    // 이미지 자세히 보기
+    GetPage(
+      name: '/detail/image',
+      page: () => ImageViewerScreen(
+        src: Get.parameters['src']!,
       ),
+      fullscreenDialog: true,
+      transition: Transition.cupertino,
+    ),
 
-      // 마이페이지 설정 페이지
-      GoRoute(
-        name: 'mypagesetting',
-        path: '/mypage_setting',
-        pageBuilder: (context, state) => const CupertinoPage(
-          child: MypageSettingScreen(),
-        ),
-      ),
+    // 마이페이지 설정 페이지
+    GetPage(
+      name: '/mypage_setting',
+      page: () => const MypageSettingScreen(),
+      transition: Transition.cupertino,
+    ),
 
-      // 마이페이지 스크린 페이지
-      GoRoute(
-        name: 'mypagescreen',
-        path: '/mypage_screen',
-        pageBuilder: (context, state) => const CupertinoPage(
-          child: MypageScreen(),
-        ),
-      ),
+    // 마이페이지 스크린 페이지
+    GetPage(
+      name: '/mypage_screen',
+      page: () => const MypageScreen(),
+      transition: Transition.cupertino,
+    ),
 
-      // 채팅 설정 페이지
-      GoRoute(
-        name: 'chat',
-        path: '/chat',
-        pageBuilder: (context, state) => CupertinoPage(
-          child: ChatScreen(
-            userUID: state.queryParams['userUID']!,
-          ),
-        ),
+    // 채팅 설정 페이지
+    GetPage(
+      name: '/chat',
+      page: () => ChatScreen(
+        userUID: Get.parameters['userUID']!,
       ),
+      transition: Transition.cupertino,
+    ),
 
-      // 포스트 스크린 페이지
-      GoRoute(
-        name: 'historyscreen',
-        path: '/history',
-        pageBuilder: (context, state) => CupertinoPage(
-          child: MyHistoryScreen(
-            history: state.queryParams['history']!,
-          ),
-        ),
+    // 내역 스크린 페이지
+    GetPage(
+      name: '/history',
+      page: () => MyHistoryScreen(
+        history: Get.parameters['history']!,
       ),
-    ],
-  );
+      transition: Transition.cupertino,
+    ),
+  ];
 }

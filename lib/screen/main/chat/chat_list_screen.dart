@@ -8,7 +8,7 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -112,8 +112,12 @@ class ChatListScreen extends StatelessWidget {
                                         : EdgeInsets.symmetric(vertical: 30.h),
                                     child: GestureDetector(
                                       onTap: () {
-                                        context.pushNamed('chat',
-                                            queryParams: {'userUID': chatUID});
+                                        Get.toNamed(
+                                          '/chat',
+                                          parameters: {
+                                            'userUID': chatUID,
+                                          },
+                                        );
                                       },
                                       child: Container(
                                         color: dmWhite,

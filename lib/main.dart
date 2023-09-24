@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -86,14 +87,15 @@ class DaelimMarket extends StatelessWidget {
       useInheritedMediaQuery: true,
       designSize: const Size(393, 852),
       builder: (context, child) {
-        return MaterialApp.router(
+        return GetMaterialApp(
           theme: ThemeData(
             scaffoldBackgroundColor: dmWhite,
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
           ),
           debugShowCheckedModeBanner: false,
-          routerConfig: AppRouter.config,
+          getPages: AppRouter.pages,
+          initialRoute: '/',
         );
       },
     );

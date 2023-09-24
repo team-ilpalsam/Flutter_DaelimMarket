@@ -8,19 +8,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../const/common.dart';
 import '../../widgets/named_widget.dart';
-import '../main_contoller.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
+  final HomeController controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.put(HomeController(context));
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -106,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      context.push('/search');
+                      Get.toNamed('/search');
                     },
                     child: Image.asset(
                       'assets/images/icons/icon_search_black.png',
@@ -160,12 +158,14 @@ class HomeScreen extends StatelessWidget {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                context.pushNamed('detail',
-                                                    queryParams: {
-                                                      'productId':
-                                                          controller.list[index]
-                                                              ['product_id']
-                                                    });
+                                                Get.toNamed(
+                                                  '/detail',
+                                                  parameters: {
+                                                    'productId':
+                                                        controller.list[index]
+                                                            ['product_id'],
+                                                  },
+                                                );
                                               },
                                               child: Container(
                                                 color: dmWhite,

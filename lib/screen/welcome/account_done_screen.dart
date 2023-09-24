@@ -7,7 +7,7 @@ import 'package:daelim_market/const/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class AccountDoneScreen extends StatefulWidget {
   const AccountDoneScreen({super.key});
@@ -86,7 +86,7 @@ class _AccountDoneScreenState extends State<AccountDoneScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.go('/');
+                        Get.toNamed('/');
                       },
                       child: const BlueButton(
                         text: '대림마켓 입장',

@@ -8,7 +8,6 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -44,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () {
-              context.go('/main/upload');
+              Get.toNamed('/main/upload');
             },
             elevation: 0,
             backgroundColor: dmBlue,

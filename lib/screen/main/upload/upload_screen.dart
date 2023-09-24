@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/screen/main/upload/upload_controller.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -14,7 +16,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -25,14 +26,7 @@ class UploadScreen extends StatelessWidget {
   UploadScreen({super.key});
   DateTime now = DateTime.now();
 
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-  final TextEditingController descController = TextEditingController();
-
-  RxBool isLoading = false.obs;
-  RxString selectedLocation = '장소 선택'.obs;
-  RxList pickedImages = [].obs;
-  RxList downloadUrls = [].obs;
+  final UploadController _controller = Get.put(UploadController());
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +35,14 @@ class UploadScreen extends StatelessWidget {
       // 확인창 닫기
       Navigator.pop(context);
       // Loading 상태를 true로 변경
-      isLoading.value = true;
+      _controller.isLoading.value = true;
       try {
         // productId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
         String productId = '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
 
         // Future.wait 내 코드가 다 수행될 때까지 대기
-        await Future.wait(pickedImages.asMap().entries.map((entry) async {
+        await Future.wait(
+            _controller.pickedImages.asMap().entries.map((entry) async {
           final index = entry.key;
           final value = entry.value;
 
@@ -64,7 +59,7 @@ class UploadScreen extends StatelessWidget {
           final url = await taskSnapshot.ref.getDownloadURL();
 
           // downloadUrls 리스트에 추가
-          downloadUrls.add(url.toString());
+          _controller.downloadUrls.add(url.toString());
 
           debugPrint(uploadTask.toString());
           debugPrint(taskSnapshot.toString());
@@ -83,33 +78,35 @@ class UploadScreen extends StatelessWidget {
             'uid': uid,
             'product_id': productId,
             'nickName': nickName,
-            'price': priceController.text,
-            'title': titleController.text,
-            'location': selectedLocation.value == '장소 선택'
+            'price': _controller.priceController.text,
+            'title': _controller.titleController.text,
+            'location': _controller.selectedLocation.value == '장소 선택'
                 ? locationList[0]
-                : selectedLocation.value,
-            'desc': descController.text,
-            'images': downloadUrls,
+                : _controller.selectedLocation.value,
+            'desc': _controller.descController.text,
+            'images': _controller.downloadUrls,
             'likes': [],
             'uploadTime': now,
             'status': 0,
           });
         }));
 
-        context.go('/main');
+        Get.toNamed('/main');
         DoneSnackBar.show(
           context: context,
           text: '성공적으로 등록했어요!',
           paddingBottom: 0,
         );
+        _controller.clearState();
       } catch (e) {
-        context.go('/main');
+        Get.toNamed('/main');
         WarningSnackBar.show(
           context: context,
           text: '판매글 등록 중 문제가 생겼어요.',
           paddingBottom: 0,
         );
         debugPrint(e.toString());
+        _controller.clearState();
       }
     }
 
@@ -124,7 +121,7 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 기존 이미지 개수와 선택한 이미지 개수를 합쳤을 때 5장을 넘겼을 시
-            if (pickedImages.length + xfile.length > 5) {
+            if (_controller.pickedImages.length + xfile.length > 5) {
               WarningSnackBar.show(
                 context: context,
                 text: '사진은 5장까지만 올릴 수 있어요!',
@@ -133,7 +130,8 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 선택한 이미지와 리스트 병합
-            pickedImages = pickedImages + (xfile);
+            _controller.pickedImages.value =
+                _controller.pickedImages.value + (xfile);
           },
         );
       } catch (e) {
@@ -157,7 +155,7 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 기존 이미지 개수와 카메라로 촬영한 이미지 한 장을 합쳤을 때 5장을 넘겼을 시
-            if (pickedImages.length + 1 > 5) {
+            if (_controller.pickedImages.length + 1 > 5) {
               WarningSnackBar.show(
                 context: context,
                 text: '사진은 5장까지만 올릴 수 있어요!',
@@ -165,7 +163,8 @@ class UploadScreen extends StatelessWidget {
               );
               return;
             }
-            pickedImages = pickedImages + ([xfile]);
+            _controller.pickedImages.value =
+                _controller.pickedImages + ([xfile]);
           },
         );
       } catch (e) {
@@ -183,262 +182,282 @@ class UploadScreen extends StatelessWidget {
         // 키보드 위에 입력 창 띄우기 여부
         resizeToAvoidBottomInset: true,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                MainAppbar.show(
-                  title: '물건 등록',
-                  leading: GestureDetector(
-                    onTap: () {
-                      isLoading.value
-                          ? null
-                          : AlertDialogWidget.twoButtons(
-                              context: context,
-                              content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
-                              button: ['아직이요', '나갈래요'],
-                              color: [dmGrey, dmBlue],
-                              action: [
-                                () {
-                                  Navigator.pop(context);
-                                },
-                                () {
-                                  Navigator.pop(context);
-                                  context.go('/main');
-                                }
-                              ],
-                            );
-                    },
-                    child: Image.asset(
-                      'assets/images/icons/icon_back.png',
-                      alignment: Alignment.topLeft,
-                      height: 18.h,
-                    ),
-                  ),
-                  action: titleController.text.length >= 3 && // 제목이 3글자 이상이거나
-                          priceController.text.isNotEmpty && // 가격을 작성하였거나
-                          selectedLocation.value != '장소 선택' &&
-                          pickedImages.isNotEmpty // 이미지를 선택하였거나
-                      ? GestureDetector(
-                          onTap: () {
-                            isLoading.value
-                                ? null
-                                : AlertDialogWidget.twoButtons(
-                                    context: context,
-                                    content: '판매 글을 등록하시겠습니까?',
-                                    button: ['아직이요', '등록할래요!'],
-                                    color: [dmGrey, dmBlue],
-                                    action: [
-                                      () {
-                                        Navigator.pop(context);
-                                      },
-                                      onTapUpload
-                                    ],
-                                  );
-                          },
-                          child: isLoading.value == true // Loading 상태일 경우
-                              ? const CupertinoActivityIndicator()
-                              : Text(
-                                  "완료",
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 18.sp,
-                                    fontWeight: medium,
-                                    color: dmBlue,
-                                  ),
-                                ),
-                        )
-                      :
-                      // 조건에 충족하지 못 하였을 경우 회색 글씨
-                      Text(
-                          "완료",
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18.sp,
-                            fontWeight: medium,
-                            color: dmLightGrey,
-                          ),
-                        ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 32.5.h),
-                      Obx(
-                        () => Text(
-                          '사진 (${pickedImages.length}/5)',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18.sp,
-                            fontWeight: medium,
-                            color: dmBlack,
-                          ),
-                        ),
+          child: ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  MainAppbar.show(
+                    title: '물건 등록',
+                    leading: GestureDetector(
+                      onTap: () {
+                        _controller.isLoading.value
+                            ? null
+                            : AlertDialogWidget.twoButtons(
+                                context: context,
+                                content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
+                                button: ['아직이요', '나갈래요'],
+                                color: [dmGrey, dmBlue],
+                                action: [
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                  () {
+                                    Navigator.pop(context);
+                                    Get.toNamed('/main');
+                                    _controller.clearState();
+                                  }
+                                ],
+                              );
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/icon_back.png',
+                        alignment: Alignment.topLeft,
+                        height: 18.h,
                       ),
-                      SizedBox(height: 15.h),
-                      Obx(
-                        () => SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: pickedImages.map(
-                                  (value) {
-                                    return Padding(
-                                      // 사진마다의 오른쪽 padding 부여
-                                      padding: EdgeInsets.only(
-                                          // 마지막 요소를 제외하고 오른쪽 padding 부여
-                                          right: value == pickedImages.last &&
-                                                  pickedImages.length >= 5
-                                              ? 0
-                                              : 10.w),
-                                      child: Stack(
-                                        clipBehavior:
-                                            Clip.none, // 부모 위젯을 벗어나도 잘리지 않게
-                                        children: [
-                                          Container(
-                                            width: 96.w,
-                                            height: 96.w,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image:
-                                                    Image.file(File(value.path))
-                                                        .image,
-                                                fit: BoxFit.cover,
+                    ),
+                    action: _controller.titleController.text.length >=
+                                3 && // 제목이 3글자 이상이거나
+                            _controller.priceController.text
+                                .isNotEmpty && // 가격을 작성하였거나
+                            _controller.selectedLocation.value != '장소 선택' &&
+                            _controller.pickedImages.isNotEmpty // 이미지를 선택하였거나
+                        ? GestureDetector(
+                            onTap: () {
+                              _controller.isLoading.value
+                                  ? null
+                                  : AlertDialogWidget.twoButtons(
+                                      context: context,
+                                      content: '판매 글을 등록하시겠습니까?',
+                                      button: ['아직이요', '등록할래요!'],
+                                      color: [dmGrey, dmBlue],
+                                      action: [
+                                        () {
+                                          Navigator.pop(context);
+                                        },
+                                        onTapUpload
+                                      ],
+                                    );
+                            },
+                            child: _controller.isLoading.value ==
+                                    true // Loading 상태일 경우
+                                ? const CupertinoActivityIndicator()
+                                : Text(
+                                    "완료",
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18.sp,
+                                      fontWeight: medium,
+                                      color: dmBlue,
+                                    ),
+                                  ),
+                          )
+                        :
+                        // 조건에 충족하지 못 하였을 경우 회색 글씨
+                        Text(
+                            "완료",
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 18.sp,
+                              fontWeight: medium,
+                              color: dmLightGrey,
+                            ),
+                          ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 32.5.h),
+                        Obx(
+                          () => Text(
+                            '사진 (${_controller.pickedImages.length}/5)',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 18.sp,
+                              fontWeight: medium,
+                              color: dmBlack,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 15.h),
+                        Obx(
+                          () => SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: _controller.pickedImages.map(
+                                    (value) {
+                                      return Padding(
+                                        // 사진마다의 오른쪽 padding 부여
+                                        padding: EdgeInsets.only(
+                                            // 마지막 요소를 제외하고 오른쪽 padding 부여
+                                            right: value ==
+                                                        _controller.pickedImages
+                                                            .last &&
+                                                    _controller.pickedImages
+                                                            .length >=
+                                                        5
+                                                ? 0
+                                                : 10.w),
+                                        child: Stack(
+                                          clipBehavior:
+                                              Clip.none, // 부모 위젯을 벗어나도 잘리지 않게
+                                          children: [
+                                            Container(
+                                              width: 96.w,
+                                              height: 96.w,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: Image.file(
+                                                          File(value.path))
+                                                      .image,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          // Loading 상태일 경우
-                                          isLoading.value
-                                              ? Container()
-                                              // 이미지 리스트 제거
-                                              : Positioned(
-                                                  top: 5.h,
-                                                  right: 5.w,
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      pickedImages
-                                                          .remove(value);
-                                                    },
-                                                    child: Container(
-                                                      width: 20.w,
-                                                      height: 20.h,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: dmWhite,
-                                                      ),
-                                                      child: Center(
-                                                        child: Icon(
-                                                          Icons.remove,
-                                                          size: 15.w,
-                                                          color: dmBlack,
+                                            // Loading 상태일 경우
+                                            _controller.isLoading.value
+                                                ? Container()
+                                                // 이미지 리스트 제거
+                                                : Positioned(
+                                                    top: 5.h,
+                                                    right: 5.w,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        _controller.pickedImages
+                                                            .remove(value);
+                                                      },
+                                                      child: Container(
+                                                        width: 20.w,
+                                                        height: 20.h,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color: dmWhite,
+                                                        ),
+                                                        child: Center(
+                                                          child: Icon(
+                                                            Icons.remove,
+                                                            size: 15.w,
+                                                            color: dmBlack,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                        ],
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ).toList() +
+                                  [
+                                    // 이미지 추가
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 0,
                                       ),
-                                    );
-                                  },
-                                ).toList() +
-                                [
-                                  // 이미지 추가
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: 0,
-                                    ),
-                                    child: pickedImages.length < 5
-                                        ?
-                                        // 5장 미만일 경우
-                                        GestureDetector(
-                                            onTap: () {
-                                              AlertDialogWidget.twoButtons(
-                                                context: context,
-                                                content: "사진을 선택해주세요!",
-                                                button: ["앨범에서 선택", "카메라로 촬영"],
-                                                color: [dmBlue, dmBlue],
-                                                action: [
-                                                  onTapAddPhotoFromAlbum,
-                                                  onTapAddPhotoFromCamera,
+                                      child: _controller.pickedImages.length < 5
+                                          ?
+                                          // 5장 미만일 경우
+                                          GestureDetector(
+                                              onTap: () {
+                                                AlertDialogWidget.twoButtons(
+                                                  context: context,
+                                                  content: "사진을 선택해주세요!",
+                                                  button: [
+                                                    "앨범에서 선택",
+                                                    "카메라로 촬영"
+                                                  ],
+                                                  color: [dmBlue, dmBlue],
+                                                  action: [
+                                                    onTapAddPhotoFromAlbum,
+                                                    onTapAddPhotoFromCamera,
+                                                  ],
+                                                );
+                                              },
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Container(
+                                                    width: 96.w,
+                                                    height: 96.w,
+                                                    color: dmGrey,
+                                                  ),
+                                                  Image.asset(
+                                                    'assets/images/icons/icon_add.png',
+                                                    height: 43.85.h,
+                                                  ),
                                                 ],
-                                              );
-                                            },
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: [
-                                                Container(
-                                                  width: 96.w,
-                                                  height: 96.w,
-                                                  color: dmGrey,
-                                                ),
-                                                Image.asset(
-                                                  'assets/images/icons/icon_add.png',
-                                                  height: 43.85.h,
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                  )
-                                ],
+                                              ),
+                                            )
+                                          : const SizedBox(),
+                                    )
+                                  ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Divider(
-                        thickness: 1.w,
-                        color: dmGrey,
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      SizedBox(
-                        height: 40.h,
-                        child: TextField(
-                          enabled: isLoading.value ? false : true,
-                          controller: titleController,
-                          style: mainInputTextDeco,
-                          decoration: mainInputDeco('글 제목'),
-                          inputFormatters: <TextInputFormatter>[
-                            LengthLimitingTextInputFormatter(25),
-                          ],
-                          cursorColor: dmBlack,
+                        SizedBox(
+                          height: 20.h,
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      SizedBox(
-                        height: 40.h,
-                        child: TextField(
-                          enabled: isLoading.value ? false : true,
-                          controller: priceController,
-                          style: mainInputTextDeco,
-                          decoration: mainInputDeco('가격 (1억 미만)'),
-                          inputFormatters: <TextInputFormatter>[
-                            LengthLimitingTextInputFormatter(8),
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          cursorColor: dmBlack,
+                        Divider(
+                          thickness: 1.w,
+                          color: dmGrey,
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Obx(
-                        () => GestureDetector(
-                          onTap:
-                              // Loading 상태일 경우
-                              isLoading.value
-                                  ? () {}
-                                  : () {
-                                      showCupertinoModalPopup(
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        SizedBox(
+                          height: 40.h,
+                          child: Obx(
+                            () => TextField(
+                              enabled:
+                                  _controller.isLoading.value ? false : true,
+                              controller: _controller.titleController,
+                              style: mainInputTextDeco,
+                              decoration: mainInputDeco('글 제목'),
+                              inputFormatters: <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(25),
+                              ],
+                              cursorColor: dmBlack,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        SizedBox(
+                          height: 40.h,
+                          child: Obx(
+                            () => TextField(
+                              enabled:
+                                  _controller.isLoading.value ? false : true,
+                              controller: _controller.priceController,
+                              style: mainInputTextDeco,
+                              decoration: mainInputDeco('가격 (1억 미만)'),
+                              inputFormatters: <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(8),
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              cursorColor: dmBlack,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Obx(
+                          () => GestureDetector(
+                            onTap:
+                                // Loading 상태일 경우
+                                _controller.isLoading.value
+                                    ? () {}
+                                    : () {
+                                        showCupertinoModalPopup(
                                           context: context,
                                           builder: (_) {
                                             return SizedBox(
@@ -447,9 +466,10 @@ class UploadScreen extends StatelessWidget {
                                               child: CupertinoPicker(
                                                 backgroundColor: Colors.white,
                                                 onSelectedItemChanged:
-                                                    // item이 변경될 때마다 setState 설정
+                                                    // item이 변경될 때마다 설정
                                                     (index) {
-                                                  selectedLocation.value =
+                                                  _controller.selectedLocation
+                                                          .value =
                                                       locationList[index];
                                                 },
                                                 itemExtent: 40.h,
@@ -461,68 +481,74 @@ class UploadScreen extends StatelessWidget {
                                                 }).toList(),
                                               ),
                                             );
-                                          });
-                                    },
-                          child: Container(
-                            height: 40.h,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1.w,
-                                color:
-                                    isLoading.value ? dmDarkGrey : dmLightGrey,
+                                          },
+                                        );
+                                      },
+                            child: Container(
+                              height: 40.h,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1.w,
+                                  color: _controller.isLoading.value
+                                      ? dmDarkGrey
+                                      : dmLightGrey,
+                                ),
                               ),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 8.h,
-                                horizontal: 8.w,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    selectedLocation.value,
-                                    style: mainInputTextDeco,
-                                  ),
-                                  Image.asset(
-                                    'assets/images/icons/icon_arrow_down.png',
-                                    height: 11.5.h,
-                                  ),
-                                ],
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8.h,
+                                  horizontal: 8.w,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _controller.selectedLocation.value,
+                                      style: mainInputTextDeco,
+                                    ),
+                                    Image.asset(
+                                      'assets/images/icons/icon_arrow_down.png',
+                                      height: 11.5.h,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      SizedBox(
-                        height: 200.h,
-                        child: TextField(
-                          enabled: isLoading.value ? false : true,
-                          controller: descController,
-                          keyboardType: TextInputType.multiline,
-                          expands: true,
-                          maxLines: null,
-                          textAlignVertical: TextAlignVertical.top,
-                          style: mainInputTextDeco,
-                          decoration: mainInputDeco('설명글'),
-                          inputFormatters: <TextInputFormatter>[
-                            LengthLimitingTextInputFormatter(128),
-                          ],
-                          cursorColor: dmBlack,
+                        SizedBox(
+                          height: 20.h,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                        SizedBox(
+                          height: 200.h,
+                          child: Obx(
+                            () => TextField(
+                              enabled:
+                                  _controller.isLoading.value ? false : true,
+                              controller: _controller.descController,
+                              keyboardType: TextInputType.multiline,
+                              expands: true,
+                              maxLines: null,
+                              textAlignVertical: TextAlignVertical.top,
+                              style: mainInputTextDeco,
+                              decoration: mainInputDeco('설명글'),
+                              inputFormatters: <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(128),
+                              ],
+                              cursorColor: dmBlack,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

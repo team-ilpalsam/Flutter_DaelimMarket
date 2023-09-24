@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -73,7 +73,7 @@ class _LoginScreen extends State<LoginScreen> {
                         image: 'assets/images/icons/icon_close.png',
                         title: '로그인',
                         onTap: () {
-                          context.go('/welcome');
+                          Get.toNamed('/welcome');
                         },
                       ),
 
@@ -140,7 +140,7 @@ class _LoginScreen extends State<LoginScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context.push('/login/forgot');
+                          Get.toNamed('/login/forgot');
                         },
                         child: Text(
                           '비밀번호를 잊으셨나요?',
@@ -219,7 +219,7 @@ class _LoginScreen extends State<LoginScreen> {
               await const FlutterSecureStorage()
                   .write(key: 'uid', value: value.user!.uid);
               // MainScreen으로 이동
-              context.go('/');
+              Get.toNamed('/');
             }
             // 만약 인증이 안 된 계정이면,
             else {

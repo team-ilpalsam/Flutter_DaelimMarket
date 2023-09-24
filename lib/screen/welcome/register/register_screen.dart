@@ -11,7 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -258,10 +258,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'read_time': {},
           });
           // 회원가입 후 이메일 인증 안내 페이지로 이동
-          context.goNamed(
-            'registerAuthLink',
-            queryParams: {
-              'email': ('${emailController.text}@email.daelim.ac.kr'),
+          Get.toNamed(
+            '/register/authlink',
+            parameters: {
+              'email': '${emailController.text}@email.daelim.ac.kr',
             },
           );
           return value;

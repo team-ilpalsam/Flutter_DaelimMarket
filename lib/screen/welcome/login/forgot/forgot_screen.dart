@@ -11,7 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class ForgotScreen extends StatefulWidget {
   const ForgotScreen({super.key});
@@ -159,7 +159,7 @@ class _ForgotScreen extends State<ForgotScreen> {
             content: "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
             button: "확인",
             action: () {
-              context.go('/welcome');
+              Get.toNamed('/welcome');
             },
             barrierDismissible: false, // 바깥 부분 눌렀을 때 알림 창 닫는지의 여부
           );

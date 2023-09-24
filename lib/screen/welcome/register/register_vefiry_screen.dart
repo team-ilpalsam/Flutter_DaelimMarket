@@ -6,7 +6,7 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class RegisterVefiryScreen extends StatefulWidget {
   final String email;
@@ -83,7 +83,7 @@ class _RegisterVefiryScreenState extends State<RegisterVefiryScreen> {
                     const Expanded(child: SizedBox()),
                     GestureDetector(
                       onTap: () {
-                        context.go('/login');
+                        Get.toNamed('/login');
                       },
                       child: const BlueButton(
                         text: '인증 후 로그인',
