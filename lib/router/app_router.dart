@@ -5,6 +5,7 @@ import 'package:daelim_market/screen/main/detail/detail_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_setting_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_history_screen.dart';
+import 'package:daelim_market/screen/main/search/search_screen.dart';
 import 'package:daelim_market/screen/main/upload/upload_screen.dart';
 import 'package:daelim_market/screen/splash_screen.dart';
 import 'package:daelim_market/screen/welcome/account_done_screen.dart';
@@ -107,11 +108,20 @@ class AppRouter {
         ),
       ),
 
+      // 검색 페이지
+      GoRoute(
+        name: 'search',
+        path: '/search',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: SearchScreen(),
+        ),
+      ),
+
       // 판매 물건 등록 페이지
       GoRoute(
         name: 'upload',
         path: '/main/upload',
-        pageBuilder: (context, state) => const CupertinoPage(
+        pageBuilder: (context, state) => CupertinoPage(
           fullscreenDialog: true,
           child: UploadScreen(),
         ),

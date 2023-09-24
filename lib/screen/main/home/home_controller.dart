@@ -25,11 +25,13 @@ class HomeController extends GetxController {
   final RxString selectedLocation = '전체'.obs;
   final RxList list = [].obs;
   final Rx<ScrollController> scrollController = ScrollController().obs;
-  Rx<DocumentSnapshot<Object?>?> last = null.obs;
+  Rx<DocumentSnapshot<Object?>?> lastDocument = null.obs;
+  final RxBool isMore = true.obs;
 
   Future onRefresh() async {
     list.clear();
     getData();
+    isMore.value = true;
   }
 
   getData() async {
@@ -48,14 +50,14 @@ class HomeController extends GetxController {
       for (var document in data.docs) {
         list.add(document.data());
       }
-      last = data.docs.last.obs;
+      lastDocument = data.docs.last.obs;
     } else {
-      last = null.obs;
+      lastDocument = null.obs;
     }
   }
 
   getNextData() async {
-    if (last.value != null) {
+    if (lastDocument.value != null) {
       var data = await FirebaseFirestore.instance
           .collection('product') // product 컬렉션으로부터
           .where('location', // Dropdown의 장소 값의 조건으로
@@ -65,7 +67,7 @@ class HomeController extends GetxController {
           .where('status', isLessThan: 2)
           .orderBy('status')
           .orderBy('uploadTime', descending: true) // uploadTime 정렬은 내림차순으로
-          .startAfterDocument(last.value!)
+          .startAfterDocument(lastDocument.value!)
           .limit(limit)
           .get(); // 데이터를 불러온다
 
@@ -73,9 +75,9 @@ class HomeController extends GetxController {
         for (var document in data.docs) {
           list.add(document.data());
         }
-        last = data.docs.last.obs;
+        lastDocument = data.docs.last.obs;
       } else {
-        last = null.obs;
+        lastDocument = null.obs;
       }
     } else {
       debugPrint("없음");
@@ -84,6 +86,7 @@ class HomeController extends GetxController {
         text: "마지막 항목입니다.",
         paddingBottom: 0,
       );
+      isMore.value = false;
     }
   }
 }

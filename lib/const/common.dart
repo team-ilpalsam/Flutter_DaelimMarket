@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 const int limit = 6;
 const String textLessLogo = 'assets/images/logo/daelimmarket_textless.png';
 const List<String> locationList = [
@@ -14,3 +16,16 @@ const List<String> locationList = [
   '한림관',
   '홍지관',
 ];
+
+formatPrice(String price) {
+  // 가격 포맷
+  if (int.parse(price) >= 10000) {
+    if (int.parse(price) % 10000 == 0) {
+      return '${NumberFormat('#,###').format(int.parse(price) ~/ 10000)}만원';
+    } else {
+      return '${NumberFormat('#,###').format(int.parse(price) ~/ 10000)}만 ${NumberFormat('#,###').format(int.parse(price) % 10000)}원';
+    }
+  } else {
+    return '${NumberFormat('#,###').format(int.parse(price))}원';
+  }
+}

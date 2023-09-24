@@ -2,6 +2,7 @@ import 'package:daelim_market/screen/main/chat/chat_list_screen.dart';
 import 'package:daelim_market/screen/main/home/home_screen.dart';
 import 'package:daelim_market/screen/main/main_contoller.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
+import 'package:daelim_market/screen/main/school/school_screen.dart';
 import 'package:daelim_market/screen/main/search/search_screen.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,9 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final List<Widget?> _widgetOptions = [
     HomeScreen(),
-    const SearchScreen(),
-    null,
     const ChatListScreen(),
+    null,
+    const SchoolScreen(),
     const MypageScreen(),
   ];
 
@@ -98,12 +99,12 @@ class _MainScreenState extends State<MainScreen> {
                 // 검색
                 BottomNavigationBarItem(
                     icon: Image.asset(
-                      'assets/images/icons/icon_search.png',
+                      'assets/images/icons/icon_chat.png',
                       width: 30.w,
                       height: 30.h,
                     ),
                     activeIcon: Image.asset(
-                      'assets/images/icons/icon_search_selected.png',
+                      'assets/images/icons/icon_chat_fill.png',
                       width: 30.w,
                       height: 30.h,
                     ),
@@ -117,12 +118,12 @@ class _MainScreenState extends State<MainScreen> {
                 // 채팅
                 BottomNavigationBarItem(
                     icon: Image.asset(
-                      'assets/images/icons/icon_chat.png',
+                      'assets/images/icons/icon_school.png',
                       width: 30.w,
                       height: 30.h,
                     ),
                     activeIcon: Image.asset(
-                      'assets/images/icons/icon_chat_fill.png',
+                      'assets/images/icons/icon_school_fill.png',
                       width: 30.w,
                       height: 30.h,
                     ),
