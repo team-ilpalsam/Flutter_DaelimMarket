@@ -6,7 +6,7 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/const/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 import '../widgets/scroll_behavior.dart';
 
@@ -71,7 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                       children: [
                         GestureDetector(
                             onTap: () {
-                              context.push('/register');
+                              Get.toNamed('/register');
                             },
                             child: const BlueButton(text: '바로 시작하기')),
                         SizedBox(
@@ -79,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            context.push('/login');
+                            Get.toNamed('/login');
                           },
                           child: Text(
                             '계정이 있으신가요?',

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class ImageViewerScreen extends StatefulWidget {
   final String src;
@@ -91,7 +91,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      context.pop();
+                      Get.back();
                     },
                     child: Image.asset(
                       'assets/images/icons/icon_close_circle.png',

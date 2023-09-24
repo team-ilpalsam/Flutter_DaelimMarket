@@ -7,8 +7,8 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:daelim_market/main.dart';
+import 'package:get/get.dart';
 import '../../widgets/named_widget.dart';
 
 class MypageScreen extends StatefulWidget {
@@ -41,8 +41,12 @@ class _MypageScreenState extends State<MypageScreen> {
   Widget imageBlock(data, index) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed('detail',
-            queryParams: {'productId': data[index]['product_id']});
+        Get.toNamed(
+          'detail',
+          parameters: {
+            'productId': data[index]['product_id'],
+          },
+        );
       },
       child: Stack(
         children: [
@@ -104,7 +108,12 @@ class _MypageScreenState extends State<MypageScreen> {
   Widget moreImageBlock(data, index, history) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed('historyscreen', queryParams: {'history': history});
+        Get.toNamed(
+          'historyscreen',
+          parameters: {
+            'history': history,
+          },
+        );
       },
       child: CachedNetworkImage(
         fadeInDuration: Duration.zero,
@@ -329,7 +338,7 @@ class _MypageScreenState extends State<MypageScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              context.pushNamed('mypagesetting');
+                              Get.toNamed('/mypage_setting');
                             },
                             child: const BlueButton(
                               text: '프로필 수정',

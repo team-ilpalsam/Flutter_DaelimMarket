@@ -82,7 +82,6 @@ class SearchGetXController extends GetxController {
     } else {
       debugPrint("없음");
       InfoSnackBar.show(
-        context: context,
         text: "마지막 항목입니다.",
         paddingBottom: 0,
       );

@@ -13,7 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:daelim_market/main.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -313,7 +313,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
           _isLoading = false;
         });
 
-        context.go('/register/setting/done');
+        Get.toNamed('/register/setting/done');
       } else {
         WarningSnackBar.show(
           context: context,

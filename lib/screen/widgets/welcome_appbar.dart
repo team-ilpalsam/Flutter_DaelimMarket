@@ -2,7 +2,7 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class WelcomeAppbar extends StatelessWidget {
   final String? image;
@@ -33,7 +33,7 @@ class WelcomeAppbar extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onTap ??
                       () {
-                        context.pop();
+                        Get.back();
                       },
                   child: Image.asset(
                     image!,

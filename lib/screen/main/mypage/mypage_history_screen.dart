@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
@@ -26,8 +26,6 @@ class MyHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 키보드 위에 입력 창 띄우기 여부
-      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
@@ -36,7 +34,7 @@ class MyHistoryScreen extends StatelessWidget {
               title: history == 'posts' ? '판매내역' : '관심목록',
               leading: GestureDetector(
                 onTap: () {
-                  context.go('/main');
+                  Get.toNamed('/main');
                 },
                 child: Image.asset(
                   'assets/images/icons/icon_back.png',
@@ -131,11 +129,13 @@ class MyHistoryScreen extends StatelessWidget {
                                     child: GestureDetector(
                                       // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
                                       onTap: () {
-                                        context.pushNamed('detail',
-                                            queryParams: {
-                                              'productId': snapshot.data![index]
-                                                  ['product_id']
-                                            });
+                                        Get.toNamed(
+                                          '/detail',
+                                          parameters: {
+                                            'productId': snapshot.data![index]
+                                                ['product_id'],
+                                          },
+                                        );
                                       },
                                       child: Container(
                                         color: dmWhite,

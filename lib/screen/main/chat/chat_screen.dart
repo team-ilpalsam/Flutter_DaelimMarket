@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -202,7 +202,7 @@ class ChatScreen extends StatelessWidget {
                         title: userNickname,
                         leading: GestureDetector(
                           onTap: () {
-                            context.pop();
+                            Get.back();
                           },
                           child: Image.asset(
                             'assets/images/icons/icon_back.png',
@@ -227,7 +227,7 @@ class ChatScreen extends StatelessWidget {
                                       .doc(uid) // 자신의 UID 문서 내
                                       .update({userUID: FieldValue.delete()});
                                   Navigator.pop(context);
-                                  context.go('/main');
+                                  Get.toNamed('/main');
                                 }
                               ],
                             );
@@ -329,9 +329,9 @@ class ChatScreen extends StatelessWidget {
                                                 List<dynamic> data) =>
                                             GestureDetector(
                                               onTap: () {
-                                                context.pushNamed(
-                                                  'imageviewer',
-                                                  queryParams: {
+                                                Get.toNamed(
+                                                  '/detail/image',
+                                                  parameters: {
                                                     'src': data[index]['image']
                                                   },
                                                 );

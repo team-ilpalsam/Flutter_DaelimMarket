@@ -12,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../main.dart';
@@ -65,7 +64,7 @@ class DetailScreen extends StatelessWidget {
                     title: '알 수 없음',
                     leading: GestureDetector(
                       onTap: () {
-                        context.go('/main');
+                        Get.toNamed('/main');
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
@@ -103,7 +102,7 @@ class DetailScreen extends StatelessWidget {
                     // 왼쪽 아이콘
                     leading: GestureDetector(
                       onTap: () {
-                        context.go('/main');
+                        Get.toNamed('/main');
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
@@ -173,9 +172,9 @@ class DetailScreen extends StatelessWidget {
                                                 // 이미지를 누를 시 src 데이터와 함께 ImageViewerScreen으로 이동
                                                 if (snapshot.data!['status'] !=
                                                     2) {
-                                                  context.pushNamed(
-                                                    'imageviewer',
-                                                    queryParams: {'src': value},
+                                                  Get.toNamed(
+                                                    '/detail/image',
+                                                    parameters: {'src': value},
                                                   );
                                                 }
                                               },
@@ -436,9 +435,12 @@ class DetailScreen extends StatelessWidget {
                           snapshot.data!['uid'] != uid
                               ? GestureDetector(
                                   onTap: () {
-                                    context.pushNamed('chat', queryParams: {
-                                      'userUID': snapshot.data!['uid']
-                                    });
+                                    Get.toNamed(
+                                      'chat',
+                                      parameters: {
+                                        'userUID': snapshot.data!['uid'],
+                                      },
+                                    );
                                   },
                                   child: Container(
                                     width: 115.w,
@@ -572,7 +574,7 @@ class DetailScreen extends StatelessWidget {
                     title: '',
                     leading: GestureDetector(
                       onTap: () {
-                        context.pop();
+                        Get.back();
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
@@ -631,7 +633,7 @@ class DetailScreen extends StatelessWidget {
           ]);
         });
       }
-      context.go('/main');
+      Get.toNamed('/main');
       DoneSnackBar.show(
         context: context,
         text: '판매글을 삭제했어요.',
@@ -639,7 +641,7 @@ class DetailScreen extends StatelessWidget {
         paddingBottom: 0,
       );
     } catch (e) {
-      context.go('/main');
+      Get.toNamed('/main');
       WarningSnackBar.show(
         context: context,
         text: '판매글 삭제 중 문제가 생겼어요.',

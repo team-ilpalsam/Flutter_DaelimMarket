@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 import '../main.dart';
 
@@ -55,13 +55,13 @@ class _SplashScreenState extends State<SplashScreen> {
                 .get();
 
             if (userData.data()?['nickName'] == '') {
-              context.go('/register/setting');
+              Get.toNamed('/register/setting');
             } else {
               await const FlutterSecureStorage().write(
                   key: 'nickname', value: '${userData.data()?['nickName']}');
               nickName =
                   await const FlutterSecureStorage().read(key: 'nickname');
-              context.go('/main');
+              Get.toNamed('/main');
             }
           } else {
             WarningSnackBar.show(
@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
               text: '이메일 인증이 안 된 계정이에요.',
               paddingHorizontal: 20.w,
             );
-            context.go('/login');
+            Get.toNamed('/login');
           }
         });
 
@@ -86,10 +86,10 @@ class _SplashScreenState extends State<SplashScreen> {
         );
         // 로그인 실패 시 FlutterSecureStorage 내 데이터 모두 삭제
         await const FlutterSecureStorage().deleteAll();
-        context.go('/welcome');
+        Get.toNamed('/welcome');
       }
     } else {
-      context.go('/welcome');
+      Get.toNamed('/welcome');
     }
   }
 
