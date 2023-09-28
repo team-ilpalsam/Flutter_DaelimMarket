@@ -8,6 +8,7 @@
 대림대학교만을 위한 중고거래 플랫폼이며, Android, iOS를 지원하는 프로젝트
 
 ## Contributors
+
 <table>
   <tr>
     <td align="center">
@@ -40,6 +41,7 @@
 </table>
 
 ## Technology Stack
+
 <table>
   <tr>
     <td align="center">
@@ -56,26 +58,26 @@
 </table>
 
 ## Dependencies
-* <a href="https://pub.dev/packages/cached_network_image">cached_network_image:</a> ^3.2.3
-* <a href="https://pub.dev/packages/carousel_slider">carousel_slider:</a> ^4.2.1
-* <a href="https://pub.dev/packages/cloud_firestore">cloud_firestore: </a>
-* <a href="https://pub.dev/packages/connectivity">connectivity:</a> ^3.0.6
-* <a href="https://pub.dev/packages/cupertino_icons">cupertino_icons: </a>
-* <a href="https://pub.dev/packages/dropdown_button2">dropdown_button2:</a> ^2.0.0
-* <a href="https://pub.dev/packages/emoji_regex">emoji_regex: </a>
-* <a href="https://pub.dev/packages/firebase_auth">firebase_auth:</a>
-* <a href="https://pub.dev/packages/firebase_core">firebase_core: </a>
-* <a href="https://pub.dev/packages/firebase_messaging">firebase_messaging:</a>
-* <a href="https://pub.dev/packages/firebase_storage">firebase_storage: </a>
-* <a href="https://pub.dev/packages/flutter_animate">flutter_animate:</a> ^4.1.1+1
-* <a href="https://pub.dev/packages/flutter_bloc">flutter_bloc:</a> ^8.1.3
-* <a href="https://pub.dev/packages/flutter_keyboard_visibility">flutter_keyboard_visibility:</a> ^5.4.1
-* <a href="https://pub.dev/packages/flutter_launcher_icons">flutter_launcher_icons:</a> ^0.13.0
-* <a href="https://pub.dev/packages/flutter_local_notifications">flutter_local_notifications:</a> ^9.1.5
-* <a href="https://pub.dev/packages/flutter_native_splash">flutter_native_splash:</a> ^2.2.19
-* <a href="https://pub.dev/packages/flutter_screenutil">flutter_screenutil: </a>
-* <a href="https://pub.dev/packages/flutter_secure_storage">flutter_secure_storage: </a>
-* <a href="https://pub.dev/packages/go_router">go_router:</a> ^6.5.0
-* <a href="https://pub.dev/packages/http">http:</a> ^0.13.4
-* <a href="https://pub.dev/packages/image_picker">image_picker:</a> ^0.8.7+1
-* <a href="https://pub.dev/packages/intl">intl:</a> ^0.18.0
+
+- <a href="https://pub.dev/packages/cached_network_image">cached_network_image:</a> ^3.2.3
+- <a href="https://pub.dev/packages/carousel_slider">carousel_slider:</a> ^4.2.1
+- <a href="https://pub.dev/packages/cloud_firestore">cloud_firestore: </a>
+- <a href="https://pub.dev/packages/connectivity">connectivity:</a> ^3.0.6
+- <a href="https://pub.dev/packages/cupertino_icons">cupertino_icons: </a>
+- <a href="https://pub.dev/packages/dropdown_button2">dropdown_button2:</a> ^2.0.0
+- <a href="https://pub.dev/packages/emoji_regex">emoji_regex: </a>
+- <a href="https://pub.dev/packages/firebase_auth">firebase_auth:</a>
+- <a href="https://pub.dev/packages/firebase_core">firebase_core: </a>
+- <a href="https://pub.dev/packages/firebase_messaging">firebase_messaging:</a>
+- <a href="https://pub.dev/packages/firebase_storage">firebase_storage: </a>
+- <a href="https://pub.dev/packages/flutter_animate">flutter_animate:</a> ^4.1.1+1
+- <a href="https://pub.dev/packages/flutter_keyboard_visibility">flutter_keyboard_visibility:</a> ^5.4.1
+- <a href="https://pub.dev/packages/flutter_launcher_icons">flutter_launcher_icons:</a> ^0.13.0
+- <a href="https://pub.dev/packages/flutter_local_notifications">flutter_local_notifications:</a> ^9.1.5
+- <a href="https://pub.dev/packages/flutter_native_splash">flutter_native_splash:</a> ^2.2.19
+- <a href="https://pub.dev/packages/flutter_screenutil">flutter_screenutil: </a>
+- <a href="https://pub.dev/packages/flutter_secure_storage">flutter_secure_storage: </a>
+- <a href="https://pub.dev/packages/get">get:</a> ^4.6.6
+- <a href="https://pub.dev/packages/http">http:</a> ^0.13.4
+- <a href="https://pub.dev/packages/image_picker">image_picker:</a> ^0.8.7+1
+- <a href="https://pub.dev/packages/intl">intl:</a> ^0.18.0

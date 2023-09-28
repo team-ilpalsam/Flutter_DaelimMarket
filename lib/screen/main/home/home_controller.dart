@@ -9,19 +9,11 @@ class HomeController extends GetxController {
   void onInit() {
     getData();
 
-    scrollController.value.addListener(() {
-      if (scrollController.value.position.pixels ==
-          scrollController.value.position.maxScrollExtent) {
-        getNextData();
-      }
-    });
-
     super.onInit();
   }
 
   final RxString selectedLocation = '전체'.obs;
   final RxList list = [].obs;
-  final Rx<ScrollController> scrollController = ScrollController().obs;
   Rx<DocumentSnapshot<Object?>?> lastDocument = null.obs;
   final RxBool isMore = true.obs;
 
@@ -31,7 +23,7 @@ class HomeController extends GetxController {
     isMore.value = true;
   }
 
-  getData() async {
+  void getData() async {
     var data = await FirebaseFirestore.instance
         .collection('product') // product 컬렉션으로부터
         .where('location', // Dropdown의 장소 값의 조건으로
@@ -53,7 +45,7 @@ class HomeController extends GetxController {
     }
   }
 
-  getNextData() async {
+  void getNextData() async {
     if (lastDocument.value != null) {
       var data = await FirebaseFirestore.instance
           .collection('product') // product 컬렉션으로부터

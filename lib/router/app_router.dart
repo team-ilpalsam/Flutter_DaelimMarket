@@ -94,7 +94,7 @@ class AppRouter {
     // 검색 페이지
     GetPage(
       name: '/search',
-      page: () => const SearchScreen(),
+      page: () => SearchScreen(),
       transition: Transition.noTransition,
     ),
 

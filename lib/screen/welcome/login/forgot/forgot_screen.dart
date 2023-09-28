@@ -136,7 +136,7 @@ class _ForgotScreen extends State<ForgotScreen> {
   Future<void> onTapResetPassword() async {
     // 이메일 유효성 검사
     if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+      WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     } else {
       // Loading 상태를 true로 변경
       setState(() {
@@ -155,7 +155,6 @@ class _ForgotScreen extends State<ForgotScreen> {
           });
           // WelcomeScreen으로 이동하는 알림창 띄우기
           AlertDialogWidget.oneButton(
-            context: context,
             content: "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
             button: "확인",
             action: () {
@@ -168,19 +167,19 @@ class _ForgotScreen extends State<ForgotScreen> {
         // 실패(Exception) 시
         switch (e.code) {
           case "invalid-email":
-            WarningSnackBar.show(context: context, text: '이메일 주소를 다시 확인해주세요.');
+            WarningSnackBar.show(text: '이메일 주소를 다시 확인해주세요.');
             setState(() {
               _isLoading = false;
             });
             break;
           case "user-not-found":
-            WarningSnackBar.show(context: context, text: '일치하는 정보가 없어요.');
+            WarningSnackBar.show(text: '일치하는 정보가 없어요.');
             setState(() {
               _isLoading = false;
             });
             break;
           default:
-            WarningSnackBar.show(context: context, text: e.code.toString());
+            WarningSnackBar.show(text: e.code.toString());
             setState(() {
               _isLoading = false;
             });

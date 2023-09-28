@@ -3,7 +3,6 @@ import 'package:daelim_market/screen/main/home/home_screen.dart';
 import 'package:daelim_market/screen/main/main_contoller.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
 import 'package:daelim_market/screen/main/school/school_screen.dart';
-import 'package:daelim_market/screen/main/search/search_screen.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

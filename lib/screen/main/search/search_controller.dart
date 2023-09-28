@@ -5,28 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SearchGetXController extends GetxController {
-  BuildContext context;
-  SearchGetXController(this.context);
-
-  @override
-  void onInit() {
-    scrollController.value.addListener(() {
-      if (scrollController.value.position.pixels ==
-          scrollController.value.position.maxScrollExtent) {
-        getNextData();
-      }
-    });
-
-    super.onInit();
-  }
-
   final RxList list = [].obs;
-  final Rx<ScrollController> scrollController = ScrollController().obs;
   final RxString text = ''.obs;
   Rx<DocumentSnapshot<Object?>?> lastDocument = null.obs;
   final RxBool isMore = true.obs;
 
-  getData() async {
+  void getData() async {
     var data = text.value != ''
         ? await FirebaseFirestore.instance
             .collection('product') // product 컬렉션으로부터
@@ -52,7 +36,7 @@ class SearchGetXController extends GetxController {
     }
   }
 
-  getNextData() async {
+  void getNextData() async {
     if (lastDocument.value != null) {
       var data = text.value != ''
           ? await FirebaseFirestore.instance
