@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -92,7 +90,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    window.viewPadding.bottom > 0
+                    View.of(context).viewPadding.bottom > 0
                         ? SizedBox(
                             height: 18.h,
                           )

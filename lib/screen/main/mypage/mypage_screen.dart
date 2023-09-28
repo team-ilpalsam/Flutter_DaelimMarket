@@ -19,7 +19,7 @@ class MypageScreen extends StatefulWidget {
 }
 
 class _MypageScreenState extends State<MypageScreen> {
-  var uidData;
+  dynamic uidData;
   int watchlistLength = 0;
   int postsLength = 0;
 
@@ -109,7 +109,7 @@ class _MypageScreenState extends State<MypageScreen> {
     return GestureDetector(
       onTap: () {
         Get.toNamed(
-          'historyscreen',
+          '/history',
           parameters: {
             'history': history,
           },

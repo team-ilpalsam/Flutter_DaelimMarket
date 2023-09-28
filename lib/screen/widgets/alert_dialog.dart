@@ -2,10 +2,10 @@ import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class AlertDialogWidget {
   static void oneButton({
-    required BuildContext context,
     required String content,
     required String button,
     required VoidCallback action,
@@ -14,7 +14,7 @@ class AlertDialogWidget {
     showDialog(
       barrierDismissible: barrierDismissible,
       barrierColor: Colors.transparent,
-      context: context,
+      context: Get.context!,
       builder: (context) {
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
@@ -107,7 +107,6 @@ class AlertDialogWidget {
   }
 
   static void twoButtons({
-    required BuildContext context,
     required String content,
     required List<String> button,
     required List<Color> color,
@@ -117,7 +116,7 @@ class AlertDialogWidget {
     showDialog(
       barrierDismissible: barrierDismissible,
       barrierColor: Colors.transparent,
-      context: context,
+      context: Get.context!,
       builder: (context) {
         return AlertDialog(
           contentPadding: EdgeInsets.zero,

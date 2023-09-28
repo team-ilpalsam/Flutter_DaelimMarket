@@ -104,7 +104,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                             _isLoading
                                 ? null
                                 : AlertDialogWidget.twoButtons(
-                                    context: context,
                                     content: '저장 하시겠습니까?',
                                     button: ['취소', '확인'],
                                     color: [dmLightGrey, dmBlue],
@@ -124,7 +123,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                               .hasMatch(
                                                   nickNameController.text)) {
                                             WarningSnackBar.show(
-                                                context: context,
                                                 text: '닉네임에 사용할 수 없는 문자가 있어요.');
                                             setState(() {
                                               _isLoading = false;
@@ -184,7 +182,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                             _isLoading
                                 ? null
                                 : AlertDialogWidget.twoButtons(
-                                    context: context,
                                     content: "프로필 사진을 선택해주세요!",
                                     button: ["앨범에서 선택", "카메라로 촬영"],
                                     color: [dmBlue, dmBlue],
@@ -203,7 +200,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(
-                                              context: context,
                                               text: '사진을 불러오는 중 실패했어요.');
                                         }
                                       },
@@ -221,7 +217,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(
-                                              context: context,
                                               text: '사진을 불러오는 중 실패했어요.');
                                         }
                                       },
@@ -406,7 +401,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                             _isLoading
                                 ? null
                                 : AlertDialogWidget.twoButtons(
-                                    context: context,
                                     content: '계정을 삭제하시겠습니까?',
                                     button: [
                                         '취소',
@@ -442,7 +436,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                           _isLoading
                               ? null
                               : AlertDialogWidget.twoButtons(
-                                  context: context,
                                   content: '로그아웃을 하시겠습니까?',
                                   button: [
                                       '아니오',
@@ -495,14 +488,12 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
 
       Get.toNamed('/welcome');
       DoneSnackBar.show(
-        context: context,
         text: '계정을 삭제했어요.',
       );
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "requires-recent-login":
           WarningSnackBar.show(
-            context: context,
             text: '계정 삭제하기엔 너무 이릅니다.',
             paddingBottom: 0,
           );
@@ -513,7 +504,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
           break;
         default:
           WarningSnackBar.show(
-            context: context,
             text: '계정 삭제 중 문제가 발생했어요.',
             paddingBottom: 0,
           );
@@ -542,7 +532,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         await const FlutterSecureStorage()
             .write(key: 'nickname', value: nickName);
         DoneSnackBar.show(
-          context: context,
           text: '성공적으로 등록했어요!',
           paddingBottom: 0,
         );
@@ -551,7 +540,6 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         });
       } else {
         WarningSnackBar.show(
-          context: context,
           text: '중복된 닉네임입니다.',
           paddingBottom: 0,
         );
@@ -560,7 +548,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         });
       }
     } catch (e) {
-      WarningSnackBar.show(context: context, text: '닉네임 변경 중 오류가 발생했어요.');
+      WarningSnackBar.show(text: '닉네임 변경 중 오류가 발생했어요.');
       return;
     }
   }
@@ -598,7 +586,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      WarningSnackBar.show(context: context, text: '프로필 사진 업로드 중 오류가 발생했어요.');
+      WarningSnackBar.show(text: '프로필 사진 업로드 중 오류가 발생했어요.');
       return;
     }
   }

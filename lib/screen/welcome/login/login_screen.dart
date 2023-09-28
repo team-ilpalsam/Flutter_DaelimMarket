@@ -182,7 +182,7 @@ class _LoginScreen extends State<LoginScreen> {
   Future<void> onTapLogin() async {
     // 이메일 유효성 검사
     if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+      WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     } else {
       try {
         // Loading 상태를 true로 변경
@@ -219,12 +219,11 @@ class _LoginScreen extends State<LoginScreen> {
               await const FlutterSecureStorage()
                   .write(key: 'uid', value: value.user!.uid);
               // MainScreen으로 이동
-              Get.toNamed('/');
+              Get.offAllNamed('/');
             }
             // 만약 인증이 안 된 계정이면,
             else {
-              WarningSnackBar.show(
-                  context: context, text: '이메일 인증이 안 된 계정이에요.');
+              WarningSnackBar.show(text: '이메일 인증이 안 된 계정이에요.');
             }
             return value;
           },
@@ -234,26 +233,25 @@ class _LoginScreen extends State<LoginScreen> {
         switch (e.code) {
           case 'user-not-found':
           case 'wrong-password':
-            WarningSnackBar.show(context: context, text: '일치하는 정보가 없어요.');
+            WarningSnackBar.show(text: '일치하는 정보가 없어요.');
             setState(() {
               _isLoading = false;
             });
             break;
           case 'user-disabled':
-            WarningSnackBar.show(context: context, text: '사용할 수 없는 계정이에요.');
+            WarningSnackBar.show(text: '사용할 수 없는 계정이에요.');
             setState(() {
               _isLoading = false;
             });
             break;
           case 'invalid-email':
-            WarningSnackBar.show(
-                context: context, text: '이메일 주소 형식을 다시 확인해주세요.');
+            WarningSnackBar.show(text: '이메일 주소 형식을 다시 확인해주세요.');
             setState(() {
               _isLoading = false;
             });
             break;
           default:
-            WarningSnackBar.show(context: context, text: e.code.toString());
+            WarningSnackBar.show(text: e.code.toString());
             setState(() {
               _isLoading = false;
             });

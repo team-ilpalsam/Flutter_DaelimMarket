@@ -65,7 +65,6 @@ class _SplashScreenState extends State<SplashScreen> {
             }
           } else {
             WarningSnackBar.show(
-              context: context,
               text: '이메일 인증이 안 된 계정이에요.',
               paddingHorizontal: 20.w,
             );
@@ -81,7 +80,6 @@ class _SplashScreenState extends State<SplashScreen> {
         });
       } on FirebaseAuthException {
         WarningSnackBar.show(
-          context: context,
           text: '자동 로그인에 실패했어요.',
         );
         // 로그인 실패 시 FlutterSecureStorage 내 데이터 모두 삭제

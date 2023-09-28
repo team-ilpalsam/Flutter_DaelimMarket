@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -117,7 +115,6 @@ class DetailScreen extends StatelessWidget {
                         ? GestureDetector(
                             onTap: () {
                               AlertDialogWidget.twoButtons(
-                                context: context,
                                 content: "정말로 삭제하시겠습니까?",
                                 button: ["취소", "삭제할래요."],
                                 color: [dmGrey, dmRed],
@@ -365,7 +362,9 @@ class DetailScreen extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     // Android 대응
-                    height: window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
+                    height: View.of(context).viewPadding.bottom > 0
+                        ? 60.5.h
+                        : 75.5.h,
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
@@ -377,7 +376,9 @@ class DetailScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.only(
                         // Android 대응
-                        top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
+                        top: View.of(context).viewPadding.bottom > 0
+                            ? 10.h
+                            : 0.h,
                         left: 25.w,
                         right: 20.w,
                       ),
@@ -635,7 +636,6 @@ class DetailScreen extends StatelessWidget {
       }
       Get.toNamed('/main');
       DoneSnackBar.show(
-        context: context,
         text: '판매글을 삭제했어요.',
         paddingHorizontal: 0,
         paddingBottom: 0,
@@ -643,7 +643,6 @@ class DetailScreen extends StatelessWidget {
     } catch (e) {
       Get.toNamed('/main');
       WarningSnackBar.show(
-        context: context,
         text: '판매글 삭제 중 문제가 생겼어요.',
         paddingHorizontal: 0,
         paddingBottom: 0,
@@ -675,7 +674,6 @@ class DetailScreen extends StatelessWidget {
       );
     } catch (e) {
       WarningSnackBar.show(
-        context: context,
         text: '관심을 누르던 중 문제가 생겼어요.',
         paddingHorizontal: 0,
       );
@@ -705,7 +703,6 @@ class DetailScreen extends StatelessWidget {
       );
     } catch (e) {
       WarningSnackBar.show(
-        context: context,
         text: '관심을 누르던 중 문제가 생겼어요.',
         paddingHorizontal: 0,
       );

@@ -24,8 +24,8 @@ import '../../../main.dart';
 
 class UploadScreen extends StatelessWidget {
   UploadScreen({super.key});
-  DateTime now = DateTime.now();
 
+  final DateTime now = DateTime.now();
   final UploadController _controller = Get.put(UploadController());
 
   @override
@@ -93,20 +93,16 @@ class UploadScreen extends StatelessWidget {
 
         Get.toNamed('/main');
         DoneSnackBar.show(
-          context: context,
           text: '성공적으로 등록했어요!',
           paddingBottom: 0,
         );
-        _controller.clearState();
       } catch (e) {
         Get.toNamed('/main');
         WarningSnackBar.show(
-          context: context,
           text: '판매글 등록 중 문제가 생겼어요.',
           paddingBottom: 0,
         );
         debugPrint(e.toString());
-        _controller.clearState();
       }
     }
 
@@ -115,15 +111,13 @@ class UploadScreen extends StatelessWidget {
       try {
         // 앨범에 여러 장 선택할 수 있는 ImagePicker 불러옴
         await ImagePicker().pickMultiImage().then(
-          (xfile) {
-            // 아무것도 고르지 않았다면
-            if (xfile == null) {
+          (xfiles) {
+            if (xfiles.isEmpty) {
               return;
             }
             // 기존 이미지 개수와 선택한 이미지 개수를 합쳤을 때 5장을 넘겼을 시
-            if (_controller.pickedImages.length + xfile.length > 5) {
+            if (_controller.pickedImages.length + xfiles.length > 5) {
               WarningSnackBar.show(
-                context: context,
                 text: '사진은 5장까지만 올릴 수 있어요!',
                 paddingBottom: 0,
               );
@@ -131,12 +125,11 @@ class UploadScreen extends StatelessWidget {
             }
             // 선택한 이미지와 리스트 병합
             _controller.pickedImages.value =
-                _controller.pickedImages.value + (xfile);
+                _controller.pickedImages + (xfiles);
           },
         );
       } catch (e) {
         WarningSnackBar.show(
-          context: context,
           text: '사진을 불러오는 중 실패했어요.',
           paddingBottom: 0,
         );
@@ -157,7 +150,6 @@ class UploadScreen extends StatelessWidget {
             // 기존 이미지 개수와 카메라로 촬영한 이미지 한 장을 합쳤을 때 5장을 넘겼을 시
             if (_controller.pickedImages.length + 1 > 5) {
               WarningSnackBar.show(
-                context: context,
                 text: '사진은 5장까지만 올릴 수 있어요!',
                 paddingBottom: 0,
               );
@@ -169,7 +161,6 @@ class UploadScreen extends StatelessWidget {
         );
       } catch (e) {
         WarningSnackBar.show(
-          context: context,
           text: '사진을 불러오는 중 실패했어요.',
           paddingBottom: 0,
         );
@@ -197,7 +188,6 @@ class UploadScreen extends StatelessWidget {
                         _controller.isLoading.value
                             ? null
                             : AlertDialogWidget.twoButtons(
-                                context: context,
                                 content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
                                 button: ['아직이요', '나갈래요'],
                                 color: [dmGrey, dmBlue],
@@ -208,7 +198,6 @@ class UploadScreen extends StatelessWidget {
                                   () {
                                     Navigator.pop(context);
                                     Get.toNamed('/main');
-                                    _controller.clearState();
                                   }
                                 ],
                               );
@@ -230,7 +219,6 @@ class UploadScreen extends StatelessWidget {
                               _controller.isLoading.value
                                   ? null
                                   : AlertDialogWidget.twoButtons(
-                                      context: context,
                                       content: '판매 글을 등록하시겠습니까?',
                                       button: ['아직이요', '등록할래요!'],
                                       color: [dmGrey, dmBlue],
@@ -367,7 +355,6 @@ class UploadScreen extends StatelessWidget {
                                           GestureDetector(
                                               onTap: () {
                                                 AlertDialogWidget.twoButtons(
-                                                  context: context,
                                                   content: "사진을 선택해주세요!",
                                                   button: [
                                                     "앨범에서 선택",

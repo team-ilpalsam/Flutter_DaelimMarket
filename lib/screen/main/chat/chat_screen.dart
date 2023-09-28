@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,7 +28,7 @@ class ChatScreen extends StatelessWidget {
 
   ChatScreen({super.key, required this.userUID});
 
-  TextEditingController chatController = TextEditingController();
+  final TextEditingController chatController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +90,6 @@ class ChatScreen extends StatelessWidget {
         });
       } catch (e) {
         WarningSnackBar.show(
-          context: context,
           text: '사진을 불러오는 중 실패했어요.',
           paddingBottom: 0,
         );
@@ -157,7 +155,6 @@ class ChatScreen extends StatelessWidget {
         });
       } catch (e) {
         WarningSnackBar.show(
-          context: context,
           text: '사진을 불러오는 중 실패했어요.',
           paddingBottom: 0,
         );
@@ -213,7 +210,6 @@ class ChatScreen extends StatelessWidget {
                         action: GestureDetector(
                           onTap: () {
                             AlertDialogWidget.twoButtons(
-                              context: context,
                               content: "정말로 나가시겠습니까?",
                               button: ["취소", "나갈래요."],
                               color: [dmGrey, dmRed],
@@ -634,8 +630,9 @@ class ChatScreen extends StatelessWidget {
                         padding: EdgeInsets.only(top: 5.h),
                         child: Container(
                           // Android 대응
-                          height:
-                              window.viewPadding.bottom > 0 ? 60.5.h : 75.5.h,
+                          height: View.of(context).viewPadding.bottom > 0
+                              ? 60.5.h
+                              : 75.5.h,
                           decoration: BoxDecoration(
                             border: Border(
                               top: BorderSide(
@@ -647,7 +644,9 @@ class ChatScreen extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(
                               // Android 대응
-                              top: window.viewPadding.bottom > 0 ? 10.h : 0.h,
+                              top: View.of(context).viewPadding.bottom > 0
+                                  ? 10.h
+                                  : 0.h,
                               left: 20.w,
                               right: 20.w,
                             ),
@@ -663,7 +662,6 @@ class ChatScreen extends StatelessWidget {
                                                 .containsKey('deleted')
                                         ? null
                                         : AlertDialogWidget.twoButtons(
-                                            context: context,
                                             content: "사진을 선택해주세요!",
                                             button: ["앨범에서 선택", "카메라로 촬영"],
                                             color: [dmBlue, dmBlue],

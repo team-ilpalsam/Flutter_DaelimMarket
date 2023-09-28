@@ -199,12 +199,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> onTapRegister() async {
     // 이메일 유효성 검사
     if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
-      WarningSnackBar.show(context: context, text: '이메일에 포함할 수 없는 문자가 있어요.');
+      WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     }
     // 비밀번호와 비밀번호 확인 일치 검사
     else if (passwordController.text != confirmController.text) {
       WarningSnackBar.show(
-        context: context,
         text: '비밀번호가 맞지 않아요.',
       );
     } else {
@@ -258,7 +257,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'read_time': {},
           });
           // 회원가입 후 이메일 인증 안내 페이지로 이동
-          Get.toNamed(
+          Get.offNamed(
             '/register/authlink',
             parameters: {
               'email': '${emailController.text}@email.daelim.ac.kr',
@@ -273,7 +272,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         switch (e.code) {
           case 'weak-password':
             WarningSnackBar.show(
-              context: context,
               text: '비밀번호 보안을 신경써주세요.',
             );
             setState(() {
@@ -282,7 +280,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             break;
           case 'email-already-in-use':
             WarningSnackBar.show(
-              context: context,
               text: '이미 존재하는 계정이에요.',
             );
             setState(() {
@@ -291,7 +288,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             break;
           case 'invalid-email':
             WarningSnackBar.show(
-              context: context,
               text: '이메일 주소 형식을 다시 확인해주세요.',
             );
             setState(() {
@@ -300,7 +296,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             break;
           case 'operation-not-allowed':
             WarningSnackBar.show(
-              context: context,
               text: '허용되지 않은 작업이에요.',
             );
             setState(() {
@@ -309,7 +304,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             break;
           default:
             WarningSnackBar.show(
-              context: context,
               text: e.code.toString(),
             );
             setState(() {

@@ -12,7 +12,6 @@ class ConnectionCheckService {
     // 인터넷 연결 확인
     if (result == ConnectivityResult.none) {
       AlertDialogWidget.oneButton(
-        context: context,
         content: '인터넷 연결을 확인하세요.',
         button: '확인',
         action: () {
