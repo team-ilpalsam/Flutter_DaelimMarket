@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 const int limit = 6;
 const String textLessLogo = 'assets/images/logo/daelimmarket_textless.png';
+const int maxFileSizeInBytes = 5 * 1024 * 1024;
 const List<String> locationList = [
   '전체',
   '다산관',

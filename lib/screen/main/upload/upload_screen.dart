@@ -96,13 +96,13 @@ class UploadScreen extends StatelessWidget {
           });
         }));
 
-        Get.toNamed('/main');
+        Get.back();
         DoneSnackBar.show(
           text: '성공적으로 등록했어요!',
           paddingBottom: 0,
         );
-      } catch (e) {
-        Get.toNamed('/main');
+      } on FirebaseException catch (e) {
+        Get.back();
         WarningSnackBar.show(
           text: '판매글 등록 중 문제가 생겼어요.',
           paddingBottom: 0,
@@ -116,7 +116,7 @@ class UploadScreen extends StatelessWidget {
       try {
         // 앨범에 여러 장 선택할 수 있는 ImagePicker 불러옴
         await ImagePicker().pickMultiImage().then(
-          (xfiles) {
+          (xfiles) async {
             if (xfiles.isEmpty) {
               return;
             }
@@ -128,8 +128,18 @@ class UploadScreen extends StatelessWidget {
               );
               return;
             }
-            // 선택한 이미지와 리스트 병합
-            _pickedImages.value += (xfiles);
+
+            for (var element in xfiles) {
+              var xfile = await element.readAsBytes();
+              if (xfile.length > maxFileSizeInBytes) {
+                WarningSnackBar.show(
+                  text: '5MB 미만 크기의 사진을 올려주세요!',
+                  paddingBottom: 0,
+                );
+              } else {
+                _pickedImages.add(element);
+              }
+            }
           },
         );
       } catch (e) {
@@ -146,7 +156,7 @@ class UploadScreen extends StatelessWidget {
       try {
         // 카메라를 불러옴
         await ImagePicker().pickImage(source: ImageSource.camera).then(
-          (xfile) {
+          (xfile) async {
             // 아무것도 고르지 않았다면
             if (xfile == null) {
               return;
@@ -159,7 +169,17 @@ class UploadScreen extends StatelessWidget {
               );
               return;
             }
-            _pickedImages.value += ([xfile]);
+
+            Uint8List sizeOfXFile = await xfile.readAsBytes();
+
+            if (sizeOfXFile.length > maxFileSizeInBytes) {
+              WarningSnackBar.show(
+                text: '5MB 미만 크기의 사진을 올려주세요!',
+                paddingBottom: 0,
+              );
+            } else {
+              _pickedImages.value += ([xfile]);
+            }
           },
         );
       } catch (e) {

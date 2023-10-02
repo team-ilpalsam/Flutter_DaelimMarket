@@ -348,7 +348,7 @@ class MypageScreen extends StatelessWidget {
                                       crossAxisCount: 3,
                                       childAspectRatio: 1 / 1,
                                       crossAxisSpacing: 20.w,
-                                      mainAxisSpacing: 20.h,
+                                      mainAxisSpacing: 20.w,
                                     ),
                                     itemCount: _controller.myPostsKeys.length >=
                                             _controller.limit
@@ -408,7 +408,7 @@ class MypageScreen extends StatelessWidget {
                                       crossAxisCount: 3,
                                       childAspectRatio: 1 / 1,
                                       crossAxisSpacing: 20.w,
-                                      mainAxisSpacing: 20.h,
+                                      mainAxisSpacing: 20.w,
                                     ),
                                     itemCount: _controller
                                                 .myWatchlistKeys.length >=

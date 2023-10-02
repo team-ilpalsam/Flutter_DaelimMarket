@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/const/common.dart';
 import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
@@ -167,13 +168,22 @@ class MypageSettingScreen extends StatelessWidget {
                                           ImagePicker()
                                               .pickImage(
                                                   source: ImageSource.gallery)
-                                              .then((xfile) {
+                                              .then((xfile) async {
                                             if (xfile == null) {
                                               return;
                                             }
-                                            _filePath.value = xfile.path;
-                                            debugPrint(
-                                                _filePath.value.toString());
+
+                                            Uint8List sizeOfXFile =
+                                                await xfile.readAsBytes();
+                                            if (sizeOfXFile.length >
+                                                maxFileSizeInBytes) {
+                                              WarningSnackBar.show(
+                                                text: '5MB 미만 크기의 사진을 올려주세요!',
+                                                paddingBottom: 0,
+                                              );
+                                            } else {
+                                              _filePath.value = xfile.path;
+                                            }
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(
@@ -188,13 +198,22 @@ class MypageSettingScreen extends StatelessWidget {
                                           ImagePicker()
                                               .pickImage(
                                                   source: ImageSource.camera)
-                                              .then((xfile) {
+                                              .then((xfile) async {
                                             if (xfile == null) {
                                               return;
                                             }
-                                            _filePath.value = xfile.path;
-                                            debugPrint(
-                                                _filePath.value.toString());
+
+                                            Uint8List sizeOfXFile =
+                                                await xfile.readAsBytes();
+                                            if (sizeOfXFile.length >
+                                                maxFileSizeInBytes) {
+                                              WarningSnackBar.show(
+                                                text: '5MB 미만 크기의 사진을 올려주세요!',
+                                                paddingBottom: 0,
+                                              );
+                                            } else {
+                                              _filePath.value = xfile.path;
+                                            }
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(

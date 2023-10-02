@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/detail/detail_screen.dart';
