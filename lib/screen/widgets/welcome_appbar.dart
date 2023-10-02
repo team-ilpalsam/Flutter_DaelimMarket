@@ -5,13 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class WelcomeAppbar extends StatelessWidget {
-  final String? image;
+  final Widget widget;
   final String title;
   final VoidCallback? onTap;
 
   const WelcomeAppbar({
     super.key,
-    this.image,
+    required this.widget,
     required this.title,
     this.onTap,
   });
@@ -24,23 +24,15 @@ class WelcomeAppbar extends StatelessWidget {
         SizedBox(
           height: 71.h,
         ),
-        image == null
-            ? SizedBox(
-                height: 18.h,
-              )
-            : Padding(
-                padding: EdgeInsets.only(right: 10.w),
-                child: GestureDetector(
-                  onTap: onTap ??
-                      () {
-                        Get.back();
-                      },
-                  child: Image.asset(
-                    image!,
-                    height: 18.h,
-                  ),
-                ),
-              ),
+        Padding(
+          padding: EdgeInsets.only(right: 10.w),
+          child: GestureDetector(
+              onTap: onTap ??
+                  () {
+                    Get.back();
+                  },
+              child: widget),
+        ),
         SizedBox(
           height: 52.h,
         ),

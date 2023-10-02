@@ -33,7 +33,9 @@ class DetailScreen extends StatelessWidget {
     dmGrey,
   ];
 
-  final RxInt imageIndex = RxInt(1);
+  final RxInt _imageIndex = 1.obs;
+  final RxString _userNickName = '조회 중...'.obs;
+  final RxString _userProfileImage = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +92,14 @@ class DetailScreen extends StatelessWidget {
             }
             // 판매글의 데이터가 존재하는 경우
             else if (snapshot.hasData && snapshot.data!.data()!.isNotEmpty) {
+              FirebaseFirestore.instance
+                  .collection('user')
+                  .doc(snapshot.data!['uid'])
+                  .get()
+                  .then((value) {
+                _userProfileImage.value = value.data()!["profile_image"];
+                _userNickName.value = value.data()!["nickName"];
+              });
               return Column(
                 children: [
                   // Title
@@ -242,7 +252,7 @@ class DetailScreen extends StatelessWidget {
                                           height:
                                               MediaQuery.of(context).size.width,
                                           onPageChanged: (index, reason) {
-                                            imageIndex.value = index + 1;
+                                            _imageIndex.value = index + 1;
                                           },
                                         ),
                                       ),
@@ -263,7 +273,7 @@ class DetailScreen extends StatelessWidget {
                                           child: Center(
                                             child: Obx(
                                               () => Text(
-                                                '$imageIndex / ${snapshot.data!['images'].length}',
+                                                '$_imageIndex / ${snapshot.data!['images'].length}',
                                                 style: TextStyle(
                                                     fontFamily: 'Pretendard',
                                                     fontSize: 16.sp,
@@ -298,7 +308,7 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 15.h,
+                                    height: 5.h,
                                   ),
                                   Text(
                                     snapshot.data!['title'],
@@ -310,18 +320,97 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 15.h,
+                                    height: 10.h,
                                   ),
-                                  Text(
-                                    '${snapshot.data!['nickName'].toUpperCase()} · ${snapshot.data!['location']}',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      color: dmDarkGrey,
-                                      fontSize: 18.sp,
+                                  Obx(
+                                    () => Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        _userProfileImage.value == ''
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.10178,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.10178,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: dmLightGrey,
+                                                ),
+                                              )
+                                            : CachedNetworkImage(
+                                                fadeInDuration: Duration.zero,
+                                                fadeOutDuration: Duration.zero,
+                                                imageUrl:
+                                                    _userProfileImage.value,
+                                                fit: BoxFit.cover,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.10178,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.10178,
+                                                imageBuilder:
+                                                    (context, imageProvider) =>
+                                                        Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.10178,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.10178,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    shape: BoxShape.circle,
+                                                    color: dmLightGrey,
+                                                  ),
+                                                ),
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.10178,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.10178,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: dmLightGrey,
+                                                  ),
+                                                ),
+                                              ),
+                                        SizedBox(
+                                          width: 10.w,
+                                        ),
+                                        Text(
+                                          '${_userNickName.value} · ${snapshot.data!['location']}',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            color: dmDarkGrey,
+                                            fontSize: 18.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 22.h,
+                                    height: 20.h,
                                   ),
                                   // 설명글의 데이터가 존재할 경우
                                   snapshot.data!['desc'] != ''
@@ -336,7 +425,7 @@ class DetailScreen extends StatelessWidget {
                                       : const SizedBox(),
                                   snapshot.data!['desc'] != ''
                                       ? SizedBox(
-                                          height: 22.h,
+                                          height: 20.h,
                                         )
                                       : const SizedBox(),
                                   Text(

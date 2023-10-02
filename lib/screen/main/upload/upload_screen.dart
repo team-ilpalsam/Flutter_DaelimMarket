@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:daelim_market/screen/main/upload/upload_controller.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
@@ -26,7 +25,15 @@ class UploadScreen extends StatelessWidget {
   UploadScreen({super.key});
 
   final DateTime now = DateTime.now();
-  final UploadController _controller = Get.put(UploadController());
+
+  final RxBool _isLoading = false.obs;
+  final RxString _selectedLocation = '장소 선택'.obs;
+  final RxList _pickedImages = [].obs;
+  final RxList _downloadUrls = [].obs;
+
+  final RxString titleString = ''.obs;
+  final RxString priceString = ''.obs;
+  final RxString descString = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +42,13 @@ class UploadScreen extends StatelessWidget {
       // 확인창 닫기
       Navigator.pop(context);
       // Loading 상태를 true로 변경
-      _controller.isLoading.value = true;
+      _isLoading.value = true;
       try {
         // productId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
         String productId = '${DateFormat('yyyyMMddHHmmss').format(now)}_$id';
 
         // Future.wait 내 코드가 다 수행될 때까지 대기
-        await Future.wait(
-            _controller.pickedImages.asMap().entries.map((entry) async {
+        await Future.wait(_pickedImages.asMap().entries.map((entry) async {
           final index = entry.key;
           final value = entry.value;
 
@@ -59,7 +65,7 @@ class UploadScreen extends StatelessWidget {
           final url = await taskSnapshot.ref.getDownloadURL();
 
           // downloadUrls 리스트에 추가
-          _controller.downloadUrls.add(url.toString());
+          _downloadUrls.add(url.toString());
 
           debugPrint(uploadTask.toString());
           debugPrint(taskSnapshot.toString());
@@ -77,14 +83,13 @@ class UploadScreen extends StatelessWidget {
             'id': id,
             'uid': uid,
             'product_id': productId,
-            'nickName': nickName,
-            'price': _controller.priceController.text,
-            'title': _controller.titleController.text,
-            'location': _controller.selectedLocation.value == '장소 선택'
+            'price': priceString.value,
+            'title': titleString.value,
+            'location': _selectedLocation.value == '장소 선택'
                 ? locationList[0]
-                : _controller.selectedLocation.value,
-            'desc': _controller.descController.text,
-            'images': _controller.downloadUrls,
+                : _selectedLocation.value,
+            'desc': descString.value,
+            'images': _downloadUrls,
             'likes': [],
             'uploadTime': now,
             'status': 0,
@@ -116,7 +121,7 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 기존 이미지 개수와 선택한 이미지 개수를 합쳤을 때 5장을 넘겼을 시
-            if (_controller.pickedImages.length + xfiles.length > 5) {
+            if (_pickedImages.length + xfiles.length > 5) {
               WarningSnackBar.show(
                 text: '사진은 5장까지만 올릴 수 있어요!',
                 paddingBottom: 0,
@@ -124,7 +129,7 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 선택한 이미지와 리스트 병합
-            _controller.pickedImages.value += (xfiles);
+            _pickedImages.value += (xfiles);
           },
         );
       } catch (e) {
@@ -147,14 +152,14 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 기존 이미지 개수와 카메라로 촬영한 이미지 한 장을 합쳤을 때 5장을 넘겼을 시
-            if (_controller.pickedImages.length + 1 > 5) {
+            if (_pickedImages.length + 1 > 5) {
               WarningSnackBar.show(
                 text: '사진은 5장까지만 올릴 수 있어요!',
                 paddingBottom: 0,
               );
               return;
             }
-            _controller.pickedImages.value += ([xfile]);
+            _pickedImages.value += ([xfile]);
           },
         );
       } catch (e) {
@@ -181,77 +186,82 @@ class UploadScreen extends StatelessWidget {
                   // Title
                   MainAppbar.show(
                     title: '물건 등록',
-                    leading: GestureDetector(
-                      onTap: () {
-                        _controller.isLoading.value
-                            ? null
-                            : AlertDialogWidget.twoButtons(
-                                content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
-                                button: ['아직이요', '나갈래요'],
-                                color: [dmGrey, dmBlue],
-                                action: [
-                                  () {
-                                    Navigator.pop(context);
-                                  },
-                                  () {
-                                    Navigator.pop(context);
-                                    Get.back();
-                                  }
-                                ],
-                              );
-                      },
-                      child: Image.asset(
-                        'assets/images/icons/icon_back.png',
-                        alignment: Alignment.topLeft,
-                        height: 18.h,
-                      ),
-                    ),
-                    action: _controller.titleController.text.length >=
-                                3 && // 제목이 3글자 이상이거나
-                            _controller.priceController.text
-                                .isNotEmpty && // 가격을 작성하였거나
-                            _controller.selectedLocation.value != '장소 선택' &&
-                            _controller.pickedImages.isNotEmpty // 이미지를 선택하였거나
-                        ? GestureDetector(
-                            onTap: () {
-                              _controller.isLoading.value
-                                  ? null
-                                  : AlertDialogWidget.twoButtons(
-                                      content: '판매 글을 등록하시겠습니까?',
-                                      button: ['아직이요', '등록할래요!'],
-                                      color: [dmGrey, dmBlue],
-                                      action: [
-                                        () {
-                                          Navigator.pop(context);
-                                        },
-                                        onTapUpload
-                                      ],
-                                    );
-                            },
-                            child: _controller.isLoading.value ==
-                                    true // Loading 상태일 경우
-                                ? const CupertinoActivityIndicator()
-                                : Text(
-                                    "완료",
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 18.sp,
-                                      fontWeight: medium,
-                                      color: dmBlue,
-                                    ),
-                                  ),
-                          )
-                        :
-                        // 조건에 충족하지 못 하였을 경우 회색 글씨
-                        Text(
-                            "완료",
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 18.sp,
-                              fontWeight: medium,
-                              color: dmLightGrey,
+                    leading: Obx(
+                      () => _isLoading.value
+                          ? Image.asset(
+                              'assets/images/icons/icon_back.png',
+                              alignment: Alignment.topLeft,
+                              height: 18.h,
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                AlertDialogWidget.twoButtons(
+                                  content: '등록을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
+                                  button: ['아직이요', '나갈래요'],
+                                  color: [dmGrey, dmBlue],
+                                  action: [
+                                    () {
+                                      Navigator.pop(context);
+                                    },
+                                    () {
+                                      Navigator.pop(context);
+                                      Get.back();
+                                    }
+                                  ],
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/images/icons/icon_back.png',
+                                alignment: Alignment.topLeft,
+                                height: 18.h,
+                              ),
                             ),
-                          ),
+                    ),
+                    action: Obx(
+                      () => titleString.value.length >= 3 && // 제목이 3글자 이상이거나
+                              priceString.value != '' && // 가격을 작성하였거나
+                              _selectedLocation.value != '장소 선택' &&
+                              _pickedImages.isNotEmpty // 이미지를 선택하였거나
+                          ? GestureDetector(
+                              onTap: () {
+                                _isLoading.value
+                                    ? null
+                                    : AlertDialogWidget.twoButtons(
+                                        content: '판매 글을 등록하시겠습니까?',
+                                        button: ['아직이요', '등록할래요!'],
+                                        color: [dmGrey, dmBlue],
+                                        action: [
+                                          () {
+                                            Navigator.pop(context);
+                                          },
+                                          onTapUpload
+                                        ],
+                                      );
+                              },
+                              child: _isLoading.value == true // Loading 상태일 경우
+                                  ? const CupertinoActivityIndicator()
+                                  : Text(
+                                      "완료",
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 18.sp,
+                                        fontWeight: medium,
+                                        color: dmBlue,
+                                      ),
+                                    ),
+                            )
+                          :
+                          // 조건에 충족하지 못 하였을 경우 회색 글씨
+                          Text(
+                              "완료",
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 18.sp,
+                                fontWeight: medium,
+                                color: dmLightGrey,
+                              ),
+                            ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -261,7 +271,7 @@ class UploadScreen extends StatelessWidget {
                         SizedBox(height: 32.5.h),
                         Obx(
                           () => Text(
-                            '사진 (${_controller.pickedImages.length}/5)',
+                            '사진 (${_pickedImages.length}/5)',
                             style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 18.sp,
@@ -275,18 +285,15 @@ class UploadScreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           child: Obx(
                             () => Row(
-                              children: _controller.pickedImages.map(
+                              children: _pickedImages.map(
                                     (value) {
                                       return Padding(
                                         // 사진마다의 오른쪽 padding 부여
                                         padding: EdgeInsets.only(
                                             // 마지막 요소를 제외하고 오른쪽 padding 부여
                                             right: value ==
-                                                        _controller.pickedImages
-                                                            .last &&
-                                                    _controller.pickedImages
-                                                            .length >=
-                                                        5
+                                                        _pickedImages.last &&
+                                                    _pickedImages.length >= 5
                                                 ? 0
                                                 : 10.w),
                                         child: Stack(
@@ -306,7 +313,7 @@ class UploadScreen extends StatelessWidget {
                                               ),
                                             ),
                                             // Loading 상태일 경우
-                                            _controller.isLoading.value
+                                            _isLoading.value
                                                 ? Container()
                                                 // 이미지 리스트 제거
                                                 : Positioned(
@@ -314,7 +321,7 @@ class UploadScreen extends StatelessWidget {
                                                     right: 5.w,
                                                     child: GestureDetector(
                                                       onTap: () {
-                                                        _controller.pickedImages
+                                                        _pickedImages
                                                             .remove(value);
                                                       },
                                                       child: Container(
@@ -347,7 +354,7 @@ class UploadScreen extends StatelessWidget {
                                       padding: const EdgeInsets.only(
                                         right: 0,
                                       ),
-                                      child: _controller.pickedImages.length < 5
+                                      child: _pickedImages.length < 5
                                           ?
                                           // 5장 미만일 경우
                                           GestureDetector(
@@ -400,15 +407,16 @@ class UploadScreen extends StatelessWidget {
                           height: 40.h,
                           child: Obx(
                             () => TextField(
-                              enabled:
-                                  _controller.isLoading.value ? false : true,
-                              controller: _controller.titleController,
+                              enabled: _isLoading.value ? false : true,
                               style: mainInputTextDeco,
                               decoration: mainInputDeco('글 제목'),
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(25),
                               ],
                               cursorColor: dmBlack,
+                              onChanged: (value) {
+                                titleString.value = value;
+                              },
                             ),
                           ),
                         ),
@@ -419,9 +427,7 @@ class UploadScreen extends StatelessWidget {
                           height: 40.h,
                           child: Obx(
                             () => TextField(
-                              enabled:
-                                  _controller.isLoading.value ? false : true,
-                              controller: _controller.priceController,
+                              enabled: _isLoading.value ? false : true,
                               style: mainInputTextDeco,
                               decoration: mainInputDeco('가격 (1억 미만)'),
                               inputFormatters: <TextInputFormatter>[
@@ -429,6 +435,9 @@ class UploadScreen extends StatelessWidget {
                                 FilteringTextInputFormatter.digitsOnly
                               ],
                               cursorColor: dmBlack,
+                              onChanged: (value) {
+                                priceString.value = value;
+                              },
                             ),
                           ),
                         ),
@@ -439,7 +448,7 @@ class UploadScreen extends StatelessWidget {
                           () => GestureDetector(
                             onTap:
                                 // Loading 상태일 경우
-                                _controller.isLoading.value
+                                _isLoading.value
                                     ? () {}
                                     : () {
                                         showCupertinoModalPopup(
@@ -453,8 +462,7 @@ class UploadScreen extends StatelessWidget {
                                                 onSelectedItemChanged:
                                                     // item이 변경될 때마다 설정
                                                     (index) {
-                                                  _controller.selectedLocation
-                                                          .value =
+                                                  _selectedLocation.value =
                                                       locationList[index];
                                                 },
                                                 itemExtent: 40.h,
@@ -474,7 +482,7 @@ class UploadScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   width: 1.w,
-                                  color: _controller.isLoading.value
+                                  color: _isLoading.value
                                       ? dmDarkGrey
                                       : dmLightGrey,
                                 ),
@@ -490,7 +498,7 @@ class UploadScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      _controller.selectedLocation.value,
+                                      _selectedLocation.value,
                                       style: mainInputTextDeco,
                                     ),
                                     Image.asset(
@@ -510,9 +518,7 @@ class UploadScreen extends StatelessWidget {
                           height: 200.h,
                           child: Obx(
                             () => TextField(
-                              enabled:
-                                  _controller.isLoading.value ? false : true,
-                              controller: _controller.descController,
+                              enabled: _isLoading.value ? false : true,
                               keyboardType: TextInputType.multiline,
                               expands: true,
                               maxLines: null,
@@ -523,6 +529,9 @@ class UploadScreen extends StatelessWidget {
                                 LengthLimitingTextInputFormatter(128),
                               ],
                               cursorColor: dmBlack,
+                              onChanged: (value) {
+                                descString.value = value;
+                              },
                             ),
                           ),
                         ),

@@ -12,46 +12,25 @@ import 'package:daelim_market/styles/input_deco.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:daelim_market/main.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AccountSettingScreen extends StatefulWidget {
-  const AccountSettingScreen({
+class AccountSettingScreen extends StatelessWidget {
+  AccountSettingScreen({
     super.key,
   });
 
-  @override
-  State<AccountSettingScreen> createState() => _AccountSettingScreenState();
-}
+  final RxBool _isLoading = false.obs;
 
-class _AccountSettingScreenState extends State<AccountSettingScreen> {
-  @override
-  void initState() {
-    nickNameController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    nickNameController.dispose();
-    super.dispose();
-  }
-
-  late TextEditingController nickNameController = TextEditingController();
-  XFile? _pickedImage;
-  bool _isLoading = false;
+  final RxString _nickName = ''.obs;
+  final RxString _pickedImage = ''.obs;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+    return KeyboardDismissOnTap(
       child: Scaffold(
         backgroundColor: dmWhite,
         body: SafeArea(
@@ -69,7 +48,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeAppbar(
+                      WelcomeAppbar(
+                        widget: SizedBox(
+                          height: 18.h,
+                        ),
                         title: '계정 설정',
                       ),
                       SizedBox(
@@ -111,10 +93,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                             .pickImage(
                                                 source: ImageSource.gallery)
                                             .then((xfile) {
-                                          if (xfile == null) return;
-                                          setState(() {
-                                            _pickedImage = XFile(xfile.path);
-                                          });
+                                          if (xfile == null) {
+                                            return;
+                                          }
+                                          _pickedImage.value = xfile.path;
                                         });
                                       } catch (e) {
                                         WarningSnackBar.show(
@@ -127,10 +109,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                             .pickImage(
                                                 source: ImageSource.camera)
                                             .then((xfile) {
-                                          if (xfile == null) return;
-                                          setState(() {
-                                            _pickedImage = XFile(xfile.path);
-                                          });
+                                          if (xfile == null) {
+                                            return;
+                                          }
+                                          _pickedImage.value = xfile.path;
                                         });
                                       } catch (e) {
                                         WarningSnackBar.show(
@@ -142,23 +124,25 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                             child: Stack(
                               clipBehavior: Clip.none,
                               children: [
-                                Container(
-                                  width: 105.w,
-                                  height: 105.h,
-                                  decoration: BoxDecoration(
-                                    image: _pickedImage != null
-                                        ? DecorationImage(
-                                            image: Image.file(
-                                                    File(_pickedImage!.path))
-                                                .image,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
-                                    shape: BoxShape.circle,
-                                    color: dmLightGrey,
-                                    border: Border.all(
-                                      color: dmDarkGrey,
-                                      width: 1.w,
+                                Obx(
+                                  () => Container(
+                                    width: 105.w,
+                                    height: 105.h,
+                                    decoration: BoxDecoration(
+                                      image: _pickedImage.value != ''
+                                          ? DecorationImage(
+                                              image: Image.file(
+                                                      File(_pickedImage.value))
+                                                  .image,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                      shape: BoxShape.circle,
+                                      color: dmLightGrey,
+                                      border: Border.all(
+                                        color: dmDarkGrey,
+                                        width: 1.w,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -205,79 +189,80 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        enabled: _isLoading ? false : true,
-                        controller: nickNameController,
-                        cursorHeight: 24.h,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
-                          LengthLimitingTextInputFormatter(8),
-                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                        ],
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
+                            LengthLimitingTextInputFormatter(8),
+                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                          ],
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _nickName.value = value;
+                          },
+                        ),
                       ),
 
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      nickNameController.text.length >= 2
-                          ? GestureDetector(
-                              onTap: () async {
-                                _isLoading
-                                    ? null
-                                    : AlertDialogWidget.twoButtons(
-                                        content: '저장 하시겠습니까?',
-                                        button: ['취소', '확인'],
-                                        color: [dmLightGrey, dmBlue],
-                                        action: [
-                                          () {
-                                            Navigator.pop(context);
-                                          },
-                                          () async {
-                                            Navigator.pop(context);
-                                            setState(() {
-                                              _isLoading = true;
-                                            });
-                                            if (nickNameController
-                                                    .text.length >=
-                                                2) {
-                                              // 닉네임에 공백 혹은 특수문자가 포함될 경우
-                                              if (!RegExp(r'^[a-zA-Z가-힣0-9]+$')
-                                                  .hasMatch(nickNameController
-                                                      .text)) {
-                                                WarningSnackBar.show(
-                                                    text:
-                                                        '닉네임에 사용할 수 없는 문자가 있어요.');
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                                return;
+                      Obx(
+                        () => _nickName.value.length >= 2
+                            ? GestureDetector(
+                                onTap: () async {
+                                  _isLoading.value
+                                      ? null
+                                      : AlertDialogWidget.twoButtons(
+                                          content: '저장 하시겠습니까?',
+                                          button: ['취소', '확인'],
+                                          color: [dmLightGrey, dmBlue],
+                                          action: [
+                                            () {
+                                              Navigator.pop(context);
+                                            },
+                                            () async {
+                                              Navigator.pop(context);
+                                              _isLoading.value = true;
+                                              if (_nickName.value.length >= 2) {
+                                                // 닉네임에 공백 혹은 특수문자가 포함될 경우
+                                                if (!RegExp(
+                                                        r'^[a-zA-Z가-힣0-9]+$')
+                                                    .hasMatch(
+                                                        _nickName.value)) {
+                                                  WarningSnackBar.show(
+                                                      text:
+                                                          '닉네임에 사용할 수 없는 문자가 있어요.');
+                                                  _isLoading.value = false;
+                                                  return;
+                                                }
+                                                // 정상일 경우
+                                                else {
+                                                  await updateNickname(
+                                                      _nickName.value);
+                                                }
                                               }
-                                              // 정상일 경우
-                                              else {
-                                                await updateNickname(
-                                                    nickNameController.text);
+                                              if (_pickedImage.value != '') {
+                                                await updateProfileImage(
+                                                    _pickedImage.value);
                                               }
                                             }
-                                            if (_pickedImage != null) {
-                                              await updateProfileImage(
-                                                  _pickedImage!);
-                                            }
-                                            if (mounted) {
-                                              nickNameController.clear();
-                                            }
-                                          }
-                                        ],
-                                      );
-                              },
-                              child: _isLoading == true // Loading 상태일 경우
-                                  ? const LoadingButton(
-                                      color: dmLightGrey,
-                                    )
-                                  : const BlueButton(text: '입력 완료'))
-                          : const BlueButton(text: '입력 완료', color: dmLightGrey),
+                                          ],
+                                        );
+                                },
+                                child:
+                                    _isLoading.value == true // Loading 상태일 경우
+                                        ? const LoadingButton(
+                                            color: dmLightGrey,
+                                          )
+                                        : const BlueButton(text: '입력 완료'),
+                              )
+                            : const BlueButton(
+                                text: '입력 완료', color: dmLightGrey),
+                      ),
                       bottomPadding,
                     ],
                   ),
@@ -303,38 +288,30 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
             .collection('user')
             .doc(uid)
             .update({'nickName': nickName});
-
-        setState(() {
-          _isLoading = false;
-        });
-
+        _isLoading.value = false;
         Get.offAllNamed('/register/setting/done');
       } else {
         WarningSnackBar.show(
           text: '중복된 닉네임입니다.',
           paddingBottom: 0,
         );
-        setState(() {
-          _isLoading = false;
-        });
+        _isLoading.value = false;
         return;
       }
     } catch (e) {
-      if (mounted) {
-        WarningSnackBar.show(text: '닉네임 변경 중 오류가 발생했어요.');
-      }
+      WarningSnackBar.show(text: '닉네임 변경 중 오류가 발생했어요.');
     }
   }
 
   // Firebase Firestore에 user 컬렉션에서 프로필 이미지 업데이트
-  updateProfileImage(XFile imagePath) async {
+  updateProfileImage(String imagePath) async {
     try {
       // 기존 이미지 업로드
       final userRef = FirebaseStorage.instance
           .ref()
-          .child('profile/$uid/$uid.${_pickedImage!.path.split('.').last}');
+          .child('profile/$uid/$uid.${imagePath.split('.').last}');
       UploadTask uploadTask =
-          userRef.putData(File(imagePath.path).readAsBytesSync());
+          userRef.putData(File(imagePath).readAsBytesSync());
       // 만약 사진 업로드 성공 시
       final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
 
@@ -347,13 +324,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
           .collection('user')
           .doc('$uid')
           .update({'profile_image': url});
-      setState(() {
-        _isLoading = false;
-      });
+      _isLoading.value = false;
     } catch (e) {
-      if (mounted) {
-        WarningSnackBar.show(text: '프로필 사진 업로드 중 오류가 발생했어요.');
-      }
+      WarningSnackBar.show(text: '프로필 사진 업로드 중 오류가 발생했어요.');
     }
   }
 }

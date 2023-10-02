@@ -34,7 +34,7 @@ class AppRouter {
     // 회원가입
     GetPage(
       name: '/register',
-      page: () => const RegisterScreen(),
+      page: () => RegisterScreen(),
       transition: Transition.noTransition,
     ),
 
@@ -50,28 +50,28 @@ class AppRouter {
     // 계정 설정 페이지
     GetPage(
       name: '/register/setting',
-      page: () => const AccountSettingScreen(),
+      page: () => AccountSettingScreen(),
       transition: Transition.noTransition,
     ),
 
     // 계정 설정 완료 페이지
     GetPage(
       name: '/register/setting/done',
-      page: () => const AccountDoneScreen(),
+      page: () => AccountDoneScreen(),
       transition: Transition.noTransition,
     ),
 
     // 로그인
     GetPage(
       name: '/login',
-      page: () => const LoginScreen(),
+      page: () => LoginScreen(),
       transition: Transition.noTransition,
     ),
 
     // 비밀번호 찾기 페이지
     GetPage(
       name: '/login/forgot',
-      page: () => const ForgotScreen(),
+      page: () => ForgotScreen(),
       transition: Transition.noTransition,
     ),
 
