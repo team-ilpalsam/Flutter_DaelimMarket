@@ -3,7 +3,6 @@ import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
 import 'package:daelim_market/screen/main/detail/detail_screen.dart';
-import 'package:daelim_market/screen/main/mypage/mypage_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_setting_screen.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_history_screen.dart';
 import 'package:daelim_market/screen/main/search/search_screen.dart';
@@ -103,7 +102,7 @@ class AppRouter {
       name: '/main/upload',
       page: () => UploadScreen(),
       fullscreenDialog: true,
-      transition: Transition.cupertino,
+      transition: Transition.cupertinoDialog,
     ),
 
     // 이미지 자세히 보기
@@ -113,30 +112,15 @@ class AppRouter {
         src: Get.parameters['src']!,
       ),
       fullscreenDialog: true,
-      transition: Transition.cupertino,
+      transition: Transition.cupertinoDialog,
     ),
 
     // 마이페이지 설정 페이지
     GetPage(
       name: '/mypage_setting',
       page: () => MypageSettingScreen(),
-      transition: Transition.cupertino,
-    ),
-
-    // 마이페이지 스크린 페이지
-    GetPage(
-      name: '/mypage_screen',
-      page: () => MypageScreen(),
-      transition: Transition.cupertino,
-    ),
-
-    // 채팅 설정 페이지
-    GetPage(
-      name: '/chat',
-      page: () => ChatScreen(
-        userUID: Get.parameters['userUID']!,
-      ),
-      transition: Transition.cupertino,
+      fullscreenDialog: true,
+      transition: Transition.cupertinoDialog,
     ),
 
     // 내역 스크린 페이지
