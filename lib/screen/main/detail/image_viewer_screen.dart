@@ -6,18 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class ImageViewerScreen extends StatefulWidget {
+class ImageViewerScreen extends StatelessWidget {
   final String src;
 
-  const ImageViewerScreen({super.key, required this.src});
+  ImageViewerScreen({super.key, required this.src});
 
-  @override
-  State<ImageViewerScreen> createState() => _ImageViewerScreenState();
-}
-
-class _ImageViewerScreenState extends State<ImageViewerScreen> {
-  int? _width;
-  int? _height;
+  final RxInt _width = 0.obs;
+  final RxInt _height = 0.obs;
 
   Future<void> getImageSize(String imageUrl) async {
     final ByteData data =
@@ -26,59 +21,52 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
 
     final decodedImage = await decodeImageFromList(bytes);
 
-    if (mounted) {
-      setState(() {
-        _width = decodedImage.width;
-        _height = decodedImage.height;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getImageSize(widget.src);
+    _width.value = decodedImage.width;
+    _height.value = decodedImage.height;
   }
 
   @override
   Widget build(BuildContext context) {
+    getImageSize(src);
     return Scaffold(
       backgroundColor: dmBlack,
       body: Stack(
         children: [
           Center(
-              child: _height != null
-                  ? InteractiveViewer(
-                      minScale: 0.5,
-                      maxScale: 5.0,
-                      constrained: true,
-                      child: _height! > MediaQuery.of(context).size.height &&
-                              _width! == MediaQuery.of(context).size.width
-                          ? CachedNetworkImage(
+              child: Obx(
+            () => _height.value != 0
+                ? InteractiveViewer(
+                    minScale: 0.5,
+                    maxScale: 5.0,
+                    constrained: true,
+                    child: _height.value > MediaQuery.of(context).size.height &&
+                            _width.value == MediaQuery.of(context).size.width
+                        ? CachedNetworkImage(
+                            fadeInDuration: Duration.zero,
+                            fadeOutDuration: Duration.zero,
+                            imageUrl: src,
+                            placeholder: (context, url) =>
+                                const CupertinoActivityIndicator(),
+                            width: MediaQuery.of(context).size.width,
+                          )
+                        : SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: CachedNetworkImage(
                               fadeInDuration: Duration.zero,
                               fadeOutDuration: Duration.zero,
-                              imageUrl: widget.src,
+                              imageUrl: src,
                               placeholder: (context, url) =>
                                   const CupertinoActivityIndicator(),
-                              width: MediaQuery.of(context).size.width,
-                            )
-                          : SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                              child: CachedNetworkImage(
-                                fadeInDuration: Duration.zero,
-                                fadeOutDuration: Duration.zero,
-                                imageUrl: widget.src,
-                                placeholder: (context, url) =>
-                                    const CupertinoActivityIndicator(),
-                                fit: BoxFit.fitWidth,
-                              ),
+                              fit: BoxFit.fitWidth,
                             ),
-                    )
-                  : const Center(
-                      child: CupertinoActivityIndicator(
-                      color: dmWhite,
-                    ))),
+                          ),
+                  )
+                : const Center(
+                    child: CupertinoActivityIndicator(
+                    color: dmWhite,
+                  )),
+          )),
           Positioned(
             top: 0,
             left: 0,

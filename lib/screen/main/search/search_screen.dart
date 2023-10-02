@@ -62,7 +62,6 @@ class SearchScreen extends StatelessWidget {
                             color: dmBlack,
                           ),
                           contentPadding: EdgeInsets.only(
-                            bottom: 4.h,
                             left: 3.w,
                           ),
                           enabledBorder: const UnderlineInputBorder(
