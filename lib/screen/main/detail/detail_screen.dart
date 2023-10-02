@@ -62,7 +62,7 @@ class DetailScreen extends StatelessWidget {
                     title: '알 수 없음',
                     leading: GestureDetector(
                       onTap: () {
-                        Get.toNamed('/main');
+                        Get.back();
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
@@ -100,7 +100,7 @@ class DetailScreen extends StatelessWidget {
                     // 왼쪽 아이콘
                     leading: GestureDetector(
                       onTap: () {
-                        Get.toNamed('/main');
+                        Get.back();
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',
