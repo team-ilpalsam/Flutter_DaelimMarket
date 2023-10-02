@@ -124,8 +124,7 @@ class UploadScreen extends StatelessWidget {
               return;
             }
             // 선택한 이미지와 리스트 병합
-            _controller.pickedImages.value =
-                _controller.pickedImages + (xfiles);
+            _controller.pickedImages.value += (xfiles);
           },
         );
       } catch (e) {
@@ -155,8 +154,7 @@ class UploadScreen extends StatelessWidget {
               );
               return;
             }
-            _controller.pickedImages.value =
-                _controller.pickedImages + ([xfile]);
+            _controller.pickedImages.value += ([xfile]);
           },
         );
       } catch (e) {
@@ -197,7 +195,7 @@ class UploadScreen extends StatelessWidget {
                                   },
                                   () {
                                     Navigator.pop(context);
-                                    Get.toNamed('/main');
+                                    Get.back();
                                   }
                                 ],
                               );
@@ -273,10 +271,10 @@ class UploadScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 15.h),
-                        Obx(
-                          () => SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Obx(
+                            () => Row(
                               children: _controller.pickedImages.map(
                                     (value) {
                                       return Padding(

@@ -8,22 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({
+class MainScreen extends StatelessWidget {
+  MainScreen({
     super.key,
   });
 
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
   final List<Widget?> _widgetOptions = [
     HomeScreen(),
     const ChatListScreen(),
     null,
     const SchoolScreen(),
-    const MypageScreen(),
+    MypageScreen(),
   ];
 
   final MainController _controller = Get.put(MainController());

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/main.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -21,59 +22,15 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../widgets/alert_dialog.dart';
 
-class MypageSettingScreen extends StatefulWidget {
-  final VoidCallback? onTap;
-  final String? userEmail;
-
-  const MypageSettingScreen({
-    this.onTap,
-    this.userEmail,
+class MypageSettingScreen extends StatelessWidget {
+  MypageSettingScreen({
     super.key,
   });
 
-  @override
-  State<MypageSettingScreen> createState() => _MypageSettingScreenState();
-}
-
-class _MypageSettingScreenState extends State<MypageSettingScreen> {
-  late TextEditingController nickNameController;
-
-  @override
-  void initState() {
-    nickNameController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-    getUserData();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    nickNameController.dispose();
-    super.dispose();
-  }
-
-  bool _isLoading = false;
-
-  XFile? _pickedImage;
-
-  String userNickname = '';
-  String userProfileImage = '';
-  String userEmail = '';
-
-  getUserData() async {
-    var userData = await FirebaseFirestore.instance
-        .collection('user') // user 컬렉션으로부터
-        .doc(uid) // 넘겨받은 uid 필드의 데이터를
-        .get();
-
-    setState(() {
-      userProfileImage = userData.data()?['profile_image'];
-      userNickname = userData.data()?['nickName'];
-      userEmail = userData.data()?['email'];
-    });
-  }
+  final MypageController _controller = Get.put(MypageController());
+  final RxBool _isLoading = false.obs;
+  final RxString _filePath = ''.obs;
+  final RxString _nickName = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +46,22 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                   title: '프로필 수정',
                   leading: GestureDetector(
                     onTap: () {
-                      Get.back();
+                      _isLoading.value
+                          ? null
+                          : AlertDialogWidget.twoButtons(
+                              content: '수정을 취소하시겠습니까?\n작성한 내용은 저장되지 않습니다.',
+                              button: ['아직이요', '나갈래요'],
+                              color: [dmGrey, dmBlue],
+                              action: [
+                                () {
+                                  Navigator.pop(context);
+                                },
+                                () {
+                                  Navigator.pop(context);
+                                  Get.back();
+                                }
+                              ],
+                            );
                     },
                     child: Image.asset(
                       'assets/images/icons/icon_back.png',
@@ -97,76 +69,79 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       height: 18.h,
                     ),
                   ),
-                  action: nickNameController.text.length >= 2 ||
-                          _pickedImage != null
-                      ? GestureDetector(
-                          onTap: () async {
-                            _isLoading
-                                ? null
-                                : AlertDialogWidget.twoButtons(
-                                    content: '저장 하시겠습니까?',
-                                    button: ['취소', '확인'],
-                                    color: [dmLightGrey, dmBlue],
-                                    action: [
-                                      () {
-                                        Navigator.pop(context);
-                                      },
-                                      () async {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                        if (nickNameController.text.length >=
-                                            2) {
-                                          // 닉네임에 공백 혹은 특수문자가 포함될 경우
-                                          if (!RegExp(r'^[a-zA-Z가-힣0-9]+$')
-                                              .hasMatch(
-                                                  nickNameController.text)) {
-                                            WarningSnackBar.show(
-                                                text: '닉네임에 사용할 수 없는 문자가 있어요.');
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                            return;
+                  action: Obx(
+                    () => _nickName.value.length >= 2 || _filePath.value != ''
+                        ? GestureDetector(
+                            onTap: () async {
+                              _isLoading.value
+                                  ? null
+                                  : AlertDialogWidget.twoButtons(
+                                      content: '저장 하시겠습니까?',
+                                      button: ['취소', '확인'],
+                                      color: [dmLightGrey, dmBlue],
+                                      action: [
+                                        () {
+                                          Navigator.pop(context);
+                                        },
+                                        () async {
+                                          Navigator.pop(context);
+                                          _isLoading.value = true;
+                                          if (_nickName.value.length >= 2) {
+                                            // 닉네임에 공백 혹은 특수문자가 포함될 경우
+                                            if (!RegExp(r'^[a-zA-Z가-힣0-9]+$')
+                                                .hasMatch(_nickName.value)) {
+                                              WarningSnackBar.show(
+                                                text: '닉네임에 사용할 수 없는 문자가 있어요.',
+                                                paddingBottom: 0,
+                                              );
+
+                                              _isLoading.value = false;
+
+                                              return;
+                                            }
+                                            // 정상일 경우
+                                            else {
+                                              await updateNickname(
+                                                  _nickName.value);
+                                            }
                                           }
-                                          // 정상일 경우
-                                          else {
-                                            await updateNickname(
-                                                nickNameController.text);
+                                          if (_filePath.value != '') {
+                                            await updateProfileImage(
+                                                _filePath.value);
                                           }
+                                          _controller.getMyData();
+                                          Get.back();
+                                          DoneSnackBar.show(
+                                            text: '내 정보를 변경했어요!',
+                                            paddingBottom: 0,
+                                          );
                                         }
-                                        if (_pickedImage != null) {
-                                          await updateProfileImage(
-                                              _pickedImage!);
-                                        }
-                                        Get.toNamed('/main');
-                                        nickNameController.clear();
-                                      }
-                                    ],
-                                  );
-                          },
-                          child: _isLoading == true // Loading 상태일 경우
-                              ? const CupertinoActivityIndicator()
-                              : Text(
-                                  "저장",
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 18.sp,
-                                    fontWeight: medium,
-                                    color: dmBlue,
+                                      ],
+                                    );
+                            },
+                            child: _isLoading.value == true // Loading 상태일 경우
+                                ? const CupertinoActivityIndicator()
+                                : Text(
+                                    "저장",
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18.sp,
+                                      fontWeight: medium,
+                                      color: dmBlue,
+                                    ),
                                   ),
-                                ),
-                        )
-                      : // 조건에 충족하지 못 하였을 경우 회색 글씨
-                      Text(
-                          "저장",
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 18.sp,
-                            fontWeight: medium,
-                            color: dmLightGrey,
+                          )
+                        : // 조건에 충족하지 못 하였을 경우 회색 글씨
+                        Text(
+                            "저장",
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 18.sp,
+                              fontWeight: medium,
+                              color: dmLightGrey,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
                 SizedBox(
                   height: 56.h,
@@ -179,7 +154,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            _isLoading
+                            _isLoading.value
                                 ? null
                                 : AlertDialogWidget.twoButtons(
                                     content: "프로필 사진을 선택해주세요!",
@@ -193,14 +168,18 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                               .pickImage(
                                                   source: ImageSource.gallery)
                                               .then((xfile) {
-                                            if (xfile == null) return;
-                                            setState(() {
-                                              _pickedImage = XFile(xfile.path);
-                                            });
+                                            if (xfile == null) {
+                                              return;
+                                            }
+                                            _filePath.value = xfile.path;
+                                            debugPrint(
+                                                _filePath.value.toString());
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(
-                                              text: '사진을 불러오는 중 실패했어요.');
+                                            text: '사진을 불러오는 중 실패했어요.',
+                                            paddingBottom: 0,
+                                          );
                                         }
                                       },
                                       () {
@@ -210,14 +189,18 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                               .pickImage(
                                                   source: ImageSource.camera)
                                               .then((xfile) {
-                                            if (xfile == null) return;
-                                            setState(() {
-                                              _pickedImage = XFile(xfile.path);
-                                            });
+                                            if (xfile == null) {
+                                              return;
+                                            }
+                                            _filePath.value = xfile.path;
+                                            debugPrint(
+                                                _filePath.value.toString());
                                           });
                                         } catch (e) {
                                           WarningSnackBar.show(
-                                              text: '사진을 불러오는 중 실패했어요.');
+                                            text: '사진을 불러오는 중 실패했어요.',
+                                            paddingBottom: 0,
+                                          );
                                         }
                                       },
                                     ],
@@ -226,67 +209,71 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              userProfileImage == '' && _pickedImage == null
-                                  ? Container(
-                                      width: 105.w,
-                                      height: 105.h,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: dmLightGrey,
-                                      ),
-                                    )
-                                  : _pickedImage != null
-                                      ? Container(
-                                          width: 105.w,
-                                          height: 105.h,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: dmLightGrey,
-                                            image: DecorationImage(
-                                              image: Image.file(
-                                                File(_pickedImage!.path),
-                                              ).image,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        )
-                                      : CachedNetworkImage(
-                                          fadeInDuration: Duration.zero,
-                                          fadeOutDuration: Duration.zero,
-                                          imageUrl: userProfileImage,
-                                          fit: BoxFit.cover,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
+                              Obx(
+                                () => _controller.myProfileImage.value == '' &&
+                                        _filePath.value != ''
+                                    ? Container(
+                                        width: 105.w,
+                                        height: 105.h,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: dmLightGrey,
+                                        ),
+                                      )
+                                    : _filePath.value != ''
+                                        ? Container(
                                             width: 105.w,
                                             height: 105.h,
                                             decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: dmLightGrey,
                                               image: DecorationImage(
-                                                image: imageProvider,
+                                                image: Image.file(
+                                                  File(_filePath.value),
+                                                ).image,
                                                 fit: BoxFit.cover,
                                               ),
-                                              shape: BoxShape.circle,
-                                              color: dmLightGrey,
-                                              border: Border.all(
-                                                color: dmDarkGrey,
-                                                width: 1.w,
+                                            ),
+                                          )
+                                        : CachedNetworkImage(
+                                            fadeInDuration: Duration.zero,
+                                            fadeOutDuration: Duration.zero,
+                                            imageUrl: _controller
+                                                .myProfileImage.value,
+                                            fit: BoxFit.cover,
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              width: 105.w,
+                                              height: 105.h,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                                shape: BoxShape.circle,
+                                                color: dmLightGrey,
+                                                border: Border.all(
+                                                  color: dmDarkGrey,
+                                                  width: 1.w,
+                                                ),
+                                              ),
+                                            ),
+                                            placeholder: (context, url) =>
+                                                Container(
+                                              width: 105.w,
+                                              height: 105.h,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: dmLightGrey,
+                                              ),
+                                              child: const Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
                                               ),
                                             ),
                                           ),
-                                          placeholder: (context, url) =>
-                                              Container(
-                                            width: 105.w,
-                                            height: 105.h,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: dmLightGrey,
-                                            ),
-                                            child: const Center(
-                                              child:
-                                                  CupertinoActivityIndicator(),
-                                            ),
-                                          ),
-                                        ),
+                              ),
                               Positioned(
                                 top: 73.h,
                                 left: 73.h,
@@ -332,17 +319,20 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       SizedBox(
                         height: 40.h,
                         child: TextField(
-                          enabled: _isLoading ? false : true,
+                          enabled: _isLoading.value ? false : true,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
                             LengthLimitingTextInputFormatter(8),
                             FilteringTextInputFormatter.deny(RegExp(r'\s')),
                           ],
-                          controller: nickNameController,
                           style: mainInputTextDeco,
-                          decoration: mainInputDeco(userNickname),
+                          decoration:
+                              mainInputDeco(_controller.myNickName.value),
                           cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _nickName.value = value;
+                          },
                         ),
                       ),
                       SizedBox(
@@ -376,7 +366,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                           child: SizedBox(
                             width: double.infinity,
                             child: Text(
-                              userEmail,
+                              _controller.myEmail.value,
                               style: mainInputTextDeco,
                             ),
                           ),
@@ -394,11 +384,11 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.toNamed('/');
+                          Get.offAllNamed('/');
                         },
                         child: GestureDetector(
                           onTap: () {
-                            _isLoading
+                            _isLoading.value
                                 ? null
                                 : AlertDialogWidget.twoButtons(
                                     content: '계정을 삭제하시겠습니까?',
@@ -433,7 +423,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          _isLoading
+                          _isLoading.value
                               ? null
                               : AlertDialogWidget.twoButtons(
                                   content: '로그아웃을 하시겠습니까?',
@@ -454,7 +444,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                                         const FlutterSecureStorage()
                                             .deleteAll();
                                         await FirebaseAuth.instance.signOut();
-                                        Get.toNamed('/welcome');
+                                        Get.offAllNamed('/welcome');
                                       }
                                     ]);
                         },
@@ -467,7 +457,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -482,11 +472,11 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
       await FirebaseAuth.instance.currentUser?.delete();
       await FirebaseFirestore.instance.collection('user').doc('$uid').update({
         'deleted': true,
-        'nickName': 'del_$userNickname',
+        'nickName': 'del_${_controller.myNickName.value}',
       });
       const FlutterSecureStorage().deleteAll();
 
-      Get.toNamed('/welcome');
+      Get.offAllNamed('/welcome');
       DoneSnackBar.show(
         text: '계정을 삭제했어요.',
       );
@@ -498,9 +488,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
             paddingBottom: 0,
           );
           debugPrint(e.toString());
-          setState(() {
-            _isLoading = false;
-          });
+          _isLoading.value = false;
           break;
         default:
           WarningSnackBar.show(
@@ -508,9 +496,7 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
             paddingBottom: 0,
           );
           debugPrint(e.toString());
-          setState(() {
-            _isLoading = false;
-          });
+          _isLoading.value = false;
           break;
       }
     }
@@ -531,30 +517,24 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
             .update({'nickName': nickName});
         await const FlutterSecureStorage()
             .write(key: 'nickname', value: nickName);
-        DoneSnackBar.show(
-          text: '성공적으로 등록했어요!',
-          paddingBottom: 0,
-        );
-        setState(() {
-          _isLoading = false;
-        });
       } else {
         WarningSnackBar.show(
           text: '중복된 닉네임입니다.',
           paddingBottom: 0,
         );
-        setState(() {
-          _isLoading = false;
-        });
+        _isLoading.value = false;
       }
     } catch (e) {
-      WarningSnackBar.show(text: '닉네임 변경 중 오류가 발생했어요.');
+      WarningSnackBar.show(
+        text: '닉네임 변경 중 오류가 발생했어요.',
+        paddingBottom: 0,
+      );
       return;
     }
   }
 
   // Firebase Firestore에 user 컬렉션에서 프로필 이미지 업데이트
-  updateProfileImage(XFile imagePath) async {
+  updateProfileImage(String imagePath) async {
     try {
       // 기존 이미지 삭제
       Future.wait([
@@ -567,9 +547,9 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
       // 기존 이미지 업로드
       final userRef = FirebaseStorage.instance
           .ref()
-          .child('profile/$uid/$uid.${_pickedImage!.path.split('.').last}');
+          .child('profile/$uid/$uid.${imagePath.split('.').last}');
       UploadTask uploadTask =
-          userRef.putData(File(imagePath.path).readAsBytesSync());
+          userRef.putData(File(imagePath).readAsBytesSync());
       // 만약 사진 업로드 성공 시
       final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
 
@@ -582,11 +562,11 @@ class _MypageSettingScreenState extends State<MypageSettingScreen> {
           .collection('user')
           .doc('$uid')
           .update({'profile_image': url});
-      setState(() {
-        _isLoading = false;
-      });
     } catch (e) {
-      WarningSnackBar.show(text: '프로필 사진 업로드 중 오류가 발생했어요.');
+      WarningSnackBar.show(
+        text: '프로필 사진 업로드 중 오류가 발생했어요.',
+        paddingBottom: 0,
+      );
       return;
     }
   }

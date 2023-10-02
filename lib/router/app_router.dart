@@ -78,7 +78,7 @@ class AppRouter {
     // 메인 페이지
     GetPage(
       name: '/main',
-      page: () => const MainScreen(),
+      page: () => MainScreen(),
       transition: Transition.noTransition,
     ),
 
@@ -119,14 +119,14 @@ class AppRouter {
     // 마이페이지 설정 페이지
     GetPage(
       name: '/mypage_setting',
-      page: () => const MypageSettingScreen(),
+      page: () => MypageSettingScreen(),
       transition: Transition.cupertino,
     ),
 
     // 마이페이지 스크린 페이지
     GetPage(
       name: '/mypage_screen',
-      page: () => const MypageScreen(),
+      page: () => MypageScreen(),
       transition: Transition.cupertino,
     ),
 

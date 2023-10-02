@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/const/common.dart';
-import 'package:daelim_market/main.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,43 +23,35 @@ class MyHistoryScreen extends StatelessWidget {
     required this.history,
   });
 
-  final RxList historyKeys = [].obs;
-  final RxList list = [].obs;
+  final MypageController _controller = Get.put(MypageController());
+
   final RxInt stack = 0.obs;
+  final int limit = 5;
 
-  void getMyData() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('user')
-          .doc('$uid')
-          .get()
-          .then((value) {
-        historyKeys.value = List.from(value.data()?[history].reversed);
-      });
-      getData();
-    } catch (e) {
-      WarningSnackBar.show(
-        text: e.toString(),
-        paddingBottom: 0,
-      );
-      Get.back();
-    }
-  }
+  final RxList keys = [].obs;
+  final RxList list = [].obs;
 
+  // 데이터 리스트 가져오기
   void getData() async {
-    if (historyKeys.isNotEmpty) {
-      if (historyKeys.length > (stack.value * 10)) {
-        var tempList = [];
+    if (history == 'posts') {
+      keys.value = _controller.myPostsKeys;
+    } else {
+      keys.value = _controller.myWatchlistKeys;
+    }
+
+    if (keys.isNotEmpty) {
+      if (keys.length > (stack.value * limit)) {
+        List tempList = [];
         try {
-          for (var i = (stack.value * 10);
+          for (var i = (stack.value * limit);
               i <
-                  (historyKeys.length >= (stack.value + 1) * 10
-                      ? stack.value * 10
-                      : historyKeys.length);
+                  (keys.length >= (stack.value + 1) * limit
+                      ? (stack.value + 1) * limit
+                      : keys.length);
               i++) {
             await FirebaseFirestore.instance
                 .collection('product')
-                .doc(historyKeys[i])
+                .doc(keys[i])
                 .get()
                 .then((value) {
               tempList.add(value);
@@ -67,19 +59,29 @@ class MyHistoryScreen extends StatelessWidget {
           }
           stack.value++;
           list.value += tempList;
-          debugPrint(list.toString());
         } catch (e) {
           WarningSnackBar.show(
               text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);
           debugPrint(e.toString());
         }
       }
+    } else {
+      debugPrint('history의 list가 비어있음');
     }
+  }
+
+  // refresh 함수
+  Future<void> onRefresh() async {
+    stack.value = 0;
+    list.value = [];
+
+    _controller.getMyData();
+    getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    getMyData();
+    getData();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -89,7 +91,7 @@ class MyHistoryScreen extends StatelessWidget {
               title: history == 'posts' ? '판매내역' : '관심목록',
               leading: GestureDetector(
                 onTap: () {
-                  Get.toNamed('/main');
+                  Get.back();
                 },
                 child: Image.asset(
                   'assets/images/icons/icon_back.png',
@@ -104,32 +106,38 @@ class MyHistoryScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
-                child: Obx(
-                  () => ScrollConfiguration(
-                    behavior: MyBehavior(),
-                    child: list.isNotEmpty
-                        ? NotificationListener(
-                            onNotification: (ScrollNotification notification) {
-                              if (notification is ScrollEndNotification &&
-                                  notification.metrics.maxScrollExtent ==
-                                      notification.metrics.pixels) {
-                                getData();
-                              }
-                              return false;
-                            },
-                            child: ListView.separated(
-                              scrollDirection: Axis.vertical,
-                              itemCount: list.length,
-                              separatorBuilder: (context, index) => divider,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
-                                  padding: index == 0
-                                      ? EdgeInsets.only(
-                                          top: 30.5.h, bottom: 17.5.h)
-                                      : EdgeInsets.symmetric(vertical: 17.5.h),
-                                  child: Obx(
-                                    () => Column(
+                child: RefreshIndicator(
+                  onRefresh: onRefresh,
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
+                  child: Obx(
+                    () => ScrollConfiguration(
+                      behavior: MyBehavior(),
+                      child: list.isNotEmpty
+                          ? NotificationListener(
+                              onNotification:
+                                  (ScrollNotification notification) {
+                                if (notification is ScrollEndNotification &&
+                                    notification.metrics.maxScrollExtent ==
+                                        notification.metrics.pixels) {
+                                  getData();
+                                }
+                                return false;
+                              },
+                              child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                itemCount: list.length,
+                                separatorBuilder: (context, index) => divider,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
+                                    padding: index == 0
+                                        ? EdgeInsets.only(
+                                            top: 30.5.h, bottom: 17.5.h)
+                                        : EdgeInsets.symmetric(
+                                            vertical: 17.5.h),
+                                    child: Column(
                                       children: [
                                         GestureDetector(
                                           // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
@@ -344,7 +352,7 @@ class MyHistoryScreen extends StatelessWidget {
                                                                     color:
                                                                         dmGrey,
                                                                   ),
-                                                                )
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
@@ -353,42 +361,32 @@ class MyHistoryScreen extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ),
-                                                if (list.length == index + 1 &&
-                                                    historyKeys.length !=
-                                                        index + 1) ...[
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      vertical: 40.h,
-                                                    ),
-                                                    child:
-                                                        const CupertinoActivityIndicator(),
-                                                  )
-                                                ],
                                               ],
                                             ),
                                           ),
                                         ),
+                                        if (list.length == index + 1 &&
+                                            keys.length != index + 1) ...[
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 40.h,
+                                            ),
+                                            child:
+                                                const CupertinoActivityIndicator(),
+                                          )
+                                        ],
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        :
-                        // 데이터가 존재하지 않는다면
-                        Center(
-                            child: Text(
-                              '검색과 일치하는 게시글이 없어요.',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14.sp,
-                                fontWeight: bold,
-                                color: dmLightGrey,
+                                  );
+                                },
                               ),
+                            )
+                          :
+                          // 데이터가 존재하지 않는다면
+                          const Center(
+                              child: CupertinoActivityIndicator(),
                             ),
-                          ),
+                    ),
                   ),
                 ),
               ),
