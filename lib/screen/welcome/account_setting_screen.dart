@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/const/common.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
@@ -26,7 +27,7 @@ class AccountSettingScreen extends StatelessWidget {
   final RxBool _isLoading = false.obs;
 
   final RxString _nickName = ''.obs;
-  final RxString _pickedImage = ''.obs;
+  final RxString _filePath = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +93,22 @@ class AccountSettingScreen extends StatelessWidget {
                                         ImagePicker()
                                             .pickImage(
                                                 source: ImageSource.gallery)
-                                            .then((xfile) {
+                                            .then((xfile) async {
                                           if (xfile == null) {
                                             return;
                                           }
-                                          _pickedImage.value = xfile.path;
+
+                                          Uint8List sizeOfXFile =
+                                              await xfile.readAsBytes();
+                                          if (sizeOfXFile.length >
+                                              maxFileSizeInBytes) {
+                                            WarningSnackBar.show(
+                                              text: '5MB 미만 크기의 사진을 올려주세요!',
+                                              paddingBottom: 0,
+                                            );
+                                          } else {
+                                            _filePath.value = xfile.path;
+                                          }
                                         });
                                       } catch (e) {
                                         WarningSnackBar.show(
@@ -108,11 +120,22 @@ class AccountSettingScreen extends StatelessWidget {
                                         ImagePicker()
                                             .pickImage(
                                                 source: ImageSource.camera)
-                                            .then((xfile) {
+                                            .then((xfile) async {
                                           if (xfile == null) {
                                             return;
                                           }
-                                          _pickedImage.value = xfile.path;
+
+                                          Uint8List sizeOfXFile =
+                                              await xfile.readAsBytes();
+                                          if (sizeOfXFile.length >
+                                              maxFileSizeInBytes) {
+                                            WarningSnackBar.show(
+                                              text: '5MB 미만 크기의 사진을 올려주세요!',
+                                              paddingBottom: 0,
+                                            );
+                                          } else {
+                                            _filePath.value = xfile.path;
+                                          }
                                         });
                                       } catch (e) {
                                         WarningSnackBar.show(
@@ -129,10 +152,10 @@ class AccountSettingScreen extends StatelessWidget {
                                     width: 105.w,
                                     height: 105.h,
                                     decoration: BoxDecoration(
-                                      image: _pickedImage.value != ''
+                                      image: _filePath.value != ''
                                           ? DecorationImage(
                                               image: Image.file(
-                                                      File(_pickedImage.value))
+                                                      File(_filePath.value))
                                                   .image,
                                               fit: BoxFit.cover,
                                             )
@@ -245,9 +268,9 @@ class AccountSettingScreen extends StatelessWidget {
                                                       _nickName.value);
                                                 }
                                               }
-                                              if (_pickedImage.value != '') {
+                                              if (_filePath.value != '') {
                                                 await updateProfileImage(
-                                                    _pickedImage.value);
+                                                    _filePath.value);
                                               }
                                             }
                                           ],
