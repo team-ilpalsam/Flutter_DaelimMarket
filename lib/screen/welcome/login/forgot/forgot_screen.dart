@@ -13,33 +13,11 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class ForgotScreen extends StatefulWidget {
-  const ForgotScreen({super.key});
+class ForgotScreen extends StatelessWidget {
+  ForgotScreen({super.key});
 
-  @override
-  State<ForgotScreen> createState() => _ForgotScreen();
-}
-
-class _ForgotScreen extends State<ForgotScreen> {
-  late TextEditingController emailController;
-
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    emailController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
-  }
+  final RxString _email = ''.obs;
+  final RxBool _isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +44,16 @@ class _ForgotScreen extends State<ForgotScreen> {
                       // Title
                       WelcomeAppbar(
                         // Loading 상태일 경우 뒤로가기 방지
-                        image: _isLoading
-                            ? null
-                            : 'assets/images/icons/icon_close.png',
+                        widget: Obx(
+                          () => _isLoading.value
+                              ? SizedBox(
+                                  height: 18.h,
+                                )
+                              : Image.asset(
+                                  'assets/images/icons/icon_close.png',
+                                  height: 18.h,
+                                ),
+                        ),
                         title: '비밀번호 찾기',
                       ),
                       // Contents
@@ -87,12 +72,17 @@ class _ForgotScreen extends State<ForgotScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: emailController,
-                        cursorHeight: 24.h,
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _email.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 6.h,
@@ -108,19 +98,23 @@ class _ForgotScreen extends State<ForgotScreen> {
                       ),
                       // Bottom
                       const Expanded(child: SizedBox()),
-                      emailController.text.length >= 3
-                          ? GestureDetector(
-                              onTap: onTapResetPassword,
-                              child: _isLoading
-                                  ? const LoadingButton(
-                                      color: dmLightGrey,
-                                    )
-                                  : const BlueButton(text: '인증메일 받기'),
-                            )
-                          : const BlueButton(
-                              text: '인증메일 받기',
-                              color: dmLightGrey,
-                            ),
+                      Obx(
+                        () => _email.value.length >= 3
+                            ? GestureDetector(
+                                onTap: onTapResetPassword,
+                                child: Obx(
+                                  () => _isLoading.value
+                                      ? const LoadingButton(
+                                          color: dmLightGrey,
+                                        )
+                                      : const BlueButton(text: '인증메일 받기'),
+                                ),
+                              )
+                            : const BlueButton(
+                                text: '인증메일 받기',
+                                color: dmLightGrey,
+                              ),
+                      ),
                       bottomPadding,
                     ],
                   ),
@@ -135,24 +129,19 @@ class _ForgotScreen extends State<ForgotScreen> {
 
   Future<void> onTapResetPassword() async {
     // 이메일 유효성 검사
-    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+    if (!_email.value.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
       WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     } else {
       // Loading 상태를 true로 변경
-      setState(() {
-        _isLoading = true;
-      });
+      _isLoading.value = true;
       try {
         // Firebase에 비밀번호 초기화 메일 전송 요청
         await FirebaseAuth.instance
-            .sendPasswordResetEmail(
-                email: "${emailController.text}@email.daelim.ac.kr")
+            .sendPasswordResetEmail(email: "${_email.value}@email.daelim.ac.kr")
             .then((value) {
           // 성공 시
           // Loading 상태를 false로 변경
-          setState(() {
-            _isLoading = false;
-          });
+          _isLoading.value = false;
           // WelcomeScreen으로 이동하는 알림창 띄우기
           AlertDialogWidget.oneButton(
             content: "해당 주소에 링크를 전송했어요.\n메일 확인 후 로그인 해주세요.",
@@ -168,21 +157,15 @@ class _ForgotScreen extends State<ForgotScreen> {
         switch (e.code) {
           case "invalid-email":
             WarningSnackBar.show(text: '이메일 주소를 다시 확인해주세요.');
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case "user-not-found":
             WarningSnackBar.show(text: '일치하는 정보가 없어요.');
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           default:
             WarningSnackBar.show(text: e.code.toString());
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
         }
       }

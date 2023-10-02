@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:emoji_regex/emoji_regex.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,6 +30,7 @@ class ChatScreen extends StatelessWidget {
   ChatScreen({super.key, required this.userUID});
 
   final TextEditingController chatController = TextEditingController();
+  final MypageController _mypageController = Get.put(MypageController());
 
   @override
   Widget build(BuildContext context) {
@@ -777,14 +779,16 @@ class ChatScreen extends StatelessWidget {
                                             <String, dynamic>{
                                               'to': userData.data?['token'],
                                               'notification': <String, dynamic>{
-                                                'title': '$nickName',
+                                                'title': _mypageController
+                                                    .myNickName.value,
                                                 'body': chatController.text,
                                                 "android_channel_id":
                                                     '${uid.hashCode}',
                                                 "sound": "alert.wav",
                                               },
                                               "aps": {
-                                                "title": '$nickName',
+                                                "title": _mypageController
+                                                    .myNickName.value,
                                                 "body": chatController.text,
                                                 "badge": 1
                                               },

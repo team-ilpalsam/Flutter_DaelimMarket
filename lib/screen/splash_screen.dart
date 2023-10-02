@@ -59,8 +59,6 @@ class _SplashScreenState extends State<SplashScreen> {
             } else {
               await const FlutterSecureStorage().write(
                   key: 'nickname', value: '${userData.data()?['nickName']}');
-              nickName =
-                  await const FlutterSecureStorage().read(key: 'nickname');
               Get.toNamed('/main');
             }
           } else {

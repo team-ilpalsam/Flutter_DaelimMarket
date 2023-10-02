@@ -13,39 +13,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreen();
-}
+  final RxBool _isLoading = false.obs;
 
-class _LoginScreen extends State<LoginScreen> {
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    emailController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-
-    passwordController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  final RxString _email = ''.obs;
+  final RxString _password = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +44,16 @@ class _LoginScreen extends State<LoginScreen> {
                     children: [
                       // Title
                       WelcomeAppbar(
-                        image: 'assets/images/icons/icon_close.png',
+                        widget: Obx(
+                          () => _isLoading.value
+                              ? SizedBox(
+                                  height: 18.h,
+                                )
+                              : Image.asset(
+                                  'assets/images/icons/icon_close.png',
+                                  height: 18.h,
+                                ),
+                        ),
                         title: '로그인',
                         onTap: () {
                           Get.toNamed('/welcome');
@@ -93,12 +76,17 @@ class _LoginScreen extends State<LoginScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: emailController,
-                        cursorHeight: 24.h,
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _email.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 6.h,
@@ -127,13 +115,18 @@ class _LoginScreen extends State<LoginScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: passwordController,
-                        cursorHeight: 24.h,
-                        obscureText: true, // 비밀번호 가리기
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          obscureText: true, // 비밀번호 가리기
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _password.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 29.h,
@@ -155,18 +148,20 @@ class _LoginScreen extends State<LoginScreen> {
                       // Bottom
                       const Expanded(child: SizedBox()),
                       // 이메일 TextField의 글자 수가 3 글자 이상
-                      emailController.text.length >= 3 &&
-                              // 비밀번호 TextField의 글자 수가 4 글자 이상
-                              passwordController.text.length >= 4
-                          ? GestureDetector(
-                              onTap: onTapLogin,
-                              child: _isLoading
-                                  ? const LoadingButton(
-                                      color: dmLightGrey,
-                                    )
-                                  : const BlueButton(text: '로그인'),
-                            )
-                          : const BlueButton(text: '로그인', color: dmLightGrey),
+                      Obx(
+                        () => _email.value.length >= 3 &&
+                                // 비밀번호 TextField의 글자 수가 4 글자 이상
+                                _password.value.length >= 4
+                            ? GestureDetector(
+                                onTap: onTapLogin,
+                                child: _isLoading.value
+                                    ? const LoadingButton(
+                                        color: dmLightGrey,
+                                      )
+                                    : const BlueButton(text: '로그인'),
+                              )
+                            : const BlueButton(text: '로그인', color: dmLightGrey),
+                      ),
                       bottomPadding,
                     ],
                   ),
@@ -181,40 +176,35 @@ class _LoginScreen extends State<LoginScreen> {
 
   Future<void> onTapLogin() async {
     // 이메일 유효성 검사
-    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+    if (!_email.value.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
       WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     } else {
       try {
         // Loading 상태를 true로 변경
-        setState(() {
-          _isLoading = true;
-        });
+        _isLoading.value = true;
         // Firebase에 이메일/패스워드 형식의 로그인 요청
         await FirebaseAuth.instance
             .signInWithEmailAndPassword(
-                email: '${emailController.text}@email.daelim.ac.kr',
-                password: passwordController.text)
+                email: '${_email.value}@email.daelim.ac.kr',
+                password: _password.value)
             .then(
           // 성공 시
           (value) async {
             // Loading 상태를 false로 변경
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             // 이메일 링크를 눌러 인증이 완료된 계정이면,
             if (value.user!.emailVerified == true) {
               // FlutterSecureStorage 내의 데이터를 삭제하여 초기화
               await const FlutterSecureStorage().deleteAll();
               // FlutterSecureStorage에 이메일 주소 저장
               await const FlutterSecureStorage().write(
-                  key: 'email',
-                  value: '${emailController.text}@email.daelim.ac.kr');
+                  key: 'email', value: '${_email.value}@email.daelim.ac.kr');
               // FlutterSecureStorage에 비밀번호 저장
               await const FlutterSecureStorage()
-                  .write(key: 'password', value: passwordController.text);
+                  .write(key: 'password', value: _password.value);
               // FlutterSecureStorage에 ID 저장
               await const FlutterSecureStorage()
-                  .write(key: 'id', value: emailController.text);
+                  .write(key: 'id', value: _email.value);
               // FlutterSecureStorage에 UID 저장
               await const FlutterSecureStorage()
                   .write(key: 'uid', value: value.user!.uid);
@@ -234,27 +224,19 @@ class _LoginScreen extends State<LoginScreen> {
           case 'user-not-found':
           case 'wrong-password':
             WarningSnackBar.show(text: '일치하는 정보가 없어요.');
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case 'user-disabled':
             WarningSnackBar.show(text: '사용할 수 없는 계정이에요.');
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case 'invalid-email':
             WarningSnackBar.show(text: '이메일 주소 형식을 다시 확인해주세요.');
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           default:
             WarningSnackBar.show(text: e.code.toString());
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
         }
       }

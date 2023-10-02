@@ -13,46 +13,14 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
+  final RxBool _isLoading = false.obs;
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  late TextEditingController confirmController;
-
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    emailController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-
-    passwordController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-
-    confirmController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmController.dispose();
-    super.dispose();
-  }
+  final RxString _email = ''.obs;
+  final RxString _password = ''.obs;
+  final RxString _confirm = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +44,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      const WelcomeAppbar(
-                        image: 'assets/images/icons/icon_close.png',
+                      WelcomeAppbar(
+                        widget: Obx(
+                          () => _isLoading.value
+                              ? SizedBox(
+                                  height: 18.h,
+                                )
+                              : Image.asset(
+                                  'assets/images/icons/icon_close.png',
+                                  height: 18.h,
+                                ),
+                        ),
                         title: '회원가입',
                       ),
 
@@ -97,11 +74,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: emailController,
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _email.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 6.h,
@@ -130,12 +113,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: passwordController,
-                        obscureText: true, // 비밀번호 가리기
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          obscureText: true, // 비밀번호 가리기
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _password.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 63.5.h,
@@ -152,13 +141,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                         height: 14.h,
                       ),
-                      TextField(
-                        controller: confirmController,
-                        cursorHeight: 24.h,
-                        obscureText: true, // 비밀번호 가리기
-                        style: welcomeInputTextDeco,
-                        decoration: welcomeInputDeco(),
-                        cursorColor: dmBlack,
+                      Obx(
+                        () => TextField(
+                          enabled: _isLoading.value ? false : true,
+                          cursorHeight: 24.h,
+                          obscureText: true, // 비밀번호 가리기
+                          style: welcomeInputTextDeco,
+                          decoration: welcomeInputDeco(),
+                          cursorColor: dmBlack,
+                          onChanged: (value) {
+                            _confirm.value = value;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 63.5.h,
@@ -167,23 +161,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Bottom
                       const Expanded(child: SizedBox()),
                       // 이메일 TextField의 글자 수가 3 글자 이상
-                      emailController.text.length >= 3 &&
-                              // 비밀번호 TextField의 글자 수가 3 글자 이상
-                              passwordController.text.length >= 4 &&
-                              // 비밀번호 확인 TextField의 글자 수가 3 글자 이상
-                              confirmController.text.length >= 4
-                          ? GestureDetector(
-                              onTap: onTapRegister,
-                              child: _isLoading
-                                  ? const LoadingButton(
-                                      color: dmLightGrey,
-                                    )
-                                  : const BlueButton(text: '계정 등록하기'),
-                            )
-                          : const BlueButton(
-                              text: '계정 등록하기',
-                              color: dmLightGrey,
-                            ),
+                      Obx(
+                        () => _email.value.length >= 3 &&
+                                // 비밀번호 TextField의 글자 수가 3 글자 이상
+                                _password.value.length >= 4 &&
+                                // 비밀번호 확인 TextField의 글자 수가 3 글자 이상
+                                _confirm.value.length >= 4
+                            ? GestureDetector(
+                                onTap: onTapRegister,
+                                child: _isLoading.value
+                                    ? const LoadingButton(
+                                        color: dmLightGrey,
+                                      )
+                                    : const BlueButton(text: '계정 등록하기'),
+                              )
+                            : const BlueButton(
+                                text: '계정 등록하기',
+                                color: dmLightGrey,
+                              ),
+                      ),
                       bottomPadding,
                     ],
                   ),
@@ -198,31 +194,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> onTapRegister() async {
     // 이메일 유효성 검사
-    if (!emailController.text.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+    if (!_email.value.contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
       WarningSnackBar.show(text: '이메일에 포함할 수 없는 문자가 있어요.');
     }
     // 비밀번호와 비밀번호 확인 일치 검사
-    else if (passwordController.text != confirmController.text) {
+    else if (_password.value != _confirm.value) {
       WarningSnackBar.show(
         text: '비밀번호가 맞지 않아요.',
       );
     } else {
       try {
         // Loading 상태를 true로 변경
-        setState(() {
-          _isLoading = true;
-        });
+        _isLoading.value = true;
         // Firebase에 회원가입 요청
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-                email: '${emailController.text}@email.daelim.ac.kr',
-                password: passwordController.text)
+                email: '${_email.value}@email.daelim.ac.kr',
+                password: _password.value)
             .then((value) {
           // 성공 시
           // Loading 상태를 false로 변경
-          setState(() {
-            _isLoading = false;
-          });
+          _isLoading.value = false;
           // Firebase Firestore에 정보 저장 요청
           FirebaseFirestore.instance
               // user 컬렉션 내
@@ -232,8 +224,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // 다음과 같은 정보를 저장
               .set({
             'nickName': "", // 닉네임
-            'id': emailController.text, // ID
-            'email': '${emailController.text}@email.daelim.ac.kr', // 이메일
+            'id': _email.value, // ID
+            'email': '${_email.value}@email.daelim.ac.kr', // 이메일
             'profile_image': "", // 프로필 사진
             'posts': [], // 포스트 내역
             'watchlist': [], // 관심 내역
@@ -260,7 +252,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Get.offNamed(
             '/register/authlink',
             parameters: {
-              'email': '${emailController.text}@email.daelim.ac.kr',
+              'email': '${_email.value}@email.daelim.ac.kr',
             },
           );
           return value;
@@ -274,41 +266,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
             WarningSnackBar.show(
               text: '비밀번호 보안을 신경써주세요.',
             );
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case 'email-already-in-use':
             WarningSnackBar.show(
               text: '이미 존재하는 계정이에요.',
             );
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case 'invalid-email':
             WarningSnackBar.show(
               text: '이메일 주소 형식을 다시 확인해주세요.',
             );
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           case 'operation-not-allowed':
             WarningSnackBar.show(
               text: '허용되지 않은 작업이에요.',
             );
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
           default:
             WarningSnackBar.show(
               text: e.code.toString(),
             );
-            setState(() {
-              _isLoading = false;
-            });
+            _isLoading.value = false;
             break;
         }
       }

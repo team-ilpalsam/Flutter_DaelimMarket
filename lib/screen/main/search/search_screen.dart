@@ -38,7 +38,7 @@ class SearchScreen extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed('/main');
+                        Get.back();
                       },
                       child: Image.asset(
                         'assets/images/icons/icon_back.png',

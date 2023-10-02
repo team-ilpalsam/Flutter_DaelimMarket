@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class RegisterVefiryScreen extends StatefulWidget {
+class RegisterVefiryScreen extends StatelessWidget {
   final String email;
 
   const RegisterVefiryScreen({
@@ -16,11 +16,6 @@ class RegisterVefiryScreen extends StatefulWidget {
     required this.email,
   });
 
-  @override
-  State<RegisterVefiryScreen> createState() => _RegisterVefiryScreenState();
-}
-
-class _RegisterVefiryScreenState extends State<RegisterVefiryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +36,17 @@ class _RegisterVefiryScreenState extends State<RegisterVefiryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title
-                    const WelcomeAppbar(
+                    WelcomeAppbar(
+                      widget: SizedBox(
+                        height: 18.h,
+                      ),
                       title: '이메일 인증',
                     ),
                     SizedBox(
                       height: 23.h,
                     ),
                     Text(
-                      '${widget.email} 주소에\n인증 링크를 전송했어요!',
+                      '$email 주소에\n인증 링크를 전송했어요!',
                       style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 18.sp,
@@ -83,7 +81,7 @@ class _RegisterVefiryScreenState extends State<RegisterVefiryScreen> {
                     const Expanded(child: SizedBox()),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed('/login');
+                        Get.offAllNamed('/login');
                       },
                       child: const BlueButton(
                         text: '인증 후 로그인',
