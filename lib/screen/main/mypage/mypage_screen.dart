@@ -22,124 +22,129 @@ class MypageScreen extends StatelessWidget {
   }
 
   Widget imageBlock(list, index, history) {
-    return GestureDetector(
-      onTap: () {
-        if (index == 5) {
-          Get.toNamed(
-            '/history',
-            parameters: {
-              'history': history,
-            },
-          );
-        } else {
-          Get.toNamed(
-            'detail',
-            parameters: {
-              'productId': list[index]['product_id'],
-            },
-          );
-        }
-      },
-      child: CachedNetworkImage(
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        imageUrl: list[index]['images'][0],
-        fit: BoxFit.cover,
-        imageBuilder: (context, imageProvider) => Container(
-          width: 105.w,
-          height: 105.w,
-          alignment: Alignment.center,
-          child: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+    if (list != []) {
+      if (list[index] != null) {
+        return GestureDetector(
+          onTap: () {
+            if (index == 5) {
+              Get.toNamed(
+                '/history',
+                parameters: {
+                  'history': history,
+                },
+              );
+            } else {
+              Get.toNamed(
+                'detail',
+                parameters: {
+                  'productId': list[index]['product_id'],
+                },
+              );
+            }
+          },
+          child: CachedNetworkImage(
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
+            imageUrl: list[index]['images'][0],
+            fit: BoxFit.cover,
+            imageBuilder: (context, imageProvider) => Container(
+              width: 105.w,
+              height: 105.w,
+              alignment: Alignment.center,
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                      color: dmGrey,
+                      borderRadius: BorderRadius.circular(5.r),
+                    ),
                   ),
-                  color: dmGrey,
-                  borderRadius: BorderRadius.circular(5.r),
-                ),
-              ),
-              index == 5
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: dmBlack.withOpacity(0.75),
-                        borderRadius: BorderRadius.circular(5.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 50.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            for (int i = 0; i < 3; i++)
-                              Container(
-                                width: 10.w,
-                                height: 10.w,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: dmWhite,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : list[index]['status'] == 1 || list[index]['status'] == 2
+                  index == 5
                       ? Container(
-                          width: 105.w,
-                          height: 105.w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.r),
                             color: dmBlack.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(5.r),
                           ),
-                          child: Center(
-                            child: list[index]['status'] == 1
-                                ? Image.asset(
-                                    'assets/images/status/status_1.png',
-                                    width: 95.h,
-                                  )
-                                : Image.asset(
-                                    'assets/images/status/status_2.png',
-                                    width: 95.h,
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            width: 50.w,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                for (int i = 0; i < 3; i++)
+                                  Container(
+                                    width: 10.w,
+                                    height: 10.w,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dmWhite,
+                                    ),
                                   ),
+                              ],
+                            ),
                           ),
                         )
-                      : const SizedBox()
-            ],
+                      : list[index]['status'] == 1 || list[index]['status'] == 2
+                          ? Container(
+                              width: 105.w,
+                              height: 105.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.r),
+                                color: dmBlack.withOpacity(0.75),
+                              ),
+                              child: Center(
+                                child: list[index]['status'] == 1
+                                    ? Image.asset(
+                                        'assets/images/status/status_1.png',
+                                        width: 95.h,
+                                      )
+                                    : Image.asset(
+                                        'assets/images/status/status_2.png',
+                                        width: 95.h,
+                                      ),
+                              ),
+                            )
+                          : const SizedBox()
+                ],
+              ),
+            ),
+            placeholder: (context, url) => Container(
+              decoration: BoxDecoration(
+                color: dmGrey,
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              width: 105.w,
+              height: 105.w,
+              alignment: Alignment.center,
+              child: index == 5
+                  ? SizedBox(
+                      width: 50.w,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (int i = 0; i < 3; i++)
+                            Container(
+                              width: 10.w,
+                              height: 10.w,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: dmWhite,
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
+            ),
           ),
-        ),
-        placeholder: (context, url) => Container(
-          decoration: BoxDecoration(
-            color: dmGrey,
-            borderRadius: BorderRadius.circular(5.r),
-          ),
-          width: 105.w,
-          height: 105.w,
-          alignment: Alignment.center,
-          child: index == 5
-              ? SizedBox(
-                  width: 50.w,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      for (int i = 0; i < 3; i++)
-                        Container(
-                          width: 10.w,
-                          height: 10.w,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: dmWhite,
-                          ),
-                        ),
-                    ],
-                  ),
-                )
-              : const SizedBox(),
-        ),
-      ),
-    );
+        );
+      }
+    }
+    return const SizedBox();
   }
 
   @override
@@ -310,29 +315,39 @@ class MypageScreen extends StatelessWidget {
                           SizedBox(
                             height: 20.h,
                           ),
-                          Row(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Image.asset(
-                                  'assets/images/icons/icon_heart.png',
-                                  height: 22.h,
-                                  width: 24.w,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 11.w),
-                                child: Text(
-                                  '관심목록',
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 20.sp,
-                                    fontWeight: medium,
-                                    color: dmDarkGrey,
+                          GestureDetector(
+                            onTap: () {
+                              Get.toNamed(
+                                '/history',
+                                parameters: {
+                                  'history': 'watchlist',
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Image.asset(
+                                    'assets/images/icons/icon_heart.png',
+                                    height: 22.h,
+                                    width: 24.w,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 11.w),
+                                  child: Text(
+                                    '관심목록',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 20.sp,
+                                      fontWeight: medium,
+                                      color: dmDarkGrey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 20.h,
@@ -368,29 +383,39 @@ class MypageScreen extends StatelessWidget {
                           SizedBox(
                             height: 20.h,
                           ),
-                          Row(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Image.asset(
-                                  'assets/images/icons/icon_paper.png',
-                                  height: 22.h,
-                                  width: 24.w,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 11.w),
-                                child: Text(
-                                  '판매내역',
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 20.sp,
-                                    fontWeight: medium,
-                                    color: dmDarkGrey,
+                          GestureDetector(
+                            onTap: () {
+                              Get.toNamed(
+                                '/history',
+                                parameters: {
+                                  'history': 'posts',
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Image.asset(
+                                    'assets/images/icons/icon_paper.png',
+                                    height: 22.h,
+                                    width: 24.w,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 11.w),
+                                  child: Text(
+                                    '판매내역',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 20.sp,
+                                      fontWeight: medium,
+                                      color: dmDarkGrey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 20.h,

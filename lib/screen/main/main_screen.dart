@@ -17,7 +17,7 @@ class MainScreen extends StatelessWidget {
     HomeScreen(),
     const ChatListScreen(),
     null,
-    const SchoolScreen(),
+    SchoolScreen(),
     MypageScreen(),
   ];
 
@@ -64,7 +64,7 @@ class MainScreen extends StatelessWidget {
           child: Obx(
             () => BottomNavigationBar(
               currentIndex: _controller.page.value,
-              selectedItemColor: Colors.lightGreen,
+              selectedItemColor: dmWhite,
               onTap: (int index) {
                 if (index != 2) {
                   _controller.page.value = index;

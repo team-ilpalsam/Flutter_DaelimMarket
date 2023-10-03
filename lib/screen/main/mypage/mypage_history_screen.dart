@@ -54,7 +54,9 @@ class MyHistoryScreen extends StatelessWidget {
                 .doc(keys[i])
                 .get()
                 .then((value) {
-              tempList.add(value);
+              if (value.data() != null) {
+                tempList.add(value);
+              }
             });
           }
           stack.value++;
@@ -130,254 +132,270 @@ class MyHistoryScreen extends StatelessWidget {
                                 itemCount: list.length,
                                 separatorBuilder: (context, index) => divider,
                                 itemBuilder: (context, index) {
-                                  return Padding(
-                                    // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
-                                    padding: index == 0
-                                        ? EdgeInsets.only(
-                                            top: 30.5.h, bottom: 17.5.h)
-                                        : EdgeInsets.symmetric(
-                                            vertical: 17.5.h),
-                                    child: Column(
-                                      children: [
-                                        GestureDetector(
-                                          // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
-                                          onTap: () {
-                                            Get.toNamed(
-                                              '/detail',
-                                              parameters: {
-                                                'productId': list[index]
-                                                    ['product_id'],
+                                  if (list != []) {
+                                    if (list[index] != null) {
+                                      return Padding(
+                                        // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
+                                        padding: index == 0
+                                            ? EdgeInsets.only(
+                                                top: 30.5.h, bottom: 17.5.h)
+                                            : EdgeInsets.symmetric(
+                                                vertical: 17.5.h),
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              // 요소 클릭 시 요소의 product_id를 DetailScreen으로 넘겨 이동
+                                              onTap: () {
+                                                Get.toNamed(
+                                                  '/detail',
+                                                  parameters: {
+                                                    'productId': list[index]
+                                                        ['product_id'],
+                                                  },
+                                                );
                                               },
-                                            );
-                                          },
-                                          child: Container(
-                                            color: dmWhite,
-                                            // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.312,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(
+                                              child: Container(
+                                                color: dmWhite,
+                                                // 기존 113.w에서 디바이스의 0.312배의 너비 값으로 변경
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.312,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    CachedNetworkImage(
-                                                      fadeInDuration:
-                                                          Duration.zero,
-                                                      fadeOutDuration:
-                                                          Duration.zero,
-                                                      imageUrl: list[index]
-                                                          ['images'][0],
-                                                      fit: BoxFit.cover,
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                    Stack(
+                                                      children: [
+                                                        CachedNetworkImage(
+                                                          fadeInDuration:
+                                                              Duration.zero,
+                                                          fadeOutDuration:
+                                                              Duration.zero,
+                                                          imageUrl: list[index]
+                                                              ['images'][0],
+                                                          fit: BoxFit.cover,
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.312,
-                                                      height:
-                                                          MediaQuery.of(context)
+                                                          height: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.312,
-                                                      imageBuilder: (context,
-                                                              imageProvider) =>
-                                                          Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.r),
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                          color: dmGrey,
-                                                        ),
-                                                      ),
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const CupertinoActivityIndicator(),
-                                                    ),
-                                                    list[index]['status'] ==
-                                                                1 ||
-                                                            list[index][
-                                                                    'status'] ==
-                                                                2
-                                                        ? Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.312,
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.312,
+                                                          imageBuilder: (context,
+                                                                  imageProvider) =>
+                                                              Container(
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           5.r),
-                                                              color: dmBlack
-                                                                  .withOpacity(
-                                                                      0.75),
-                                                            ),
-                                                            child: Center(
-                                                              child: list[index]
-                                                                          [
-                                                                          'status'] ==
-                                                                      1
-                                                                  ? Image.asset(
-                                                                      'assets/images/status/status_1.png',
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.312 *
-                                                                          0.9,
-                                                                    )
-                                                                  : Image.asset(
-                                                                      'assets/images/status/status_2.png',
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.312 *
-                                                                          0.9,
-                                                                    ),
-                                                            ),
-                                                          )
-                                                        : const SizedBox(),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  width: 17.w,
-                                                ),
-                                                Expanded(
-                                                  child: SizedBox(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SizedBox(
-                                                          child: Text(
-                                                            list[index]
-                                                                ['title'],
-                                                            overflow: TextOverflow
-                                                                .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
-                                                            maxLines: 2,
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 17.sp,
-                                                              fontWeight:
-                                                                  medium,
-                                                              color: dmBlack,
+                                                              image:
+                                                                  DecorationImage(
+                                                                image:
+                                                                    imageProvider,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                              color: dmGrey,
                                                             ),
                                                           ),
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              const CupertinoActivityIndicator(),
                                                         ),
-                                                        SizedBox(
-                                                          height: 11.h,
-                                                        ),
-                                                        Text(
-                                                          '${list[index]['location']} | ${DateFormat('yy.MM.dd').format((list[index]['uploadTime'].toDate()))}',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 14.sp,
-                                                            fontWeight: medium,
-                                                            color: dmGrey,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 9.h,
-                                                        ),
-                                                        Text(
-                                                          formatPrice(
-                                                              list[index]
-                                                                  ['price']),
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Pretendard',
-                                                            fontSize: 16.sp,
-                                                            fontWeight: bold,
-                                                            color: dmBlue,
-                                                          ),
-                                                        ),
-                                                        const Expanded(
-                                                            child: SizedBox()),
-                                                        // likes가 1개 이상일 때만 표시
-                                                        Visibility(
-                                                          maintainSize: true,
-                                                          maintainAnimation:
-                                                              true,
-                                                          maintainState: true,
-                                                          visible: list[index][
-                                                                          'likes']
-                                                                      .length >
-                                                                  0
-                                                              ? true
-                                                              : false,
-                                                          child: Align(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Image.asset(
-                                                                  'assets/images/icons/icon_heart.png',
-                                                                  width: 13.w,
+                                                        list[index]['status'] ==
+                                                                    1 ||
+                                                                list[index][
+                                                                        'status'] ==
+                                                                    2
+                                                            ? Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.312,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.312,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5.r),
+                                                                  color: dmBlack
+                                                                      .withOpacity(
+                                                                          0.75),
                                                                 ),
-                                                                SizedBox(
-                                                                  width: 5.5.w,
+                                                                child: Center(
+                                                                  child: list[index]
+                                                                              [
+                                                                              'status'] ==
+                                                                          1
+                                                                      ? Image
+                                                                          .asset(
+                                                                          'assets/images/status/status_1.png',
+                                                                          width: MediaQuery.of(context).size.width *
+                                                                              0.312 *
+                                                                              0.9,
+                                                                        )
+                                                                      : Image
+                                                                          .asset(
+                                                                          'assets/images/status/status_2.png',
+                                                                          width: MediaQuery.of(context).size.width *
+                                                                              0.312 *
+                                                                              0.9,
+                                                                        ),
                                                                 ),
-                                                                Text(
-                                                                  '${list[index]['likes'].length}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    fontWeight:
-                                                                        bold,
-                                                                    color:
-                                                                        dmGrey,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
+                                                              )
+                                                            : const SizedBox(),
                                                       ],
                                                     ),
-                                                  ),
+                                                    SizedBox(
+                                                      width: 17.w,
+                                                    ),
+                                                    Expanded(
+                                                      child: SizedBox(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              child: Text(
+                                                                list[index]
+                                                                    ['title'],
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis, // Text가 overflow 현상이 일어나면 뒷부분을 ...으로 생략한다
+                                                                maxLines: 2,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Pretendard',
+                                                                  fontSize:
+                                                                      17.sp,
+                                                                  fontWeight:
+                                                                      medium,
+                                                                  color:
+                                                                      dmBlack,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 11.h,
+                                                            ),
+                                                            Text(
+                                                              '${list[index]['location']} | ${DateFormat('yy.MM.dd').format((list[index]['uploadTime'].toDate()))}',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    medium,
+                                                                color: dmGrey,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 9.h,
+                                                            ),
+                                                            Text(
+                                                              formatPrice(list[
+                                                                      index]
+                                                                  ['price']),
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Pretendard',
+                                                                fontSize: 16.sp,
+                                                                fontWeight:
+                                                                    bold,
+                                                                color: dmBlue,
+                                                              ),
+                                                            ),
+                                                            const Expanded(
+                                                                child:
+                                                                    SizedBox()),
+                                                            // likes가 1개 이상일 때만 표시
+                                                            Visibility(
+                                                              maintainSize:
+                                                                  true,
+                                                              maintainAnimation:
+                                                                  true,
+                                                              maintainState:
+                                                                  true,
+                                                              visible: list[index]
+                                                                              [
+                                                                              'likes']
+                                                                          .length >
+                                                                      0
+                                                                  ? true
+                                                                  : false,
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .end,
+                                                                  children: [
+                                                                    Image.asset(
+                                                                      'assets/images/icons/icon_heart.png',
+                                                                      width:
+                                                                          13.w,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          5.5.w,
+                                                                    ),
+                                                                    Text(
+                                                                      '${list[index]['likes'].length}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontFamily:
+                                                                            'Pretendard',
+                                                                        fontSize:
+                                                                            14.sp,
+                                                                        fontWeight:
+                                                                            bold,
+                                                                        color:
+                                                                            dmGrey,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
+                                            if (list.length == index + 1 &&
+                                                keys.length != index + 1) ...[
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 40.h,
+                                                ),
+                                                child:
+                                                    const CupertinoActivityIndicator(),
+                                              )
+                                            ],
+                                          ],
                                         ),
-                                        if (list.length == index + 1 &&
-                                            keys.length != index + 1) ...[
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 40.h,
-                                            ),
-                                            child:
-                                                const CupertinoActivityIndicator(),
-                                          )
-                                        ],
-                                      ],
-                                    ),
-                                  );
+                                      );
+                                    }
+                                  }
+                                  return const SizedBox();
                                 },
                               ),
                             )

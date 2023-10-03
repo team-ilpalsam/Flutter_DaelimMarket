@@ -701,7 +701,7 @@ class DetailScreen extends StatelessWidget {
               .collection('user')
               .doc(element)
               .update({
-            'watchlist': FieldValue.arrayRemove([snapshot.data!['product_id']])
+            'watchlist': FieldValue.arrayRemove([productId])
           });
         });
       }
@@ -712,17 +712,18 @@ class DetailScreen extends StatelessWidget {
             .collection('user')
             .doc(snapshot.data!['uid'])
             .update({
-          'posts': FieldValue.arrayRemove([snapshot.data!['product_id']]),
+          'posts': FieldValue.arrayRemove([productId]),
         }),
+
         // product 컬렉션 내 product_id 문서 삭제
         FirebaseFirestore.instance
             .collection('product')
-            .doc(snapshot.data!['product_id'])
+            .doc(productId)
             .delete(),
 
         // FirebaseStorage에서 product 디렉토리 내 product_id를 가진 디렉토리의 파일을 모두 삭제
         FirebaseStorage.instance
-            .ref('product/${snapshot.data!['product_id']}')
+            .ref('product/$productId')
             .listAll()
             .then((value) => Future.wait(value.items.map((e) => e.delete()))),
       ]);
@@ -754,15 +755,14 @@ class DetailScreen extends StatelessWidget {
         [
           FirebaseFirestore.instance
               .collection('product') // product 컬렉션에서
-              .doc(snapshot.data!['product_id']) // product_id의 문서 내
+              .doc(productId) // product_id의 문서 내
               .update({
             'likes': FieldValue.arrayRemove([uid!]) // likes 리스트에 사용자 UID 값을 제거
           }),
           // user 컬렉션에서 사용자의 UID의 watchlist 리스트에 product_id 값 제거
           FirebaseFirestore.instance.collection('user').doc(uid).update(
             {
-              'watchlist':
-                  FieldValue.arrayRemove([snapshot.data!['product_id']])
+              'watchlist': FieldValue.arrayRemove([productId])
             },
           ),
         ],
@@ -784,14 +784,14 @@ class DetailScreen extends StatelessWidget {
         [
           FirebaseFirestore.instance
               .collection('product') // product 컬렉션에서
-              .doc(snapshot.data!['product_id']) // product_id의 문서 내
+              .doc(productId) // product_id의 문서 내
               .update({
             'likes': FieldValue.arrayUnion([uid!]) // likes 리스트에 사용자 UID 값을 추가
           }),
           // user 컬렉션에서 사용자의 UID의 watchlist 리스트에 product_id 값 추가
           FirebaseFirestore.instance.collection('user').doc(uid).update(
             {
-              'watchlist': FieldValue.arrayUnion([snapshot.data!['product_id']])
+              'watchlist': FieldValue.arrayUnion([productId])
             },
           ),
         ],
