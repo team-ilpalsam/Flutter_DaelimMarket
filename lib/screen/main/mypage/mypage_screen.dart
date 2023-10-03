@@ -15,8 +15,8 @@ class MypageScreen extends StatelessWidget {
   final MypageController _controller = Get.put(MypageController());
 
   Future<void> onRefresh() async {
-    _controller.myPostsLimitValue.value = [];
-    _controller.myWatchlistLimitValue.value = [];
+    _controller.myPostsLimitValue.clear();
+    _controller.myWatchlistLimitValue.clear();
 
     _controller.getMyData();
   }
@@ -353,18 +353,10 @@ class MypageScreen extends StatelessWidget {
                                     itemCount: _controller
                                         .myWatchlistLimitValue.length,
                                     itemBuilder: (context, index) {
-                                      if (_controller
-                                          .myWatchlistLimitValue.isNotEmpty) {
-                                        if (_controller
-                                                .myWatchlistLimitValue[index] !=
-                                            null) {
-                                          return imageBlock(
-                                              _controller.myWatchlistLimitValue,
-                                              index,
-                                              'watchlist');
-                                        }
-                                      }
-                                      return null;
+                                      return imageBlock(
+                                          _controller.myWatchlistLimitValue,
+                                          index,
+                                          'watchlist');
                                     },
                                   )
                                 : const SizedBox(),
@@ -405,38 +397,25 @@ class MypageScreen extends StatelessWidget {
                           ),
                           Obx(
                             () => _controller.myPostsLimitValue.isNotEmpty
-                                ? Obx(
-                                    () => GridView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
-                                        childAspectRatio: 1 / 1,
-                                        crossAxisSpacing: 20.w,
-                                        mainAxisSpacing: 20.w,
-                                      ),
-                                      itemCount:
-                                          _controller.myPostsLimitValue.length,
-                                      itemBuilder: (context, index) {
-                                        if (_controller
-                                            .myPostsLimitValue.isNotEmpty) {
-                                          if (_controller
-                                                  .myPostsLimitValue[index] !=
-                                              null) {
-                                            return imageBlock(
-                                                _controller.myPostsLimitValue,
-                                                index,
-                                                'posts');
-                                          } else {
-                                            _controller.getPostsData();
-                                          }
-                                        }
-                                        return null;
-                                      },
+                                ? GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      childAspectRatio: 1 / 1,
+                                      crossAxisSpacing: 20.w,
+                                      mainAxisSpacing: 20.w,
                                     ),
-                                  )
+                                    itemCount:
+                                        _controller.myPostsLimitValue.length,
+                                    itemBuilder: (context, index) {
+                                      return imageBlock(
+                                          _controller.myPostsLimitValue,
+                                          index,
+                                          'posts');
+                                    })
                                 : const SizedBox(),
                           ),
                           SizedBox(
