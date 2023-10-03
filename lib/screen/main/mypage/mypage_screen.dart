@@ -338,7 +338,7 @@ class MypageScreen extends StatelessWidget {
                             height: 20.h,
                           ),
                           Obx(
-                            () => _controller.myPostsLimitValue.isNotEmpty
+                            () => _controller.myWatchlistLimitValue.isNotEmpty
                                 ? GridView.builder(
                                     shrinkWrap: true,
                                     physics:
@@ -350,15 +350,21 @@ class MypageScreen extends StatelessWidget {
                                       crossAxisSpacing: 20.w,
                                       mainAxisSpacing: 20.w,
                                     ),
-                                    itemCount: _controller.myPostsKeys.length >=
-                                            _controller.limit
-                                        ? _controller.limit
-                                        : _controller.myPostsKeys.length,
+                                    itemCount: _controller
+                                        .myWatchlistLimitValue.length,
                                     itemBuilder: (context, index) {
-                                      return imageBlock(
-                                          _controller.myPostsLimitValue,
-                                          index,
-                                          'posts');
+                                      if (_controller
+                                          .myWatchlistLimitValue.isNotEmpty) {
+                                        if (_controller
+                                                .myWatchlistLimitValue[index] !=
+                                            null) {
+                                          return imageBlock(
+                                              _controller.myWatchlistLimitValue,
+                                              index,
+                                              'watchlist');
+                                        }
+                                      }
+                                      return null;
                                     },
                                   )
                                 : const SizedBox(),
@@ -398,29 +404,38 @@ class MypageScreen extends StatelessWidget {
                             height: 20.h,
                           ),
                           Obx(
-                            () => _controller.myWatchlistLimitValue.isNotEmpty
-                                ? GridView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      childAspectRatio: 1 / 1,
-                                      crossAxisSpacing: 20.w,
-                                      mainAxisSpacing: 20.w,
+                            () => _controller.myPostsLimitValue.isNotEmpty
+                                ? Obx(
+                                    () => GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        childAspectRatio: 1 / 1,
+                                        crossAxisSpacing: 20.w,
+                                        mainAxisSpacing: 20.w,
+                                      ),
+                                      itemCount:
+                                          _controller.myPostsLimitValue.length,
+                                      itemBuilder: (context, index) {
+                                        if (_controller
+                                            .myPostsLimitValue.isNotEmpty) {
+                                          if (_controller
+                                                  .myPostsLimitValue[index] !=
+                                              null) {
+                                            return imageBlock(
+                                                _controller.myPostsLimitValue,
+                                                index,
+                                                'posts');
+                                          } else {
+                                            _controller.getPostsData();
+                                          }
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    itemCount: _controller
-                                                .myWatchlistKeys.length >=
-                                            _controller.limit
-                                        ? _controller.limit
-                                        : _controller.myWatchlistKeys.length,
-                                    itemBuilder: (context, index) {
-                                      return imageBlock(
-                                          _controller.myWatchlistLimitValue,
-                                          index,
-                                          'watchlist');
-                                    },
                                   )
                                 : const SizedBox(),
                           ),

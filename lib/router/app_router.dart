@@ -1,3 +1,4 @@
+import 'package:daelim_market/screen/main/chat/chat_screen.dart';
 import 'package:get/get.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
@@ -120,6 +121,15 @@ class AppRouter {
       page: () => MypageSettingScreen(),
       fullscreenDialog: true,
       transition: Transition.cupertinoDialog,
+    ),
+
+    // 채팅 페이지
+    GetPage(
+      name: '/chat',
+      page: () => ChatScreen(
+        userUID: Get.parameters['userUID']!,
+      ),
+      transition: Transition.cupertino,
     ),
 
     // 내역 스크린 페이지

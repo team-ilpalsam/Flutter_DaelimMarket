@@ -231,15 +231,11 @@ class HomeScreen extends StatelessWidget {
                                                                     url) =>
                                                                 const CupertinoActivityIndicator(),
                                                           ),
-                                                          _controller.list[index]
-                                                                          [
-                                                                          'status'] ==
-                                                                      1 ||
-                                                                  _controller.list[
-                                                                              index]
-                                                                          [
-                                                                          'status'] ==
-                                                                      2
+                                                          _controller.list[
+                                                                          index]
+                                                                      [
+                                                                      'status'] >
+                                                                  0
                                                               ? Container(
                                                                   width: MediaQuery.of(
                                                                               context)

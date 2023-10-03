@@ -18,8 +18,8 @@ class MypageController extends GetxController {
   final RxList myPostsKeys = [].obs;
   final RxList myWatchlistKeys = [].obs;
 
-  final RxList myPostsLimitValue = [].obs;
   final RxList myWatchlistLimitValue = [].obs;
+  final RxList myPostsLimitValue = [].obs;
 
   void getMyData() async {
     try {
@@ -32,12 +32,12 @@ class MypageController extends GetxController {
         myNickName.value = value.data()!['nickName'];
         myProfileImage.value = value.data()!['profile_image'];
 
-        myPostsKeys.value = List.from(value.data()!['posts']).reversed.toList();
         myWatchlistKeys.value =
             List.from(value.data()!['watchlist']).reversed.toList();
+        myPostsKeys.value = List.from(value.data()!['posts']).reversed.toList();
 
-        getPostsData();
         getWatchlistData();
+        getPostsData();
       });
     } catch (e) {
       WarningSnackBar.show(
@@ -52,35 +52,11 @@ class MypageController extends GetxController {
 
   int limit = 6;
 
-  void getPostsData() async {
-    if (myPostsKeys.isNotEmpty) {
-      List tempList = [];
-      try {
-        for (var i = 0;
-            i < (myPostsKeys.length >= limit ? limit : myPostsKeys.length);
-            i++) {
-          await FirebaseFirestore.instance
-              .collection('product')
-              .doc(myPostsKeys[i])
-              .get()
-              .then((value) {
-            tempList.add(value);
-          });
-        }
-        myPostsLimitValue.value = tempList;
-      } catch (e) {
-        WarningSnackBar.show(
-            text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);
-        debugPrint(e.toString());
-      }
-    }
-  }
-
-  void getWatchlistData() async {
+  Future<void> getWatchlistData() async {
     if (myWatchlistKeys.isNotEmpty) {
       List tempList = [];
       try {
-        for (var i = 0;
+        for (int i = 0;
             i <
                 (myWatchlistKeys.length >= limit
                     ? limit
@@ -91,10 +67,34 @@ class MypageController extends GetxController {
               .doc(myWatchlistKeys[i])
               .get()
               .then((value) {
-            tempList.add(value);
+            tempList.add(value.data());
           });
         }
         myWatchlistLimitValue.value = tempList;
+      } catch (e) {
+        WarningSnackBar.show(
+            text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);
+        debugPrint(e.toString());
+      }
+    }
+  }
+
+  Future<void> getPostsData() async {
+    if (myPostsKeys.isNotEmpty) {
+      List tempList = [];
+      try {
+        for (int i = 0;
+            i < (myPostsKeys.length >= limit ? limit : myPostsKeys.length);
+            i++) {
+          await FirebaseFirestore.instance
+              .collection('product')
+              .doc(myPostsKeys[i])
+              .get()
+              .then((value) {
+            tempList.add(value.data());
+          });
+        }
+        myPostsLimitValue.value = tempList;
       } catch (e) {
         WarningSnackBar.show(
             text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
@@ -32,6 +33,8 @@ class DetailScreen extends StatelessWidget {
     dmYellow,
     dmGrey,
   ];
+
+  final MypageController _mypageController = Get.put(MypageController());
 
   final RxInt _imageIndex = 1.obs;
   final RxString _userNickName = '조회 중...'.obs;
@@ -691,29 +694,8 @@ class DetailScreen extends StatelessWidget {
   // 삭제 처리 메소드
   onTapDelete(BuildContext context, snapshot) async {
     try {
-      // Future.wait 내 코드가 다 수행될 때까지 대기
-      await Future.wait([
-        // product 컬렉션 내 product_id 문서 삭제
-        FirebaseFirestore.instance
-            .collection('product')
-            .doc(snapshot.data!['product_id'])
-            .delete(),
-        // user 컬렉션 내 업로드 한 user 문서의 posts 리스트 중 product_id를 가진 값을 삭제 후 업데이트
-        FirebaseFirestore.instance
-            .collection('user')
-            .doc(snapshot.data!['uid'])
-            .update({
-          'posts': FieldValue.arrayRemove([snapshot.data!['product_id']]),
-        }),
-        // FirebaseStorage에서 product 디렉토리 내 product_id를 가진 디렉토리의 파일을 모두 삭제
-        FirebaseStorage.instance
-            .ref('product/${snapshot.data!['product_id']}')
-            .listAll()
-            .then((value) => Future.wait(value.items.map((e) => e.delete()))),
-      ]);
-
       // user 컬렉션 내 likes 배열에 있는 UID의 문서 내 watch_list 배열에 해당 product_id 요소를 제거 후 업데이트한다.
-      if (snapshot.data!['likes'] != null) {
+      if (snapshot.data!['likes'].isNotEmpty) {
         snapshot.data!['likes'].forEach((element) async {
           await Future.wait([
             FirebaseFirestore.instance.collection('user').doc(element).update({
@@ -723,14 +705,38 @@ class DetailScreen extends StatelessWidget {
           ]);
         });
       }
-      Get.toNamed('/main');
+      // Future.wait 내 코드가 다 수행될 때까지 대기
+      await Future.wait([
+        // user 컬렉션 내 업로드 한 user 문서의 posts 리스트 중 product_id를 가진 값을 삭제 후 업데이트
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(snapshot.data!['uid'])
+            .update({
+          'posts': FieldValue.arrayRemove([snapshot.data!['product_id']]),
+        }),
+        // product 컬렉션 내 product_id 문서 삭제
+        FirebaseFirestore.instance
+            .collection('product')
+            .doc(snapshot.data!['product_id'])
+            .delete(),
+
+        // FirebaseStorage에서 product 디렉토리 내 product_id를 가진 디렉토리의 파일을 모두 삭제
+        FirebaseStorage.instance
+            .ref('product/${snapshot.data!['product_id']}')
+            .listAll()
+            .then((value) => Future.wait(value.items.map((e) => e.delete()))),
+      ]);
+
+      _mypageController.getMyData();
+      Get.back();
       DoneSnackBar.show(
         text: '판매글을 삭제했어요.',
         paddingHorizontal: 0,
         paddingBottom: 0,
       );
     } catch (e) {
-      Get.toNamed('/main');
+      _mypageController.getMyData();
+      Get.back();
       WarningSnackBar.show(
         text: '판매글 삭제 중 문제가 생겼어요.',
         paddingHorizontal: 0,
