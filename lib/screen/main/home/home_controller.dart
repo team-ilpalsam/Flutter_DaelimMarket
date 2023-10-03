@@ -23,14 +23,12 @@ class HomeController extends GetxController {
     isMore.value = true;
   }
 
-  void getData() async {
+  Future<void> getData() async {
     var data = await FirebaseFirestore.instance
         .collection('product') // product 컬렉션으로부터
         .where('location', // Dropdown의 장소 값의 조건으로
             isEqualTo:
                 selectedLocation.value == '전체' ? null : selectedLocation.value)
-        .where('status', isLessThan: 2)
-        .orderBy('status')
         .orderBy('uploadTime', descending: true) // uploadTime 정렬은 내림차순으로
         .limit(limit)
         .get(); // 데이터를 불러온다
@@ -45,7 +43,7 @@ class HomeController extends GetxController {
     }
   }
 
-  void getNextData() async {
+  Future<void> getNextData() async {
     if (lastDocument.value != null) {
       var data = await FirebaseFirestore.instance
           .collection('product') // product 컬렉션으로부터
@@ -53,8 +51,6 @@ class HomeController extends GetxController {
               isEqualTo: selectedLocation.value == '전체'
                   ? null
                   : selectedLocation.value)
-          .where('status', isLessThan: 2)
-          .orderBy('status')
           .orderBy('uploadTime', descending: true) // uploadTime 정렬은 내림차순으로
           .startAfterDocument(lastDocument.value!)
           .limit(limit)
