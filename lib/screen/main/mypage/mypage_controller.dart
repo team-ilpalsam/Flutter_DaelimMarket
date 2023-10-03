@@ -93,8 +93,10 @@ class MypageController extends GetxController {
               .doc(key)
               .get()
               .then((value) {
-            tempList.add(value.data());
-            count++;
+            if (value.data() != null) {
+              tempList.add(value.data());
+              count++;
+            }
           });
 
           if (count == limit) {
