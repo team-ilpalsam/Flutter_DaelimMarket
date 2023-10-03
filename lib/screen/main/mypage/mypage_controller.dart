@@ -55,20 +55,23 @@ class MypageController extends GetxController {
   Future<void> getWatchlistData() async {
     if (myWatchlistKeys.isNotEmpty) {
       List tempList = [];
+      int count = 0;
       try {
-        for (int i = 0;
-            i <
-                (myWatchlistKeys.length >= limit
-                    ? limit
-                    : myWatchlistKeys.length);
-            i++) {
+        for (var key in myWatchlistKeys) {
           await FirebaseFirestore.instance
               .collection('product')
-              .doc(myWatchlistKeys[i])
+              .doc(key)
               .get()
               .then((value) {
-            tempList.add(value.data());
+            if (value.data() != null) {
+              tempList.add(value.data());
+              count++;
+            }
           });
+
+          if (count == limit) {
+            break;
+          }
         }
         myWatchlistLimitValue.value = tempList;
       } catch (e) {
@@ -82,17 +85,21 @@ class MypageController extends GetxController {
   Future<void> getPostsData() async {
     if (myPostsKeys.isNotEmpty) {
       List tempList = [];
+      int count = 0;
       try {
-        for (int i = 0;
-            i < (myPostsKeys.length >= limit ? limit : myPostsKeys.length);
-            i++) {
+        for (var key in myPostsKeys) {
           await FirebaseFirestore.instance
               .collection('product')
-              .doc(myPostsKeys[i])
+              .doc(key)
               .get()
               .then((value) {
             tempList.add(value.data());
+            count++;
           });
+
+          if (count == limit) {
+            break;
+          }
         }
         myPostsLimitValue.value = tempList;
       } catch (e) {

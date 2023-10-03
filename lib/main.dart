@@ -92,6 +92,7 @@ class DaelimMarket extends StatelessWidget {
             scaffoldBackgroundColor: dmWhite,
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
           ),
           debugShowCheckedModeBanner: false,
           getPages: AppRouter.pages,
