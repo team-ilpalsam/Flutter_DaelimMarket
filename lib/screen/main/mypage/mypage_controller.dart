@@ -62,17 +62,25 @@ class MypageController extends GetxController {
               .collection('product')
               .doc(key)
               .get()
-              .then((value) {
+              .then((value) async {
             if (value.data() != null) {
               tempList.add(value.data());
               count++;
+            } else {
+              await FirebaseFirestore.instance
+                  .collection('user')
+                  .doc(uid)
+                  .update({
+                'watchlist': FieldValue.arrayRemove([key]),
+              });
             }
           });
 
-          if (count == limit) {
+          if (count >= limit) {
             break;
           }
         }
+
         myWatchlistLimitValue.value = tempList;
       } catch (e) {
         WarningSnackBar.show(
@@ -92,17 +100,25 @@ class MypageController extends GetxController {
               .collection('product')
               .doc(key)
               .get()
-              .then((value) {
+              .then((value) async {
             if (value.data() != null) {
               tempList.add(value.data());
               count++;
+            } else {
+              await FirebaseFirestore.instance
+                  .collection('user')
+                  .doc(uid)
+                  .update({
+                'posts': FieldValue.arrayRemove([key]),
+              });
             }
           });
 
-          if (count == limit) {
+          if (count >= limit) {
             break;
           }
         }
+
         myPostsLimitValue.value = tempList;
       } catch (e) {
         WarningSnackBar.show(

@@ -20,7 +20,7 @@ class AppRouter {
   static List<GetPage> pages = [
     GetPage(
       name: '/',
-      page: () => const SplashScreen(),
+      page: () => SplashScreen(),
       transition: Transition.noTransition,
     ),
 

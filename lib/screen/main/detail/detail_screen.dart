@@ -571,8 +571,8 @@ class DetailScreen extends StatelessWidget {
                                                   FirebaseFirestore.instance
                                                       .collection(
                                                           'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
+                                                      .doc(
+                                                          productId) // product_id의 문서 내
                                                       .update({'status': 0});
                                                   Navigator.pop(context);
                                                 },
@@ -583,8 +583,8 @@ class DetailScreen extends StatelessWidget {
                                                   FirebaseFirestore.instance
                                                       .collection(
                                                           'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
+                                                      .doc(
+                                                          productId) // product_id의 문서 내
                                                       .update({'status': 1});
                                                   Navigator.pop(context);
                                                 },
@@ -592,13 +592,38 @@ class DetailScreen extends StatelessWidget {
                                               CupertinoActionSheetAction(
                                                 child: Text(_statusList[2]),
                                                 onPressed: () {
-                                                  FirebaseFirestore.instance
-                                                      .collection(
-                                                          'product') // product 컬렉션에서
-                                                      .doc(snapshot.data![
-                                                          'product_id']) // product_id의 문서 내
-                                                      .update({'status': 2});
-                                                  Navigator.pop(context);
+                                                  AlertDialogWidget.twoButtons(
+                                                      content:
+                                                          '판매완료로 변경하면 더 이상 바꿀 수 없게 되어버려요!\n계속 진행할까요?',
+                                                      button: [
+                                                        '아직이요',
+                                                        '바꿀게요!'
+                                                      ],
+                                                      color: [
+                                                        dmGrey,
+                                                        dmBlue
+                                                      ],
+                                                      action: [
+                                                        () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'product') // product 컬렉션에서
+                                                              .doc(
+                                                                  productId) // product_id의 문서 내
+                                                              .update({
+                                                            'status': 2
+                                                          });
+                                                          Navigator.pop(
+                                                              context);
+                                                        }
+                                                      ]);
                                                 },
                                               ),
                                             ],
@@ -692,7 +717,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   // 삭제 처리 메소드
-  onTapDelete(BuildContext context, snapshot) async {
+  Future<void> onTapDelete(BuildContext context, snapshot) async {
     try {
       // user 컬렉션 내 likes 배열에 있는 UID의 문서 내 watch_list 배열에 해당 product_id 요소를 제거 후 업데이트한다.
       if (snapshot.data!['likes'].isNotEmpty) {

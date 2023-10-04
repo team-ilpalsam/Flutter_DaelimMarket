@@ -22,7 +22,7 @@ class MypageScreen extends StatelessWidget {
   }
 
   Widget imageBlock(list, index, history) {
-    if (list != []) {
+    if (list.isNotEmpty) {
       if (list[index] != null) {
         return GestureDetector(
           onTap: () {
