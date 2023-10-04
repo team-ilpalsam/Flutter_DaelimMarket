@@ -11,28 +11,12 @@ import 'package:get/get.dart';
 
 import '../main.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
+  final String userNickname = '';
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _asyncMethod();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  String userNickname = '';
-
-  _asyncMethod() async {
+  Future<void> _asyncMethod(BuildContext context) async {
     await ConnectionCheckService().connectionCheck(context);
 
     id = await const FlutterSecureStorage().read(key: 'id');
@@ -55,18 +39,18 @@ class _SplashScreenState extends State<SplashScreen> {
                 .get();
 
             if (userData.data()?['nickName'] == '') {
-              Get.toNamed('/register/setting');
+              Get.offAllNamed('/register/setting');
             } else {
               await const FlutterSecureStorage().write(
                   key: 'nickname', value: '${userData.data()?['nickName']}');
-              Get.toNamed('/main');
+              Get.offAllNamed('/main');
             }
           } else {
             WarningSnackBar.show(
               text: '이메일 인증이 안 된 계정이에요.',
               paddingHorizontal: 20.w,
             );
-            Get.toNamed('/login');
+            Get.offAllNamed('/login');
           }
         });
 
@@ -82,15 +66,16 @@ class _SplashScreenState extends State<SplashScreen> {
         );
         // 로그인 실패 시 FlutterSecureStorage 내 데이터 모두 삭제
         await const FlutterSecureStorage().deleteAll();
-        Get.toNamed('/welcome');
+        Get.offAllNamed('/welcome');
       }
     } else {
-      Get.toNamed('/welcome');
+      Get.offAllNamed('/welcome');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    _asyncMethod(context);
     return Scaffold(
       body: Center(
         child: Image.asset(

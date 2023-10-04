@@ -132,7 +132,7 @@ class MyHistoryScreen extends StatelessWidget {
                                 itemCount: list.length,
                                 separatorBuilder: (context, index) => divider,
                                 itemBuilder: (context, index) {
-                                  if (list != []) {
+                                  if (list.isNotEmpty) {
                                     if (list[index] != null) {
                                       return Padding(
                                         // 첫번째 요소에만 윗부분 padding을 추가적으로 줌
