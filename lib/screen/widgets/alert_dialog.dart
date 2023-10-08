@@ -39,7 +39,7 @@ class AlertDialogWidget {
                 padding: EdgeInsets.only(
                   left: 15.w,
                   right: 15.w,
-                  top: 33.h,
+                  top: 35.h,
                   bottom: 20.h,
                 ),
                 child: Column(

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:daelim_market/const/common.dart';
+import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,9 +55,16 @@ class MyHistoryScreen extends StatelessWidget {
                 .collection('product')
                 .doc(keys[i])
                 .get()
-                .then((value) {
+                .then((value) async {
               if (value.data() != null) {
                 tempList.add(value);
+              } else {
+                await FirebaseFirestore.instance
+                    .collection('user')
+                    .doc(uid)
+                    .update({
+                  history: FieldValue.arrayRemove([keys[i]]),
+                });
               }
             });
           }
@@ -108,11 +117,31 @@ class MyHistoryScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
-                child: RefreshIndicator(
+                child: CustomRefreshIndicator(
                   onRefresh: onRefresh,
-                  backgroundColor: dmWhite,
-                  color: dmDarkGrey,
-                  strokeWidth: 2.w,
+                  builder: (context, child, controller) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        if (!controller.isIdle)
+                          Positioned(
+                            top: 40.h * controller.value,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 20.h,
+                              ),
+                              child: CupertinoActivityIndicator(
+                                animating: !controller.isDragging,
+                              ),
+                            ),
+                          ),
+                        Transform.translate(
+                          offset: Offset(0, 40.h * controller.value),
+                          child: child,
+                        ),
+                      ],
+                    );
+                  },
                   child: Obx(
                     () => ScrollConfiguration(
                       behavior: MyBehavior(),
@@ -401,8 +430,16 @@ class MyHistoryScreen extends StatelessWidget {
                             )
                           :
                           // 데이터가 존재하지 않는다면
-                          const Center(
-                              child: CupertinoActivityIndicator(),
+                          Center(
+                              child: Text(
+                                '아직 목록이 없어요.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14.sp,
+                                  fontWeight: bold,
+                                  color: dmLightGrey,
+                                ),
+                              ),
                             ),
                     ),
                   ),

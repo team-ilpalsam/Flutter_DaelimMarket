@@ -1,10 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/const/common.dart';
+import 'package:daelim_market/const/server_key.dart';
+import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
+import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
+import 'package:daelim_market/screen/widgets/snackbar.dart';
+import 'package:daelim_market/styles/colors.dart';
+import 'package:daelim_market/styles/fonts.dart';
+import 'package:dio/dio.dart';
 import 'package:emoji_regex/emoji_regex.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,26 +24,134 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-
-import '../../../const/server_key.dart';
-import '../../../main.dart';
-import '../../../styles/colors.dart';
-import '../../../styles/fonts.dart';
-import '../../widgets/alert_dialog.dart';
-import '../../widgets/scroll_behavior.dart';
-import '../../widgets/snackbar.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userUID;
 
   ChatScreen({super.key, required this.userUID});
 
-  final TextEditingController chatController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
   final MypageController _mypageController = Get.put(MypageController());
 
   @override
   Widget build(BuildContext context) {
+    /// 보낸 날짜 위젯
+    Widget sendDayWidget(Map data) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * 0.52162,
+            height: 30.h,
+            decoration: BoxDecoration(
+              color: dmGrey,
+              borderRadius:
+                  // 타원형
+                  BorderRadius.circular(3.40e+38),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              DateFormat('yyyy년 M월 d일 EEEE', 'ko_KR').format(
+                data['send_time'].toDate(),
+              ),
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 14.sp,
+                fontWeight: medium,
+                color: dmWhite,
+              ),
+            ),
+          )
+        ],
+      );
+    }
+
+    /// 보낸 시간 위젯
+    Widget sendTimeWidget(Map data) {
+      return Text(
+        DateFormat('a h:mm', 'ko_KR').format(
+          data['send_time'].toDate(),
+        ),
+        style: TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 12.sp,
+          fontWeight: medium,
+          color: dmDarkGrey,
+        ),
+      );
+    }
+
+    /// Image 위젯
+    Widget cachedImage(Map data) {
+      return GestureDetector(
+        onTap: () {
+          Get.toNamed(
+            '/detail/image',
+            parameters: {'src': data['image']},
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.r),
+          child: Container(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.6234,
+                maxHeight: MediaQuery.of(context).size.height * 0.44601),
+            decoration: const BoxDecoration(
+              color: dmWhite,
+            ),
+            child: CachedNetworkImage(
+              imageUrl: data['image'],
+              placeholder: (context, url) => const CupertinoActivityIndicator(),
+              fadeInDuration: Duration.zero,
+              fadeOutDuration: Duration.zero,
+            ),
+          ),
+        ),
+      );
+    }
+
+    /// 메시지 위젯
+    Widget messageWidget(Map data) {
+      // Text Type
+      if (data['type'] == 'text') {
+        return data['text'].length >= 2 &&
+                data['text'].length <= 6 &&
+                data['text'].contains(emojiRegex())
+            ? Text(
+                data['text'],
+                style: TextStyle(
+                  fontSize: 60.sp,
+                ),
+              )
+            : Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.6234),
+                decoration: BoxDecoration(
+                  color: data['sender'] == uid ? dmBlue : dmLightGrey,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                  child: Text(
+                    data['text'],
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 18.sp,
+                      fontWeight: medium,
+                      color: data['sender'] == uid ? dmWhite : dmBlack,
+                    ),
+                  ),
+                ),
+              );
+      }
+      // Image Type
+      else if (data['type'] == 'image') {
+        return cachedImage(data);
+      }
+      return const SizedBox();
+    }
+
     onTapAddPhotoFromAlbum() async {
       Navigator.pop(context);
       try {
@@ -45,50 +163,60 @@ class ChatScreen extends StatelessWidget {
           if (xfile == null) {
             return;
           }
-          // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
-          String chatImageId =
-              'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
 
-          // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
-          Reference ref = FirebaseStorage.instance
-              .ref()
-              .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
-          final UploadTask uploadTask =
-              ref.putData(File(xfile.path).readAsBytesSync());
-          // 만약 사진 업로드 성공 시
-          final TaskSnapshot taskSnapshot =
-              await uploadTask.whenComplete(() {});
+          Uint8List sizeOfXFile = await xfile.readAsBytes();
 
-          // 사진의 다운로드 가능한 url을 불러온 후
-          final url = await taskSnapshot.ref.getDownloadURL();
+          if (sizeOfXFile.length > maxFileSizeInBytes) {
+            WarningSnackBar.show(
+              text: '5MB 미만 크기의 사진을 올려주세요!',
+              paddingBottom: 0,
+            );
+          } else {
+            // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
+            String chatImageId =
+                'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
 
-          // product 컬렉션 내 productId 문서에 데이터 저장
-          await FirebaseFirestore.instance
-              .collection('chat') // chat 컬렉션에서
-              .doc(uid) // 자신의 UID 문서 내
-              .update({
-            userUID: FieldValue.arrayUnion([
-              {
-                'type': 'image',
-                'send_time': DateTime.now(),
-                'sender': uid,
-                'image': url,
-              }
-            ])
-          });
-          await FirebaseFirestore.instance
-              .collection('chat') // chat 컬렉션에서
-              .doc(userUID) // 상대 UID의 문서 내
-              .update({
-            uid!: FieldValue.arrayUnion([
-              {
-                'type': 'image',
-                'send_time': DateTime.now(),
-                'sender': uid,
-                'image': url,
-              }
-            ])
-          });
+            // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
+            Reference ref = FirebaseStorage.instance
+                .ref()
+                .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
+            final UploadTask uploadTask =
+                ref.putData(File(xfile.path).readAsBytesSync());
+            // 만약 사진 업로드 성공 시
+            final TaskSnapshot taskSnapshot =
+                await uploadTask.whenComplete(() {});
+
+            // 사진의 다운로드 가능한 url을 불러온 후
+            final url = await taskSnapshot.ref.getDownloadURL();
+
+            // product 컬렉션 내 productId 문서에 데이터 저장
+            await FirebaseFirestore.instance
+                .collection('chat') // chat 컬렉션에서
+                .doc(uid) // 자신의 UID 문서 내
+                .update({
+              userUID: FieldValue.arrayUnion([
+                {
+                  'type': 'image',
+                  'send_time': DateTime.now(),
+                  'sender': uid,
+                  'image': url,
+                }
+              ])
+            });
+            await FirebaseFirestore.instance
+                .collection('chat') // chat 컬렉션에서
+                .doc(userUID) // 상대 UID의 문서 내
+                .update({
+              uid!: FieldValue.arrayUnion([
+                {
+                  'type': 'image',
+                  'send_time': DateTime.now(),
+                  'sender': uid,
+                  'image': url,
+                }
+              ])
+            });
+          }
         });
       } catch (e) {
         WarningSnackBar.show(
@@ -110,50 +238,60 @@ class ChatScreen extends StatelessWidget {
           if (xfile == null) {
             return;
           }
-          // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
-          String chatImageId =
-              'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
 
-          // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
-          Reference ref = FirebaseStorage.instance
-              .ref()
-              .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
-          final UploadTask uploadTask =
-              ref.putData(File(xfile.path).readAsBytesSync());
-          // 만약 사진 업로드 성공 시
-          final TaskSnapshot taskSnapshot =
-              await uploadTask.whenComplete(() {});
+          Uint8List sizeOfXFile = await xfile.readAsBytes();
 
-          // 사진의 다운로드 가능한 url을 불러온 후
-          final url = await taskSnapshot.ref.getDownloadURL();
+          if (sizeOfXFile.length > maxFileSizeInBytes) {
+            WarningSnackBar.show(
+              text: '5MB 미만 크기의 사진을 올려주세요!',
+              paddingBottom: 0,
+            );
+          } else {
+            // chatImageId 변수에 'yyyyMMddHHmmss_id' 형식으로 대입
+            String chatImageId =
+                'chat_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}_$id';
 
-          // product 컬렉션 내 productId 문서에 데이터 저장
-          await FirebaseFirestore.instance
-              .collection('chat') // chat 컬렉션에서
-              .doc(uid) // 자신의 UID 문서 내
-              .update({
-            userUID: FieldValue.arrayUnion([
-              {
-                'type': 'image',
-                'send_time': DateTime.now(),
-                'sender': uid,
-                'image': url,
-              }
-            ])
-          });
-          await FirebaseFirestore.instance
-              .collection('chat') // chat 컬렉션에서
-              .doc(userUID) // 상대 UID의 문서 내
-              .update({
-            uid!: FieldValue.arrayUnion([
-              {
-                'type': 'image',
-                'send_time': DateTime.now(),
-                'sender': uid,
-                'image': url,
-              }
-            ])
-          });
+            // Firebase Storage에 chat 디렉터리 내 uid 디렉터리를 생성한 후 'chatImageId.파일확장자' 형식으로 저장
+            Reference ref = FirebaseStorage.instance
+                .ref()
+                .child('chat/$uid/$chatImageId.${xfile.path.split('.').last}');
+            final UploadTask uploadTask =
+                ref.putData(File(xfile.path).readAsBytesSync());
+            // 만약 사진 업로드 성공 시
+            final TaskSnapshot taskSnapshot =
+                await uploadTask.whenComplete(() {});
+
+            // 사진의 다운로드 가능한 url을 불러온 후
+            final url = await taskSnapshot.ref.getDownloadURL();
+
+            // product 컬렉션 내 productId 문서에 데이터 저장
+            await FirebaseFirestore.instance
+                .collection('chat') // chat 컬렉션에서
+                .doc(uid) // 자신의 UID 문서 내
+                .update({
+              userUID: FieldValue.arrayUnion([
+                {
+                  'type': 'image',
+                  'send_time': DateTime.now(),
+                  'sender': uid,
+                  'image': url,
+                }
+              ])
+            });
+            await FirebaseFirestore.instance
+                .collection('chat') // chat 컬렉션에서
+                .doc(userUID) // 상대 UID의 문서 내
+                .update({
+              uid!: FieldValue.arrayUnion([
+                {
+                  'type': 'image',
+                  'send_time': DateTime.now(),
+                  'sender': uid,
+                  'image': url,
+                }
+              ])
+            });
+          }
         });
       } catch (e) {
         WarningSnackBar.show(
@@ -265,175 +403,6 @@ class ChatScreen extends StatelessWidget {
                                       scrollDirection: Axis.vertical,
                                       itemCount: data.length,
                                       itemBuilder: ((context, index) {
-                                        /// 보낸 날짜 위젯
-                                        Widget sendDayWidget(
-                                                List<dynamic> data) =>
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.52162,
-                                                  height: 30.h,
-                                                  decoration: BoxDecoration(
-                                                    color: dmGrey,
-                                                    borderRadius:
-                                                        // 타원형
-                                                        BorderRadius.circular(
-                                                            3.40e+38),
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    DateFormat(
-                                                            'yyyy년 M월 d일 EEEE',
-                                                            'ko_KR')
-                                                        .format(
-                                                      data[index]['send_time']
-                                                          .toDate(),
-                                                    ),
-                                                    style: TextStyle(
-                                                      fontFamily: 'Pretendard',
-                                                      fontSize: 14.sp,
-                                                      fontWeight: medium,
-                                                      color: dmWhite,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            );
-
-                                        /// 보낸 시간 위젯
-                                        Widget sendTimeWidget(
-                                                List<dynamic> data) =>
-                                            Text(
-                                              DateFormat('a h:mm', 'ko_KR')
-                                                  .format(
-                                                data[index]['send_time']
-                                                    .toDate(),
-                                              ),
-                                              style: TextStyle(
-                                                fontFamily: 'Pretendard',
-                                                fontSize: 12.sp,
-                                                fontWeight: medium,
-                                                color: dmDarkGrey,
-                                              ),
-                                            );
-
-                                        /// Image 위젯
-                                        Widget cachedImage(
-                                                List<dynamic> data) =>
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.toNamed(
-                                                  '/detail/image',
-                                                  parameters: {
-                                                    'src': data[index]['image']
-                                                  },
-                                                );
-                                              },
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.r),
-                                                child: Container(
-                                                  constraints: BoxConstraints(
-                                                      maxWidth:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.6234,
-                                                      maxHeight:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.44601),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color: dmWhite,
-                                                  ),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: data[index]
-                                                        ['image'],
-                                                    placeholder: (context,
-                                                            url) =>
-                                                        const CupertinoActivityIndicator(),
-                                                    fadeInDuration:
-                                                        Duration.zero,
-                                                    fadeOutDuration:
-                                                        Duration.zero,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-
-                                        /// 메시지 위젯
-                                        Widget messageWidget(
-                                            List<dynamic> data) {
-                                          // Text Type
-                                          if (data[index]['type'] == 'text') {
-                                            return data[index]['text']
-                                                            .length >=
-                                                        2 &&
-                                                    data[index]['text']
-                                                            .length <=
-                                                        6 &&
-                                                    data[index]['text']
-                                                        .contains(emojiRegex())
-                                                ? Text(
-                                                    data[index]['text'],
-                                                    style: TextStyle(
-                                                      fontSize: 60.sp,
-                                                    ),
-                                                  )
-                                                : Container(
-                                                    constraints: BoxConstraints(
-                                                        maxWidth: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.6234),
-                                                    decoration: BoxDecoration(
-                                                      color: data[index]
-                                                                  ['sender'] ==
-                                                              uid
-                                                          ? dmBlue
-                                                          : dmLightGrey,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.r),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10.w,
-                                                              vertical: 10.h),
-                                                      child: Text(
-                                                        data[index]['text'],
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Pretendard',
-                                                          fontSize: 18.sp,
-                                                          fontWeight: medium,
-                                                          color: data[index][
-                                                                      'sender'] ==
-                                                                  uid
-                                                              ? dmWhite
-                                                              : dmBlack,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                          }
-                                          // Image Type
-                                          else if (data[index]['type'] ==
-                                              'image') {
-                                            return cachedImage(data);
-                                          }
-                                          return const SizedBox();
-                                        }
-
                                         // 자신이 보냈을 경우
                                         if (data[index]['sender'] == uid) {
                                           return Column(
@@ -455,8 +424,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
+                                                      child: sendDayWidget(
+                                                          data[index]),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -511,14 +480,14 @@ class ChatScreen extends StatelessWidget {
                                                                           .toDate()
                                                                           .minute
                                                               ? sendTimeWidget(
-                                                                  data)
+                                                                  data[index])
                                                               : const SizedBox(),
                                                         ],
                                                       ),
                                                       SizedBox(
                                                         width: 7.w,
                                                       ),
-                                                      messageWidget(data)
+                                                      messageWidget(data[index])
                                                     ]),
                                               )
                                             ],
@@ -570,8 +539,8 @@ class ChatScreen extends StatelessWidget {
                                                               ? 27.5.h
                                                               : 22.5.h,
                                                           bottom: 22.5.h),
-                                                      child:
-                                                          sendDayWidget(data),
+                                                      child: sendDayWidget(
+                                                          data[index]),
                                                     )
                                                   : const SizedBox(),
                                               Padding(
@@ -583,7 +552,7 @@ class ChatScreen extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
-                                                    messageWidget(data),
+                                                    messageWidget(data[index]),
                                                     SizedBox(
                                                       width: 7.w,
                                                     ),
@@ -599,7 +568,8 @@ class ChatScreen extends StatelessWidget {
                                                                         'send_time']
                                                                     .toDate()
                                                                     .minute
-                                                        ? sendTimeWidget(data)
+                                                        ? sendTimeWidget(
+                                                            data[index])
                                                         : const SizedBox()
                                                   ],
                                                 ),
@@ -695,7 +665,7 @@ class ChatScreen extends StatelessWidget {
                                                   .containsKey('deleted')
                                           ? false
                                           : true,
-                                      controller: chatController,
+                                      controller: _textEditingController,
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
                                         fontSize: 16.sp,
@@ -737,9 +707,9 @@ class ChatScreen extends StatelessWidget {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    if (chatController.text != '' &&
-                                        !RegExp(r'^\s*$')
-                                            .hasMatch(chatController.text)) {
+                                    if (_textEditingController.text != '' &&
+                                        !RegExp(r'^\s*$').hasMatch(
+                                            _textEditingController.text)) {
                                       FirebaseFirestore.instance
                                           .collection('chat') // chat 컬렉션에서
                                           .doc(uid) // 자신의 UID 문서 내
@@ -749,7 +719,7 @@ class ChatScreen extends StatelessWidget {
                                             'type': 'text',
                                             'send_time': DateTime.now(),
                                             'sender': uid,
-                                            'text': chatController.text,
+                                            'text': _textEditingController.text,
                                           }
                                         ])
                                       });
@@ -762,48 +732,62 @@ class ChatScreen extends StatelessWidget {
                                             'type': 'text',
                                             'send_time': DateTime.now(),
                                             'sender': uid,
-                                            'text': chatController.text,
+                                            'text': _textEditingController.text,
                                           }
                                         ])
                                       });
 
                                       if (userData.data?['token'] != '') {
-                                        http.post(
-                                          Uri.parse(
-                                              'https://fcm.googleapis.com/fcm/send'),
-                                          headers: <String, String>{
-                                            'Content-Type': 'application/json',
-                                            'Authorization': 'key=$serverKey',
-                                          },
-                                          body: jsonEncode(
-                                            <String, dynamic>{
-                                              'to': userData.data?['token'],
-                                              'notification': <String, dynamic>{
-                                                'title': _mypageController
-                                                    .myNickName.value,
-                                                'body': chatController.text,
-                                                "android_channel_id":
-                                                    '${uid.hashCode}',
-                                                "sound": "alert.wav",
+                                        try {
+                                          Dio().post(
+                                            'https://fcm.googleapis.com/fcm/send',
+                                            options: Options(
+                                              headers: {
+                                                'Content-Type':
+                                                    'application/json',
+                                                'Authorization':
+                                                    'key=$serverKey',
                                               },
-                                              "aps": {
-                                                "title": _mypageController
-                                                    .myNickName.value,
-                                                "body": chatController.text,
-                                                "badge": 1
+                                            ),
+                                            data: jsonEncode(
+                                              {
+                                                'to': userData.data?['token'],
+                                                'notification':
+                                                    <String, dynamic>{
+                                                  'title': _mypageController
+                                                      .myNickName.value,
+                                                  'body': _textEditingController
+                                                      .text,
+                                                  "android_channel_id":
+                                                      '${uid.hashCode}',
+                                                  "sound": "alert.wav",
+                                                },
+                                                "aps": {
+                                                  "title": _mypageController
+                                                      .myNickName.value,
+                                                  "body": _textEditingController
+                                                      .text,
+                                                  "badge": 1
+                                                },
+                                                'priority': 'high',
+                                                'data': <String, dynamic>{
+                                                  'click_action':
+                                                      'FLUTTER_NOTIFICATION_CLICK',
+                                                  'id': '${uid.hashCode}',
+                                                  'status': 'done'
+                                                },
                                               },
-                                              'priority': 'high',
-                                              'data': <String, dynamic>{
-                                                'click_action':
-                                                    'FLUTTER_NOTIFICATION_CLICK',
-                                                'id': '${uid.hashCode}',
-                                                'status': 'done'
-                                              },
-                                            },
-                                          ),
-                                        );
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          WarningSnackBar.show(
+                                            text: '메시지 전송 중 문제가 발생했어요.',
+                                            paddingBottom: 0,
+                                          );
+                                          debugPrint(e.toString());
+                                        }
                                       }
-                                      chatController.text = '';
+                                      _textEditingController.text = '';
                                     }
                                   },
                                   child: Container(

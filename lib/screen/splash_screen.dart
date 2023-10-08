@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
-import 'package:daelim_market/service/connection_check_service.dart';
 import 'package:daelim_market/const/common.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,16 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
-import '../main.dart';
-
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   final String userNickname = '';
 
   Future<void> _asyncMethod(BuildContext context) async {
-    await ConnectionCheckService().connectionCheck(context);
-
     id = await const FlutterSecureStorage().read(key: 'id');
     uid = await const FlutterSecureStorage().read(key: 'uid');
     email = await const FlutterSecureStorage().read(key: 'email');

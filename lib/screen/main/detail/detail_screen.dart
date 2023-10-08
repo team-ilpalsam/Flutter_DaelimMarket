@@ -1,21 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
+import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
+import 'package:daelim_market/styles/fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../../../main.dart';
-import '../../../styles/fonts.dart';
-import '../../widgets/snackbar.dart';
 
 class DetailScreen extends StatelessWidget {
   final String productId;
@@ -39,6 +38,7 @@ class DetailScreen extends StatelessWidget {
   final RxInt _imageIndex = 1.obs;
   final RxString _userNickName = '조회 중...'.obs;
   final RxString _userProfileImage = ''.obs;
+  final RxBool _isDeletedAccount = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +100,12 @@ class DetailScreen extends StatelessWidget {
                   .doc(snapshot.data!['uid'])
                   .get()
                   .then((value) {
-                _userProfileImage.value = value.data()!["profile_image"];
-                _userNickName.value = value.data()!["nickName"];
+                if (value.data() != null) {
+                  _userProfileImage.value = value.data()!["profile_image"];
+                  _userNickName.value = value.data()!["nickName"];
+                  _isDeletedAccount.value =
+                      value.data()!.containsKey('deleted');
+                }
               });
               return Column(
                 children: [
@@ -402,7 +406,7 @@ class DetailScreen extends StatelessWidget {
                                           width: 10.w,
                                         ),
                                         Text(
-                                          '${_userNickName.value} · ${snapshot.data!['location']}',
+                                          '${_isDeletedAccount.value ? '탈퇴한 사용자' : _userNickName.value} · ${snapshot.data!['location']}',
                                           style: TextStyle(
                                             fontFamily: 'Pretendard',
                                             color: dmDarkGrey,
