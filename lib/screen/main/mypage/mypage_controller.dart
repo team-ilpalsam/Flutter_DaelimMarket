@@ -84,7 +84,9 @@ class MypageController extends GetxController {
         myWatchlistLimitValue.value = tempList;
       } catch (e) {
         WarningSnackBar.show(
-            text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);
+          text: '데이터를 불러오는 중 오류가 발생하였습니다.',
+          paddingBottom: 0,
+        );
         debugPrint(e.toString());
       }
     }
@@ -122,7 +124,9 @@ class MypageController extends GetxController {
         myPostsLimitValue.value = tempList;
       } catch (e) {
         WarningSnackBar.show(
-            text: '데이터를 불러오는 중 오류가 발생하였습니다.', paddingBottom: 0);
+          text: '데이터를 불러오는 중 오류가 발생하였습니다.',
+          paddingBottom: 0,
+        );
         debugPrint(e.toString());
       }
     }

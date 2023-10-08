@@ -1,12 +1,11 @@
 import 'package:daelim_market/screen/widgets/button.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:daelim_market/const/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import '../widgets/scroll_behavior.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

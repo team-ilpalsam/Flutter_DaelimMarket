@@ -1,8 +1,9 @@
+import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_profstaff_screen.dart';
+import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_student_screen.dart';
 import 'package:daelim_market/screen/main/school/school_controller.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
-import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -76,16 +77,60 @@ class SchoolScreen extends StatelessWidget {
             divider,
 
             // Content
-            const Row(
-              children: [
-                // SideMenu(
-                //   items: [],
-                //   controller: controller,
-                // ),
-                // Expanded(
-                //   child: PageView(),
-                // ),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.31806,
+                      color: dmBlue,
+                      child: ListView.builder(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: _controller.list.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              _controller.pageIndex.value = index;
+                              _controller.changePage(index);
+                            },
+                            child: Obx(
+                              () => Container(
+                                height: MediaQuery.of(context).size.height *
+                                    0.07042,
+                                color: _controller.pageIndex.value == index
+                                    ? dmWhite
+                                    : dmBlue,
+                                child: Center(
+                                  child: Text(
+                                    _controller.list[index],
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16.sp,
+                                      fontWeight: semiBold,
+                                      color:
+                                          _controller.pageIndex.value == index
+                                              ? dmBlack
+                                              : dmWhite,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )),
+                  Expanded(
+                    child: PageView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _controller.pageController,
+                      children: const [
+                        CafeteriaStudentScreen(),
+                        CafeteriaProfstaffScreen(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ),

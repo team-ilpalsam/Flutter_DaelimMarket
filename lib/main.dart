@@ -1,4 +1,5 @@
 import 'package:daelim_market/router/app_router.dart';
+import 'package:daelim_market/service/connection_service.dart';
 import 'package:daelim_market/service/notification_service.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -83,6 +84,7 @@ class DaelimMarket extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ConnectionService());
     return ScreenUtilInit(
       useInheritedMediaQuery: true,
       designSize: const Size(393, 852),

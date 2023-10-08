@@ -1,4 +1,5 @@
 import 'package:daelim_market/screen/main/chat/chat_screen.dart';
+import 'package:daelim_market/screen/offline_screen.dart';
 import 'package:get/get.dart';
 import 'package:daelim_market/screen/main/detail/image_viewer_screen.dart';
 import 'package:daelim_market/screen/main/main_screen.dart';
@@ -20,7 +21,13 @@ class AppRouter {
   static List<GetPage> pages = [
     GetPage(
       name: '/',
-      page: () => SplashScreen(),
+      page: () => const SplashScreen(),
+      transition: Transition.noTransition,
+    ),
+
+    GetPage(
+      name: '/offline',
+      page: () => OfflineScreen(),
       transition: Transition.noTransition,
     ),
 

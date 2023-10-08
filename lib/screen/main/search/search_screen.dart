@@ -5,14 +5,13 @@ import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
+import 'package:daelim_market/styles/input_deco.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../../../styles/input_deco.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});

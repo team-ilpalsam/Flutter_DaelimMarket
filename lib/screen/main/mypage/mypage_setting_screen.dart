@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daelim_market/const/common.dart';
 import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
+import 'package:daelim_market/screen/widgets/alert_dialog.dart';
 import 'package:daelim_market/screen/widgets/main_appbar.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -20,8 +21,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../widgets/alert_dialog.dart';
 
 class MypageSettingScreen extends StatelessWidget {
   MypageSettingScreen({

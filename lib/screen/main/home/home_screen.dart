@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:daelim_market/const/common.dart';
 import 'package:daelim_market/screen/main/home/home_controller.dart';
+import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -9,9 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../../../const/common.dart';
-import '../../widgets/named_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -125,11 +125,31 @@ class HomeScreen extends StatelessWidget {
                   horizontal: 20.w,
                 ),
                 // ListView를 아래로 스와이프할 경우 Refresh
-                child: RefreshIndicator(
+                child: CustomRefreshIndicator(
                   onRefresh: _controller.onRefresh,
-                  backgroundColor: dmWhite,
-                  color: dmDarkGrey,
-                  strokeWidth: 2.w,
+                  builder: (context, child, controller) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        if (!controller.isIdle)
+                          Positioned(
+                            top: 40.h * controller.value,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 20.h,
+                              ),
+                              child: CupertinoActivityIndicator(
+                                animating: !controller.isDragging,
+                              ),
+                            ),
+                          ),
+                        Transform.translate(
+                          offset: Offset(0, 40.h * controller.value),
+                          child: child,
+                        ),
+                      ],
+                    );
+                  },
                   child: Obx(
                     () =>
                         // 안드로이드 스와이프 Glow 애니메이션 제거
