@@ -1,4 +1,5 @@
 import 'package:daelim_market/const/common.dart';
+import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/service/connection_service.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
@@ -46,6 +47,9 @@ class OfflineScreen extends StatelessWidget {
             onTap: () {
               if (_connectionController.isConnetected.value) {
                 Get.offAllNamed('/');
+              } else {
+                WarningSnackBar.show(
+                    text: '네트워크가 연결이 되지 않았어요.', paddingBottom: 0);
               }
             },
             child: Container(

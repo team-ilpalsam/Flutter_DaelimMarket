@@ -64,7 +64,7 @@ class SchoolScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.h),
               child: Text(
-                '마이페이지',
+                '우리 학교 정보',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 28.sp,
@@ -121,12 +121,15 @@ class SchoolScreen extends StatelessWidget {
                       )),
                   Expanded(
                     child: PageView(
-                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
                       controller: _controller.pageController,
-                      children: const [
+                      children: [
                         CafeteriaStudentScreen(),
                         CafeteriaProfstaffScreen(),
                       ],
+                      onPageChanged: (value) {
+                        _controller.pageIndex.value = value;
+                      },
                     ),
                   ),
                 ],
