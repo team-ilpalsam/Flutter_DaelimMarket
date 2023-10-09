@@ -69,27 +69,32 @@ class UploadScreen extends StatelessWidget {
 
           debugPrint(uploadTask.toString());
           debugPrint(taskSnapshot.toString());
-        })).timeout(const Duration(minutes: 2));
 
-        // product 컬렉션 내 productId 문서에 데이터 저장
-        await FirebaseFirestore.instance
-            .collection('product')
-            .doc(productId)
-            .set({
-          'id': id,
-          'uid': uid,
-          'product_id': productId,
-          'price': priceString.value,
-          'title': titleString.value,
-          'location': _selectedLocation.value == '장소 선택'
-              ? locationList[0]
-              : _selectedLocation.value,
-          'desc': descString.value,
-          'images': _downloadUrls,
-          'likes': [],
-          'uploadTime': now,
-          'status': 0,
-        }).timeout(const Duration(minutes: 1));
+          // user 컬렉션 내 사용자의 uid 문서의 posts 리스트에 productId 값 추가
+          await FirebaseFirestore.instance.collection('user').doc(uid).update({
+            'posts': FieldValue.arrayUnion([productId])
+          });
+
+          // product 컬렉션 내 productId 문서에 데이터 저장
+          await FirebaseFirestore.instance
+              .collection('product')
+              .doc(productId)
+              .set({
+            'id': id,
+            'uid': uid,
+            'product_id': productId,
+            'price': priceString.value,
+            'title': titleString.value,
+            'location': _selectedLocation.value == '장소 선택'
+                ? locationList[0]
+                : _selectedLocation.value,
+            'desc': descString.value,
+            'images': _downloadUrls,
+            'likes': [],
+            'uploadTime': now,
+            'status': 0,
+          });
+        })).timeout(const Duration(minutes: 2));
 
         // user 컬렉션 내 사용자의 uid 문서의 posts 리스트에 productId 값 추가
         await FirebaseFirestore.instance.collection('user').doc(uid).update({

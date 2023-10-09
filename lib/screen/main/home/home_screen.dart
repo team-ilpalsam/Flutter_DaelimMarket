@@ -425,7 +425,9 @@ class HomeScreen extends StatelessWidget {
                                               ),
                                               if (_controller.isMore.value &&
                                                   _controller.list.length ==
-                                                      index + 1) ...[
+                                                      index + 1 &&
+                                                  _controller.list.length >=
+                                                      limit) ...[
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                     vertical: 40.h,

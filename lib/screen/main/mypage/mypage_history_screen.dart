@@ -410,7 +410,8 @@ class MyHistoryScreen extends StatelessWidget {
                                               ),
                                             ),
                                             if (list.length == index + 1 &&
-                                                keys.length != index + 1) ...[
+                                                keys.length != index + 1 &&
+                                                list.length >= limit) ...[
                                               Padding(
                                                 padding: EdgeInsets.symmetric(
                                                   vertical: 40.h,

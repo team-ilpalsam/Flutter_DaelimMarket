@@ -17,6 +17,7 @@ const List<String> locationList = [
   '한림관',
   '홍지관',
 ];
+const List<String> weekdayList = ['월요일', '화요일', '수요일', '목요일', '금요일'];
 
 formatPrice(String price) {
   // 가격 포맷
