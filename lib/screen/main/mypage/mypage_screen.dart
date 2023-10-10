@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
 import 'package:daelim_market/screen/widgets/button.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
@@ -213,31 +212,11 @@ class MypageScreen extends StatelessWidget {
             Expanded(
               child: ScrollConfiguration(
                 behavior: MyBehavior(),
-                child: CustomRefreshIndicator(
+                child: RefreshIndicator(
                   onRefresh: onRefresh,
-                  builder: (context, child, controller) {
-                    return Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        if (!controller.isIdle)
-                          Positioned(
-                            top: 40.h * controller.value,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 20.h,
-                              ),
-                              child: CupertinoActivityIndicator(
-                                animating: !controller.isDragging,
-                              ),
-                            ),
-                          ),
-                        Transform.translate(
-                          offset: Offset(0, 40.h * controller.value),
-                          child: child,
-                        ),
-                      ],
-                    );
-                  },
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Padding(

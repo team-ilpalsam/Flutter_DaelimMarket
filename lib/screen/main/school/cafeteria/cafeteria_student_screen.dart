@@ -139,20 +139,20 @@ class CafeteriaStudentScreen extends StatelessWidget {
               if (snapshot.hasData) {
                 return Column(
                   children: [
-                    SizedBox(
-                      height: size.height * 0.06259,
-                    ),
                     Expanded(
                       child: ScrollConfiguration(
                         behavior: MyBehavior(),
-                        child: PageView(
-                          controller: pageController,
-                          children: [
-                            ...List.generate(
-                              5,
-                              (index) => section(snapshot.data, index + 1),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.only(top: size.height * 0.06259),
+                          child: PageView(
+                            controller: pageController,
+                            children: [
+                              ...List.generate(
+                                5,
+                                (index) => section(snapshot.data, index + 1),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

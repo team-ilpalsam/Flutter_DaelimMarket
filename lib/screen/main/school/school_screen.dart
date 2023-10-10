@@ -1,8 +1,8 @@
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_profstaff_screen.dart';
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_student_screen.dart';
 import 'package:daelim_market/screen/main/school/schedule/schedule_screen.dart';
-import 'package:daelim_market/screen/main/school/school_controller.dart';
-import 'package:daelim_market/screen/main/school/schoolbus/schoolbus_screen.dart';
+import 'package:daelim_market/screen/main/school/schoolbus/schoolbus_anyang_screen.dart';
+import 'package:daelim_market/screen/main/school/schoolbus/schoolbus_beomgye_screen.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
@@ -14,7 +14,28 @@ import 'package:get/get.dart';
 class SchoolScreen extends StatelessWidget {
   SchoolScreen({super.key});
 
-  final SchoolController _controller = Get.put(SchoolController());
+  // 홈페이지는 무조건 마지막에
+  final List<String> list = [
+    '학생식당',
+    '교직원식당',
+    '셔틀버스\n(안양역)',
+    '셔틀버스\n(범계역)',
+    '학사일정',
+    '학사공지',
+    '장학공지',
+    '행정공지',
+    '홈페이지',
+  ];
+
+  final RxInt pageIndex = 0.obs;
+
+  late final PageController pageController = PageController();
+
+  void changePage(int index) {
+    if (index != list.length - 1) {
+      pageController.jumpToPage(index);
+    }
+  }
 
   Widget block(String text) {
     return Padding(
@@ -53,6 +74,7 @@ class SchoolScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    pageIndex.value = 0;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -74,6 +96,7 @@ class SchoolScreen extends StatelessWidget {
                   fontWeight: bold,
                   color: dmBlack,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 17.5.h),
@@ -89,30 +112,30 @@ class SchoolScreen extends StatelessWidget {
                     color: dmBlue,
                     child: ListView.builder(
                       physics: const ClampingScrollPhysics(),
-                      itemCount: _controller.list.length,
+                      itemCount: list.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            _controller.changePage(index);
+                            changePage(index);
                           },
                           child: Obx(
                             () => Container(
                               height:
                                   MediaQuery.of(context).size.height * 0.07042,
-                              color: _controller.pageIndex.value == index
-                                  ? dmWhite
-                                  : dmBlue,
+                              color:
+                                  pageIndex.value == index ? dmWhite : dmBlue,
                               child: Center(
                                 child: Text(
-                                  _controller.list[index],
+                                  list[index],
                                   style: TextStyle(
                                     fontFamily: 'Pretendard',
                                     fontSize: 16.sp,
                                     fontWeight: semiBold,
-                                    color: _controller.pageIndex.value == index
+                                    color: pageIndex.value == index
                                         ? dmBlack
                                         : dmWhite,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
@@ -126,15 +149,16 @@ class SchoolScreen extends StatelessWidget {
                       behavior: MyBehavior(),
                       child: PageView(
                         scrollDirection: Axis.vertical,
-                        controller: _controller.pageController,
+                        controller: pageController,
                         children: [
                           CafeteriaStudentScreen(),
                           CafeteriaProfstaffScreen(),
-                          const SchoolbusScreen(),
+                          SchoolbusAnyangScreen(),
+                          SchoolbusBeomgyeScreen(),
                           ScheduleScreen(),
                         ],
                         onPageChanged: (value) {
-                          _controller.pageIndex.value = value;
+                          pageIndex.value = value;
                         },
                       ),
                     ),
