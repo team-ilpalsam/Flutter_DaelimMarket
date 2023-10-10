@@ -114,6 +114,38 @@ class MypageScreen extends StatelessWidget {
                 ],
               ),
             ),
+            errorWidget: (context, url, error) {
+              return index == 5
+                  ? SizedBox(
+                      width: 50.w,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (int i = 0; i < 3; i++)
+                            Container(
+                              width: 10.w,
+                              height: 10.w,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: dmWhite,
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        '등록된 이미지가 없어요.',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 12.sp,
+                          fontWeight: bold,
+                          color: dmLightGrey,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+            },
             placeholder: (context, url) => Container(
               decoration: BoxDecoration(
                 color: dmGrey,
@@ -140,7 +172,7 @@ class MypageScreen extends StatelessWidget {
                         ],
                       ),
                     )
-                  : const SizedBox(),
+                  : const CupertinoActivityIndicator(),
             ),
           ),
         );

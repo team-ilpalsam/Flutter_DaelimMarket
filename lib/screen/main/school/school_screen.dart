@@ -1,7 +1,10 @@
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_profstaff_screen.dart';
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_student_screen.dart';
+import 'package:daelim_market/screen/main/school/schedule/schedule_screen.dart';
 import 'package:daelim_market/screen/main/school/school_controller.dart';
+import 'package:daelim_market/screen/main/school/schoolbus/schoolbus_screen.dart';
 import 'package:daelim_market/screen/widgets/named_widget.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
@@ -82,54 +85,58 @@ class SchoolScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                      width: MediaQuery.of(context).size.width * 0.31806,
-                      color: dmBlue,
-                      child: ListView.builder(
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: _controller.list.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              _controller.pageIndex.value = index;
-                              _controller.changePage(index);
-                            },
-                            child: Obx(
-                              () => Container(
-                                height: MediaQuery.of(context).size.height *
-                                    0.07042,
-                                color: _controller.pageIndex.value == index
-                                    ? dmWhite
-                                    : dmBlue,
-                                child: Center(
-                                  child: Text(
-                                    _controller.list[index],
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16.sp,
-                                      fontWeight: semiBold,
-                                      color:
-                                          _controller.pageIndex.value == index
-                                              ? dmBlack
-                                              : dmWhite,
-                                    ),
+                    width: MediaQuery.of(context).size.width * 0.31806,
+                    color: dmBlue,
+                    child: ListView.builder(
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: _controller.list.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            _controller.changePage(index);
+                          },
+                          child: Obx(
+                            () => Container(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.07042,
+                              color: _controller.pageIndex.value == index
+                                  ? dmWhite
+                                  : dmBlue,
+                              child: Center(
+                                child: Text(
+                                  _controller.list[index],
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16.sp,
+                                    fontWeight: semiBold,
+                                    color: _controller.pageIndex.value == index
+                                        ? dmBlack
+                                        : dmWhite,
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      )),
-                  Expanded(
-                    child: PageView(
-                      scrollDirection: Axis.vertical,
-                      controller: _controller.pageController,
-                      children: [
-                        CafeteriaStudentScreen(),
-                        CafeteriaProfstaffScreen(),
-                      ],
-                      onPageChanged: (value) {
-                        _controller.pageIndex.value = value;
+                          ),
+                        );
                       },
+                    ),
+                  ),
+                  Expanded(
+                    child: ScrollConfiguration(
+                      behavior: MyBehavior(),
+                      child: PageView(
+                        scrollDirection: Axis.vertical,
+                        controller: _controller.pageController,
+                        children: [
+                          CafeteriaStudentScreen(),
+                          CafeteriaProfstaffScreen(),
+                          const SchoolbusScreen(),
+                          ScheduleScreen(),
+                        ],
+                        onPageChanged: (value) {
+                          _controller.pageIndex.value = value;
+                        },
+                      ),
                     ),
                   ),
                 ],
