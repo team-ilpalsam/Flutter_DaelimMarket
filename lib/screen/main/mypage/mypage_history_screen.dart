@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:daelim_market/const/common.dart';
 import 'package:daelim_market/main.dart';
 import 'package:daelim_market/screen/main/mypage/mypage_controller.dart';
@@ -117,31 +116,11 @@ class MyHistoryScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
                 ),
-                child: CustomRefreshIndicator(
+                child: RefreshIndicator(
                   onRefresh: onRefresh,
-                  builder: (context, child, controller) {
-                    return Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        if (!controller.isIdle)
-                          Positioned(
-                            top: 40.h * controller.value,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 20.h,
-                              ),
-                              child: CupertinoActivityIndicator(
-                                animating: !controller.isDragging,
-                              ),
-                            ),
-                          ),
-                        Transform.translate(
-                          offset: Offset(0, 40.h * controller.value),
-                          child: child,
-                        ),
-                      ],
-                    );
-                  },
+                  backgroundColor: dmWhite,
+                  color: dmDarkGrey,
+                  strokeWidth: 2.w,
                   child: Obx(
                     () => ScrollConfiguration(
                       behavior: MyBehavior(),
@@ -432,7 +411,7 @@ class MyHistoryScreen extends StatelessWidget {
                                               ),
                                             ),
                                             if (list.length == index + 1 &&
-                                                keys.length != index + 1 &&
+                                                keys.length < index + 1 &&
                                                 list.length >= limit) ...[
                                               Padding(
                                                 padding: EdgeInsets.symmetric(
