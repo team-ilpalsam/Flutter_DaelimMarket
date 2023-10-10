@@ -15,7 +15,8 @@ class SchoolController extends GetxController {
     '홈페이지',
   ];
 
-  final PageController pageController = PageController();
+  late final PageController pageController =
+      PageController(initialPage: pageIndex.value);
 
   void changePage(int index) {
     if (index != list.length - 1) {

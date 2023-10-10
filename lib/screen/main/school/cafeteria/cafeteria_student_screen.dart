@@ -1,23 +1,22 @@
 import 'dart:convert';
 
 import 'package:daelim_market/const/common.dart';
+import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/screen/widgets/snackbar.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class CafeteriaStudentScreen extends StatelessWidget {
   CafeteriaStudentScreen({super.key});
 
   final dio = Dio();
   final DateTime now = DateTime.now();
-  final RxInt weekDay = 0.obs;
-  final RxInt pageIndex = 0.obs;
-  late final PageController pageController =
-      PageController(initialPage: now.weekday - 1);
+  late final PageController pageController = PageController(
+      initialPage: now.weekday < 6 ? now.weekday - 1 : 0,
+      viewportFraction: 0.85);
 
   Future<Object?> getData() async {
     try {
@@ -27,9 +26,9 @@ class CafeteriaStudentScreen extends StatelessWidget {
 
       if (dateData.data != null) {
         final currentWeekMonday =
-            jsonDecode(dateData.data)["data"][0]["CURRENT_WEEK_MON_DAY"];
+            jsonDecode(dateData.data)['data'][0]['CURRENT_WEEK_MON_DAY'];
         final currentWeekFriday =
-            jsonDecode(dateData.data)["data"][0]["CURRENT_WEEK_FRI_DAY"];
+            jsonDecode(dateData.data)['data'][0]['CURRENT_WEEK_FRI_DAY'];
 
         final menuData = await dio.get(
           'https://www.daelim.ac.kr/ajaxf/FrBistroSvc/BistroCarteInfo.do?pageNo=1&MENU_ID=1470&BISTRO_SEQ=1&START_DAY=$currentWeekMonday&END_DAY=$currentWeekFriday',
@@ -49,10 +48,6 @@ class CafeteriaStudentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (now.weekday < 6) {
-      weekDay.value = now.weekday - 1;
-      pageIndex.value = now.weekday - 1;
-    }
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -83,7 +78,7 @@ class CafeteriaStudentScreen extends StatelessWidget {
               children: [
                 Container(
                   width: size.width * 0.78358,
-                  height: size.height * 0.83098,
+                  height: size.height * 0.86071,
                   decoration: BoxDecoration(
                     color: dmWhite,
                     borderRadius: BorderRadius.circular(15.r),
@@ -109,21 +104,25 @@ class CafeteriaStudentScreen extends StatelessWidget {
                           fontWeight: bold,
                           color: dmBlack,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(
                         height: size.height * 0.04694,
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Text(
-                            menu,
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14.sp,
-                              fontWeight: medium,
-                              color: dmBlack,
+                        child: ScrollConfiguration(
+                          behavior: MyBehavior(),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              menu,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14.sp,
+                                fontWeight: medium,
+                                color: dmBlack,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
@@ -141,53 +140,20 @@ class CafeteriaStudentScreen extends StatelessWidget {
                 return Column(
                   children: [
                     SizedBox(
-                      height: size.height * 0.05477,
+                      height: size.height * 0.06259,
                     ),
                     Expanded(
-                      child: Stack(
-                        alignment: Alignment.topCenter,
-                        children: [
-                          PageView(
-                            controller: pageController,
-                            children: [
-                              ...List.generate(
-                                5,
-                                (index) => section(snapshot.data, index + 1),
-                              ),
-                            ],
-                            onPageChanged: (value) {
-                              pageIndex.value = value;
-                            },
-                          ),
-                          Positioned(
-                            bottom: size.height * 0.05946,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ...List.generate(
-                                  5,
-                                  (index) => Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 5.w,
-                                    ),
-                                    child: Obx(
-                                      () => Container(
-                                        width: 10.w,
-                                        height: 10.w,
-                                        decoration: BoxDecoration(
-                                          color: pageIndex.value == index
-                                              ? dmDarkGrey
-                                              : dmLightGrey,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      child: ScrollConfiguration(
+                        behavior: MyBehavior(),
+                        child: PageView(
+                          controller: pageController,
+                          children: [
+                            ...List.generate(
+                              5,
+                              (index) => section(snapshot.data, index + 1),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
