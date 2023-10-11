@@ -1,3 +1,6 @@
+import 'package:daelim_market/screen/main/school/announcement/announcement_administrative_screen.dart';
+import 'package:daelim_market/screen/main/school/announcement/announcement_bachelor_screen.dart';
+import 'package:daelim_market/screen/main/school/announcement/announcement_scholarship_screen.dart';
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_profstaff_screen.dart';
 import 'package:daelim_market/screen/main/school/cafeteria/cafeteria_student_screen.dart';
 import 'package:daelim_market/screen/main/school/schedule/schedule_screen.dart';
@@ -10,6 +13,7 @@ import 'package:daelim_market/styles/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SchoolScreen extends StatelessWidget {
   SchoolScreen({super.key});
@@ -31,9 +35,14 @@ class SchoolScreen extends StatelessWidget {
 
   late final PageController pageController = PageController();
 
-  void changePage(int index) {
+  void onTapPage(int index) async {
     if (index != list.length - 1) {
       pageController.jumpToPage(index);
+    } else {
+      Uri url = Uri.parse('http://daelim.ac.kr/');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
     }
   }
 
@@ -116,7 +125,7 @@ class SchoolScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            changePage(index);
+                            onTapPage(index);
                           },
                           child: Obx(
                             () => Container(
@@ -156,6 +165,9 @@ class SchoolScreen extends StatelessWidget {
                           SchoolbusAnyangScreen(),
                           SchoolbusBeomgyeScreen(),
                           ScheduleScreen(),
+                          AnnouncementBachelorScreen(),
+                          AnnouncementScholarshipScreen(),
+                          AnnouncementAdministrativeScreen(),
                         ],
                         onPageChanged: (value) {
                           pageIndex.value = value;

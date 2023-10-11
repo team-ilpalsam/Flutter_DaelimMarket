@@ -83,3 +83,4 @@
 - <a href="https://pub.dev/packages/html">html:</a> ^0.15.4
 - <a href="https://pub.dev/packages/image_picker">image_picker:</a> ^0.8.7+1
 - <a href="https://pub.dev/packages/intl">intl:</a> ^0.18.0
+- <a href="https://pub.dev/packages/url_launcher">url_launcher:</a> ^6.1.14
