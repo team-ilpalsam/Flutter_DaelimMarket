@@ -54,8 +54,8 @@ class SchoolbusBeomgyeScreen extends StatelessWidget {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
-                              top: size.width * 0.07463,
-                              left: size.height * 0.03129,
+                              left: size.width * 0.07463,
+                              top: size.height * 0.03129,
                             ),
                             child: Text(
                               '범계역',
