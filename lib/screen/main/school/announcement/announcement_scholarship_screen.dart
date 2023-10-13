@@ -50,64 +50,83 @@ class AnnouncementScholarshipScreen extends StatelessWidget {
                     Expanded(
                       child: ScrollConfiguration(
                         behavior: MyBehavior(),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.07463),
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) => divider,
-                            itemCount: snapshot.data!['data']['list'].length,
-                            itemBuilder: (context, index) {
-                              List data = snapshot.data!['data']['list'];
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    top: index == 0
-                                        ? size.height * 0.03129
-                                        : size.height * 0.02347,
-                                    bottom: size.height * 0.02347),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    Uri url = Uri.parse(
-                                        'https://www.daelim.ac.kr/cms/FrBoardCon/BoardView.do?MENU_ID=990&SITE_NO=2&BOARD_SEQ=9&BBS_SEQ=${data[index]['BBS_SEQ']}');
-                                    if (await canLaunchUrl(url)) {
-                                      await launchUrl(url);
-                                    }
+                        child: snapshot.data!['data']['list'].isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.07463),
+                                child: ListView.separated(
+                                  separatorBuilder: (context, index) => divider,
+                                  itemCount:
+                                      snapshot.data!['data']['list'].length,
+                                  itemBuilder: (context, index) {
+                                    List data = snapshot.data!['data']['list'];
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                        top: index == 0
+                                            ? size.height * 0.03129
+                                            : size.height * 0.02347,
+                                        bottom: index ==
+                                                snapshot.data!['data']['list']
+                                                        .length -
+                                                    1
+                                            ? size.height * 0.07824
+                                            : size.height * 0.02347,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          Uri url = Uri.parse(
+                                              'https://www.daelim.ac.kr/cms/FrBoardCon/BoardView.do?MENU_ID=900&SITE_NO=2&BOARD_SEQ=8&BBS_SEQ=${data[index]['BBS_SEQ']}');
+                                          if (await canLaunchUrl(url)) {
+                                            await launchUrl(url);
+                                          }
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${data[index]['TOP_YN'] == 'Y' ? '[공지] ' : ''}${data[index]['SUBJECT']}',
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 18.sp,
+                                                fontWeight: medium,
+                                                color: dmBlack,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: size.height * 0.01564,
+                                            ),
+                                            Text(
+                                              '${data[index]['WRITE_DATE']} | 조회수 ${data[index]['HITS']}',
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 14.sp,
+                                                fontWeight: medium,
+                                                color: dmGrey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${data[index]['TOP_YN'] == 'Y' ? '[공지] ' : ''}${data[index]['SUBJECT']}',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 18.sp,
-                                          fontWeight: medium,
-                                          color: dmBlack,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.height * 0.01564,
-                                      ),
-                                      Text(
-                                        '${data[index]['WRITE_DATE']} | 조회수 ${data[index]['HITS']}',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 14.sp,
-                                          fontWeight: medium,
-                                          color: dmGrey,
-                                        ),
-                                      ),
-                                    ],
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  '공지사항이 없어요.',
+                                  style: TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 14.sp,
+                                    fontWeight: bold,
+                                    color: dmLightGrey,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
                       ),
                     ),
                   ],
