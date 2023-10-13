@@ -226,32 +226,22 @@ class HomeScreen extends StatelessWidget {
                                                                 color: dmGrey,
                                                               ),
                                                             ),
-                                                            placeholder: (context,
-                                                                    url) =>
-                                                                const CupertinoActivityIndicator(),
+                                                            placeholder:
+                                                                (context,
+                                                                        url) =>
+                                                                    Container(
+                                                              color: dmWhite,
+                                                              child:
+                                                                  const CupertinoActivityIndicator(),
+                                                            ),
                                                             errorWidget:
                                                                 (context, url,
-                                                                    error) {
-                                                              return Center(
-                                                                child: Text(
-                                                                  '등록된 이미지가 없어요.',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Pretendard',
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    fontWeight:
-                                                                        bold,
-                                                                    color:
-                                                                        dmLightGrey,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              );
-                                                            },
+                                                                        error) =>
+                                                                    Container(
+                                                              color: dmWhite,
+                                                              child:
+                                                                  const CupertinoActivityIndicator(),
+                                                            ),
                                                           ),
                                                           _controller.list[
                                                                           index]

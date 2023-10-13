@@ -204,27 +204,20 @@ class DetailScreen extends StatelessWidget {
                                                       fadeOutDuration:
                                                           Duration.zero,
                                                       imageUrl: value,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          const CupertinoActivityIndicator(),
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Container(
+                                                        color: dmWhite,
+                                                        child:
+                                                            const CupertinoActivityIndicator(),
+                                                      ),
                                                       errorWidget: (context,
-                                                          url, error) {
-                                                        return Center(
-                                                          child: Text(
-                                                            '등록된 이미지가 없어요.',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Pretendard',
-                                                              fontSize: 16.sp,
-                                                              fontWeight: bold,
-                                                              color:
-                                                                  dmLightGrey,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        );
-                                                      },
+                                                              url, error) =>
+                                                          Container(
+                                                        color: dmWhite,
+                                                        child:
+                                                            const CupertinoActivityIndicator(),
+                                                      ),
                                                       width:
                                                           MediaQuery.of(context)
                                                               .size
@@ -419,6 +412,9 @@ class DetailScreen extends StatelessWidget {
                                                     color: dmLightGrey,
                                                   ),
                                                 ),
+                                                errorWidget: (context, url,
+                                                        error) =>
+                                                    const CupertinoActivityIndicator(),
                                               ),
                                         SizedBox(
                                           width: 10.w,
