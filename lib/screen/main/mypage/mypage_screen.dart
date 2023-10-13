@@ -113,8 +113,15 @@ class MypageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            errorWidget: (context, url, error) {
-              return index == 5
+            placeholder: (context, url) => Container(
+              decoration: BoxDecoration(
+                color: dmGrey,
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              width: 105.w,
+              height: 105.w,
+              alignment: Alignment.center,
+              child: index == 5
                   ? SizedBox(
                       width: 50.w,
                       child: Row(
@@ -132,20 +139,9 @@ class MypageScreen extends StatelessWidget {
                         ],
                       ),
                     )
-                  : Center(
-                      child: Text(
-                        '등록된 이미지가 없어요.',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 12.sp,
-                          fontWeight: bold,
-                          color: dmLightGrey,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-            },
-            placeholder: (context, url) => Container(
+                  : const CupertinoActivityIndicator(),
+            ),
+            errorWidget: (context, url, error) => Container(
               decoration: BoxDecoration(
                 color: dmGrey,
                 borderRadius: BorderRadius.circular(5.r),
@@ -246,53 +242,56 @@ class MypageScreen extends StatelessWidget {
                                       : CachedNetworkImage(
                                           fadeInDuration: Duration.zero,
                                           fadeOutDuration: Duration.zero,
-                                          imageUrl:
-                                              _controller.myProfileImage.value,
+                                          imageUrl: _controller
+                                              .myProfileImage.value,
                                           fit: BoxFit.cover,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                               0.14758,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.14758,
+                                          height:
+                                              MediaQuery.of(context).size.width *
+                                                  0.14758,
                                           imageBuilder:
-                                              (context, imageProvider) =>
+                                              (context,
+                                                      imageProvider) =>
                                                   Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.14758,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.14758,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
-                                              ),
-                                              shape: BoxShape.circle,
-                                              color: dmLightGrey,
-                                            ),
-                                          ),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.14758,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.14758,
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      shape: BoxShape.circle,
+                                                      color: dmLightGrey,
+                                                    ),
+                                                  ),
                                           placeholder: (context, url) =>
                                               Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.14758,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.14758,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: dmLightGrey,
-                                            ),
-                                          ),
-                                        ),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.14758,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.14758,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: dmLightGrey,
+                                                ),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              const CupertinoActivityIndicator()),
                                   Padding(
                                     padding: EdgeInsets.only(left: 23.w),
                                     child: Column(

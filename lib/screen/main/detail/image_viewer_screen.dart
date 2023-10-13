@@ -47,6 +47,8 @@ class ImageViewerScreen extends StatelessWidget {
                             imageUrl: src,
                             placeholder: (context, url) =>
                                 const CupertinoActivityIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const CupertinoActivityIndicator(),
                             width: MediaQuery.of(context).size.width,
                           )
                         : SizedBox(

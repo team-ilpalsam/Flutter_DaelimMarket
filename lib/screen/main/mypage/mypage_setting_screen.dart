@@ -290,6 +290,9 @@ class MypageSettingScreen extends StatelessWidget {
                                                     CupertinoActivityIndicator(),
                                               ),
                                             ),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                const CupertinoActivityIndicator(),
                                           ),
                               ),
                               Positioned(
