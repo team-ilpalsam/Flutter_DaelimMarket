@@ -1,7 +1,7 @@
 # 대림마켓
 
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_textless.png" width="300px" height="300px" />
-[ 2023년 1학기 캡스톤디자인 프로젝트 ]
+[ 2023년 대림대학교 졸업프로젝트 ]
 <br />
 우리들만의 작은 장터, 대림마켓
 <br />
@@ -83,4 +83,4 @@
 - <a href="https://pub.dev/packages/html">html:</a> ^0.15.4
 - <a href="https://pub.dev/packages/image_picker">image_picker:</a> ^0.8.7+1
 - <a href="https://pub.dev/packages/intl">intl:</a> ^0.18.0
-- <a href="https://pub.dev/packages/url_launcher">url_launcher:</a> ^6.1.14
+- <a href="https://pub.dev/packages/url_launcher">url_launcher:</a> ^6.0.2

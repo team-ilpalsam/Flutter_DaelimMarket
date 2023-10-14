@@ -116,6 +116,7 @@ class AccountSettingScreen extends StatelessWidget {
                                       }
                                     },
                                     () {
+                                      Navigator.pop(context);
                                       try {
                                         ImagePicker()
                                             .pickImage(
