@@ -65,7 +65,6 @@
 - <a href="https://pub.dev/packages/connectivity_plus">connectivity_plus:</a> ^4.0.2
 - <a href="https://pub.dev/packages/cupertino_icons">cupertino_icons: </a>
 - <a href="https://pub.dev/packages/dio">dio:</a> ^5.3.3
-- <a href="https://pub.dev/packages/dropdown_button2">dropdown_button2:</a> ^2.0.0
 - <a href="https://pub.dev/packages/emoji_regex">emoji_regex: </a>
 - <a href="https://pub.dev/packages/firebase_auth">firebase_auth:</a>
 - <a href="https://pub.dev/packages/firebase_core">firebase_core: </a>

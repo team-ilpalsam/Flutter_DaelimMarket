@@ -444,43 +444,37 @@ class UploadScreen extends StatelessWidget {
                             SizedBox(
                               height: 20.h,
                             ),
-                            SizedBox(
-                              height: 40.h,
-                              child: Obx(
-                                () => TextField(
-                                  enabled: _isLoading.value ? false : true,
-                                  style: mainInputTextDeco,
-                                  decoration: mainInputDeco('글 제목'),
-                                  inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(25),
-                                  ],
-                                  cursorColor: dmBlack,
-                                  onChanged: (value) {
-                                    titleString.value = value;
-                                  },
-                                ),
+                            Obx(
+                              () => TextField(
+                                enabled: _isLoading.value ? false : true,
+                                style: mainInputTextDeco,
+                                decoration: mainInputDeco('글 제목'),
+                                inputFormatters: <TextInputFormatter>[
+                                  LengthLimitingTextInputFormatter(25),
+                                ],
+                                cursorColor: dmBlack,
+                                onChanged: (value) {
+                                  titleString.value = value;
+                                },
                               ),
                             ),
                             SizedBox(
                               height: 20.h,
                             ),
-                            SizedBox(
-                              height: 40.h,
-                              child: Obx(
-                                () => TextField(
-                                  enabled: _isLoading.value ? false : true,
-                                  style: mainInputTextDeco,
-                                  decoration: mainInputDeco('가격 (1억 미만)'),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(8),
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  cursorColor: dmBlack,
-                                  onChanged: (value) {
-                                    priceString.value = value;
-                                  },
-                                ),
+                            Obx(
+                              () => TextField(
+                                enabled: _isLoading.value ? false : true,
+                                style: mainInputTextDeco,
+                                decoration: mainInputDeco('가격 (1억 미만)'),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  LengthLimitingTextInputFormatter(8),
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                cursorColor: dmBlack,
+                                onChanged: (value) {
+                                  priceString.value = value;
+                                },
                               ),
                             ),
                             SizedBox(
@@ -522,7 +516,6 @@ class UploadScreen extends StatelessWidget {
                                             );
                                           },
                                 child: Container(
-                                  height: 40.h,
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       width: 1.w,
@@ -533,8 +526,8 @@ class UploadScreen extends StatelessWidget {
                                   ),
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                      vertical: 8.h,
-                                      horizontal: 8.w,
+                                      vertical: 10.h,
+                                      horizontal: 10.w,
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -571,7 +564,7 @@ class UploadScreen extends StatelessWidget {
                                   style: mainInputTextDeco,
                                   decoration: mainInputDeco('설명글'),
                                   inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(128),
+                                    LengthLimitingTextInputFormatter(500),
                                   ],
                                   cursorColor: dmBlack,
                                   onChanged: (value) {
