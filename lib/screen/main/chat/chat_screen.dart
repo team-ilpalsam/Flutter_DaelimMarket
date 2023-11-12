@@ -736,6 +736,7 @@ class ChatScreen extends StatelessWidget {
                                           }
                                         ])
                                       });
+                                      _textEditingController.clear();
 
                                       if (userData.data?['token'] != '') {
                                         try {
@@ -787,7 +788,6 @@ class ChatScreen extends StatelessWidget {
                                           debugPrint(e.toString());
                                         }
                                       }
-                                      _textEditingController.text = '';
                                     }
                                   },
                                   child: Container(
