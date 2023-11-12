@@ -2,7 +2,6 @@
 
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_colored.jpg" width="300px" height="300px" />
 <br />
-<br />
 <b>[ 대림테크페어 2023 캡스톤디자인 우수작 ]</b>
 <br />
 <b>[ 2023년 대림대학교 졸업프로젝트 ]</b>
