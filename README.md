@@ -7,9 +7,6 @@
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_colored.jpg" width="300px" height="300px" />
 <br />
 <br />
-
-<img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_colored.jpg" width="300px" height="300px" />
-
 [ 2023년 대림대학교 졸업프로젝트 ]
 <br />
 우리들만의 작은 장터, 대림마켓
@@ -19,9 +16,6 @@
 <br />
 제작 기간: 2023년 3월 ~ 2023년 11월
 <br />
-
-<br />
-
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/simulator_ios.png" width="auto" height="500px">
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/simulator_android.png" width="auto" height="500px">
 
@@ -52,8 +46,8 @@
     </td>
   </tr>
   <tr>
-    <td align="center"><b>Project Manager</b><br /><b>Back End</b></td>
-    <td align="center"><b>Front End</b></td>
+    <td align="center"><b>Project Manager</b></td>
+    <td align="center"><b>Back End</b></td>
     <td align="center"><b>Front End</b></td>
   </tr>
 </table>
@@ -64,19 +58,11 @@
   <tr>
     <td align="center">
       <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/logo_dart.png" width="120px" height="auto" >
-
     </td>
     <td align="center">
       <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/logo_flutter.png" width="120px" height="auto" >
     </td>
     <td align="center">
-
-    </td>
-    <td align="center">
-      <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/logo_flutter.png" width="120px" height="auto" >
-    </td>
-    <td align="center">
-
       <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/logo_firebase.png" width="120px" height="auto" >
     </td>
   </tr>
@@ -90,7 +76,6 @@
 ## State Manager
 
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/getx.png" width="auto" height="200px">
-<img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/getx.png" width="auto" height="300px">
 <br />
 대림마켓 Flutter 프로젝트는 상태관리 라이브러리 중 GetX를 사용하고 있다.
 <br />
