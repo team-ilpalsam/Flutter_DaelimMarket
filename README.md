@@ -1,11 +1,11 @@
 # 대림마켓
 
-<b>[ 대림테크페어 2023 캡스톤디자인 우수작 ]</b>
-<br />
 <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/daelimmarket_colored.jpg" width="300px" height="300px" />
 <br />
 <br />
-[ 2023년 대림대학교 졸업프로젝트 ]
+<b>[ 대림테크페어 2023 캡스톤디자인 우수작 ]</b>
+<br />
+<b>[ 2023년 대림대학교 졸업프로젝트 ]</b>
 <br />
 <br />
 우리들만의 작은 장터, 대림마켓
@@ -112,10 +112,10 @@ GetX는 Flutter의 상태 관리를 제공하는 오픈 소스 라이브러리�
 
 ## Fonts
 
-<a href="https://gccompany.co.kr/font#download">
+<a href="https://cactus.tistory.com/306">
   <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/fonts_pretendard.jpg" width="auto" height="300px" >
 </a>
 <br />
-<a href="https://cactus.tistory.com/306">
+<a href="https://gccompany.co.kr/font#download">
   <img src="https://github.com/team-ilpalsam/Flutter_DaelimMarket/blob/main/readme/fonts_jalnan.jpg" width="auto" height="300px" >
 </a>
