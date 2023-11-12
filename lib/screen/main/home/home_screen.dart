@@ -5,7 +5,6 @@ import 'package:daelim_market/screen/widgets/named_widget.dart';
 import 'package:daelim_market/screen/widgets/scroll_behavior.dart';
 import 'package:daelim_market/styles/colors.dart';
 import 'package:daelim_market/styles/fonts.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,42 +33,13 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // 거래 장소 선택
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton2(
-                      menuItemStyleData: MenuItemStyleData(
-                        padding: EdgeInsets.zero,
-                        height: 33.h,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        elevation: 0,
-                        width: 101.w,
-                        decoration: BoxDecoration(
-                          color: dmWhite,
-                          border: Border.all(color: dmBlack),
-                        ),
-                        offset: Offset(0, -10.h),
-                      ),
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.zero,
-                      ),
-                      iconStyleData: IconStyleData(
-                        icon: Padding(
-                          padding: EdgeInsets.only(left: 14.37.w),
-                          child: Image.asset(
-                            'assets/images/icons/icon_arrow_down.png',
-                            height: 11.5.h,
-                          ),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        // Dropdown의 값을 _selectedLocation에 대입
-                        _controller.selectedLocation.value = value!;
-                        _controller.onRefresh();
-                      },
-                      value: _controller.selectedLocation.value,
-                      selectedItemBuilder: (BuildContext context) {
-                        return locationList.map((value) {
-                          return Text(
+                  PopupMenuButton(
+                    elevation: 0,
+                    shape: Border.all(color: dmBlack),
+                    child: Row(
+                      children: [
+                        Obx(
+                          () => Text(
                             _controller.selectedLocation.value,
                             style: TextStyle(
                               fontFamily: 'Pretendard',
@@ -77,29 +47,40 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: bold,
                               color: dmBlack,
                             ),
-                          );
-                        }).toList();
-                      },
-                      items: locationList.map(
-                        (value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                value,
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16.sp,
-                                  fontWeight: medium,
-                                  color: dmBlack,
-                                ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 14.37.w),
+                          child: Image.asset(
+                            'assets/images/icons/icon_arrow_down.png',
+                            height: 11.5.h,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onSelected: (String value) {
+                      _controller.selectedLocation.value = value;
+                      _controller.onRefresh();
+                    },
+                    itemBuilder: (context) {
+                      return locationList.map((value) {
+                        return PopupMenuItem(
+                          height: 40.sp,
+                          value: value,
+                          child: Center(
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16.sp,
+                                fontWeight: medium,
+                                color: dmBlack,
                               ),
                             ),
-                          );
-                        },
-                      ).toList(),
-                    ),
+                          ),
+                        );
+                      }).toList();
+                    },
                   ),
                   GestureDetector(
                     onTap: () {

@@ -36,6 +36,7 @@ var welcomeInputTextDeco = TextStyle(
 );
 
 mainInputDeco(String? hintText) => InputDecoration(
+      isDense: true,
       hintText: hintText,
       hintStyle: TextStyle(
         fontFamily: 'Pretendard',
