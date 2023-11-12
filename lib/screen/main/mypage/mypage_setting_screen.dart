@@ -337,24 +337,20 @@ class MypageSettingScreen extends StatelessWidget {
                       SizedBox(
                         height: 10.h,
                       ),
-                      SizedBox(
-                        height: 40.h,
-                        child: TextField(
-                          enabled: _isLoading.value ? false : true,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
-                            LengthLimitingTextInputFormatter(8),
-                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                          ],
-                          style: mainInputTextDeco,
-                          decoration:
-                              mainInputDeco(_controller.myNickName.value),
-                          cursorColor: dmBlack,
-                          onChanged: (value) {
-                            _nickName.value = value;
-                          },
-                        ),
+                      TextField(
+                        enabled: _isLoading.value ? false : true,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]')),
+                          LengthLimitingTextInputFormatter(8),
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
+                        style: mainInputTextDeco,
+                        decoration: mainInputDeco(_controller.myNickName.value),
+                        cursorColor: dmBlack,
+                        onChanged: (value) {
+                          _nickName.value = value;
+                        },
                       ),
                       SizedBox(
                         height: 20.h,
@@ -372,7 +368,6 @@ class MypageSettingScreen extends StatelessWidget {
                         height: 10.h,
                       ),
                       Container(
-                        height: 40.h,
                         decoration: BoxDecoration(
                           border: Border.all(
                             width: 1.w,
@@ -381,7 +376,7 @@ class MypageSettingScreen extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            vertical: 8.h,
+                            vertical: 10.h,
                             horizontal: 10.w,
                           ),
                           child: SizedBox(
