@@ -17,7 +17,6 @@ dependencies:
   cloud_firestore:
   firebase_storage:
   firebase_messaging:
-  dropdown_button2: ^2.0.0
   flutter_secure_storage:
   intl: ^0.18.0
   connectivity_plus: ^4.0.2
@@ -33,7 +32,7 @@ dependencies:
   get: ^4.6.6
   html: ^0.15.4
   flutter_widget_from_html_core: ^0.10.6
-  url_launcher: ^6.1.14
+  url_launcher: ^6.0.2
 
 dev_dependencies:
   flutter_test:

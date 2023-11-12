@@ -304,22 +304,26 @@ class MypageScreen extends StatelessWidget {
                                           _controller.myNickName.value == ''
                                               ? '불러오는 중...'
                                               : _controller.myNickName.value,
+                                          maxLines: 1,
                                           style: TextStyle(
                                             fontFamily: 'Pretendard',
                                             fontSize: 24.sp,
                                             fontWeight: medium,
                                             color: dmBlack,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                         Text(
                                           _controller.myEmail.value == ''
                                               ? '불러오는 중...'
                                               : _controller.myEmail.value,
+                                          maxLines: 1,
                                           style: TextStyle(
                                             fontFamily: 'Pretendard',
                                             fontSize: 16.sp,
                                             fontWeight: medium,
                                             color: dmDarkGrey,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],

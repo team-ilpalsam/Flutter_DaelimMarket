@@ -67,7 +67,7 @@ class ScheduleScreen extends StatelessWidget {
             List uniqueSubject = [];
             List uniquifiedScheduleListData = [];
 
-            String message = '';
+            List message = [];
 
             if (scheduleData['data'] != null &&
                 scheduleListData['data'] != null) {
@@ -110,8 +110,8 @@ class ScheduleScreen extends StatelessWidget {
                           if (stackSubject[0]["M"] == month ||
                               stackSubject[stackSubject.length - 1]["M"] ==
                                   month) {
-                            message +=
-                                "[${convertFromYMD(stackSubject[0]['FROM_YMD'])}~${convertFromYMD(stackSubject[stackSubject.length - 1]['FROM_YMD'])}]\n${stackSubject[0]['SUBJECT']}\n\n";
+                            message.add(
+                                "[${convertFromYMD(stackSubject[0]['FROM_YMD'])}~${convertFromYMD(stackSubject[stackSubject.length - 1]['FROM_YMD'])}]\n${stackSubject[0]['SUBJECT']}\n\n");
                             stackSubject = [];
                           } else {
                             stackSubject = [];
@@ -119,8 +119,8 @@ class ScheduleScreen extends StatelessWidget {
                         }
                       } else {
                         if (scheduleData['data'][i]["M"] == month) {
-                          message +=
-                              "[${convertFromYMD(scheduleData['data'][i]['FROM_YMD'])}]\n${scheduleData['data'][i]['SUBJECT']}\n\n";
+                          message.add(
+                              "[${convertFromYMD(scheduleData['data'][i]['FROM_YMD'])}]\n${scheduleData['data'][i]['SUBJECT']}\n\n");
                         }
                       }
                     }
@@ -133,8 +133,8 @@ class ScheduleScreen extends StatelessWidget {
                         if (stackSubject[0]["M"] == month ||
                             stackSubject[stackSubject.length - 1]["M"] ==
                                 month) {
-                          message +=
-                              "[${convertFromYMD(stackSubject[0]['FROM_YMD'])}~${convertFromYMD(stackSubject[stackSubject.length - 1]['FROM_YMD'])}]\n${stackSubject[0]['SUBJECT']}\n\n";
+                          message.add(
+                              "[${convertFromYMD(stackSubject[0]['FROM_YMD'])}~${convertFromYMD(stackSubject[stackSubject.length - 1]['FROM_YMD'])}]\n${stackSubject[0]['SUBJECT']}\n\n");
                           stackSubject = [];
                         } else {
                           stackSubject = [];
@@ -142,8 +142,8 @@ class ScheduleScreen extends StatelessWidget {
                       }
                     } else {
                       if (scheduleData['data'][i]["M"] == month) {
-                        message +=
-                            "[${convertFromYMD(scheduleData['data'][i]['FROM_YMD'])}]\n${scheduleData['data'][i]['SUBJECT']}\n\n";
+                        message.add(
+                            "[${convertFromYMD(scheduleData['data'][i]['FROM_YMD'])}]\n${scheduleData['data'][i]['SUBJECT']}\n\n");
                       }
                     }
                   }
@@ -158,17 +158,20 @@ class ScheduleScreen extends StatelessWidget {
                   if (item['START_D'] == item['END_D'] &&
                       item['START_M'] == item['END_M'] &&
                       item['START_Y'] == item['END_Y']) {
-                    message +=
-                        "[${item['END_Y']}.${item['END_M']}.${item['END_D']}]\n${item['SUBJECT']}\n\n";
+                    message.add(
+                        "[${item['END_Y']}.${item['END_M']}.${item['END_D']}]\n${item['SUBJECT']}\n\n");
                   } else {
-                    message +=
-                        "[${item['START_Y']}.${item['START_M']}.${item['START_D']}~${item['END_Y']}.${item['END_M']}.${item['END_D']}]\n${item['SUBJECT']}\n\n";
+                    message.add(
+                        "[${item['START_Y']}.${item['START_M']}.${item['START_D']}~${item['END_Y']}.${item['END_M']}.${item['END_D']}]\n${item['SUBJECT']}\n\n");
                   }
                 }
               }
 
-              if (message == '') {
-                message += '일정이 없습니다.';
+              if (message.isEmpty) {
+                message.add('일정이 없습니다.');
+              } else {
+                message.sort(
+                    (a, b) => a.substring(0, 12).compareTo(b.substring(0, 12)));
               }
             }
 
@@ -212,7 +215,7 @@ class ScheduleScreen extends StatelessWidget {
                       Expanded(
                         child: SingleChildScrollView(
                           child: Text(
-                            message,
+                            message.join(''),
                             style: TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 14.sp,
