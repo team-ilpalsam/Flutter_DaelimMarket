@@ -62,7 +62,12 @@ class HomeController extends GetxController {
         }
         lastDocument = data.docs.last.obs;
       } else {
+        InfoSnackBar.show(
+          text: "마지막 항목입니다.",
+          paddingBottom: 0,
+        );
         lastDocument = null.obs;
+        isMore.value = false;
       }
     } else {
       debugPrint("없음");
